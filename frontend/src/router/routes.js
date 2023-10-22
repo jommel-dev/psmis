@@ -23,69 +23,22 @@ const routes = [
   },
   
   {
-    path: '/clinic-management/',
-    component: () => import('layouts/LoginLayout.vue'),
+    path: '/user/',
+    component: () => import('layouts/UsersLayout.vue'),
     children: [
-      // Clinic Management
       { 
-        path: 'patient-records',
-        name: 'patientRecords',
-        component: () => import('pages/Clinic/PatientRecord.vue') 
+        path: 'dashboard',
+        name: 'userDashboard',
+        component: () => import('pages/Users/Dashboard.vue') 
+      },
+      { 
+        path: 'applications',
+        name: 'userApplications',
+        component: () => import('pages/Users/Applications.vue') 
       },
     ]
   },
-  {
-    path: '/inventory-management/',
-    component: () => import('layouts/LoginLayout.vue'),
-    children: [
-      // Inventory Management
-      { 
-        path: 'stock-list',
-        name: 'stockList',
-        component: () => import('pages/Inventory/Stock.vue') 
-      },
-      { 
-        path: 'product-list',
-        name: 'productList',
-        component: () => import('pages/Inventory/Product.vue') 
-      },
-      { 
-        path: 'invoice-list',
-        name: 'invoiceList',
-        component: () => import('pages/Inventory/Invoice.vue') 
-      },
-    ]
-  },
-  {
-    path: '/mobile-app-management/',
-    component: () => import('layouts/LoginLayout.vue'),
-    children: [
-      // Inventory Management
-      { 
-        path: 'agent-call-sync',
-        name: 'agentCallSync',
-        component: () => import('pages/mobile/syncData.vue') 
-      },
-      { 
-        path: 'client-list',
-        name: 'clientList',
-        component: () => import('pages/mobile/clientList.vue') 
-      },
-    ]
-  },
-
-  {
-    path: '/sales/',
-    component: () => import('layouts/LoginLayout.vue'),
-    children: [
-      // Sales Management
-      { 
-        path: 'create-transaction',
-        name: 'salesForm',
-        component: () => import('pages/Inventory/Sales.vue') 
-      },
-    ]
-  },
+  
 
   // Always leave this as last one,
   // but you can also remove it

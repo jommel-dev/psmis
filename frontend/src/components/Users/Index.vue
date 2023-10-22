@@ -102,12 +102,6 @@ export default{
         async getList(){
             this.tableRow = [];
             this.isLoading = true;
-            let vm = this;
-            
-            let payload = {
-                user: this.user.userId,
-                userType: this.user.userType
-            }
             
             api.get('users/getAllUserList').then((response) => {
                 const data = {...response.data};
@@ -146,7 +140,7 @@ export default{
                     sortable: true
                 },
                 { name: 'username', label: 'Username', field: 'username'},
-                { name: 'userType', label: 'Type', field: 'userType' },
+                { name: 'desc', label: 'Type', field: 'desc' },
                 { name: 'email', label: 'Email Address', field: 'email' },
                 { name: 'contact', label: 'Contact #', field: 'contact' },
                 { name: 'status', label: 'Status', field: 'status' },

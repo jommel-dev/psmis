@@ -27,7 +27,12 @@ export default defineComponent({
     let profile = SessionStorage.getItem('userDataLogin');
     
     if(profile || profile !== null){
-      this.$router.push('/dashboard')
+      if(Number(profile.userType) === 1){
+        this.$router.push('/dashboard')
+      } else {
+        this.$router.push('user/dashboard')
+      }
+      
     } else {
       this.$router.push('/')
     }

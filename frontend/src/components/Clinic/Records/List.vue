@@ -1,6 +1,20 @@
 <template>
   <div class="q-pa-md">
-    <span class="text-h4">Records</span>
+    <q-toolbar class="text-primary">
+        <q-toolbar-title>
+            <span class="text-h4">Records</span>
+        </q-toolbar-title>
+        <q-btn
+            @click="openAddClient"
+            flat 
+            rounded 
+            dense 
+            icon="create_new_folder" 
+            label="Add New Application" 
+            class="q-pa-sm" 
+        />
+    </q-toolbar>
+    
     <q-table
         title="Patient Records"
         :rows="rows"
@@ -173,10 +187,9 @@
 
     </q-table>
 
-    <addPatient
-        :appId="appId"
-        :modalStatus="openAddPatientModal"
-        @updateModalStatus="closePatientModal"
+    <addClient
+        :modalStatus="openAddClientModal"
+        @updateModalStatus="closeClientModal"
         @refreshData="getList"
     />
   </div>
@@ -185,6 +198,7 @@
 <script>
 import moment from 'moment';
 import addPatient from '../Modals/AddPatient.vue'
+import addClient from '../Modals/AddClient.vue'
 // import {
 //     ownerDetails,
 //     petDetails,
@@ -199,6 +213,7 @@ export default {
     name: 'RecordList',
     components: {
         addPatient,
+        addClient
         // ownerDetails,
         // petDetails,
         // schedule,
@@ -212,6 +227,8 @@ export default {
             // Context Controller
             appId: {},
             openAddPatientModal: false,
+            // Add Client Controller
+            openAddClientModal: false,
 
             // Others
             isLoading: false,
@@ -228,7 +245,7 @@ export default {
                     action: () => {}
                 },
                 {
-                    label: 'Client List',
+                    label: 'Customer List',
                     icon: 'view_list',
                     classNames: 'itemCursor', 
                     action: () => { return this.breadCrumbsClick('clientList', []) }
@@ -251,6 +268,12 @@ export default {
         openAddPatient(row){
             this.appId = row
             this.openAddPatientModal = true
+        },
+        openAddClient(){
+            this.openAddClientModal = true
+        },
+        closeClientModal(){
+            this.openAddClientModal = false;
         },
         closePatientModal(){
             this.openAddPatientModal = false;

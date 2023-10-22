@@ -121,6 +121,8 @@ export default{
                 createdBy: this.user.userId,
             }
 
+            payload.userType = payload.userType.value
+
             api.post('users/register', payload).then((response) => {
                 const data = {...response.data};
                 if(!data.error){

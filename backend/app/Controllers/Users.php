@@ -190,10 +190,28 @@ class Users extends BaseController
 
         // $header = $this->request->getHeader("");
         
-        $where = ['userInterface'=>'DSIS'];
+        $where = [
+            'status'=> 1,
+            'isDeleted'=> 0
+        ];
         $list = [];
-        $list['list'] = $this->userModel->getAllUserInfo($where);
+        // $list['list'] = $this->userModel->getAllUserInfo($where);
 
+        $query = $this->userModel->getAllUserInfo($where);
+        foreach ($query as $key => $value) {
+            $list['list'][$key] = [
+                "key" => $value['id'],
+                "username" => $value['username'],
+                "name" => $value['firstName'] .' '. $value['middleName'] .' '. $value['lastName'] .' '. $value['suffix'],
+                "email" =>  $value['email'],
+                "contact" =>  $value['contact'],
+                "status" =>  $value['status'],
+                "createdAt" =>  $value['createdAt'],
+                "userType" =>  $value['userType'],
+                "desc" =>  $value['userTypeDescription'],
+                "original" =>  $value,
+            ];
+        }
         if($list){
             return $this->response
                     ->setStatusCode(200)

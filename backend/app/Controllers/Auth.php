@@ -79,6 +79,7 @@ class Auth extends BaseController
                 $result = [
                     "fullName" => $user->firstName .' '. $user->lastName,
                     "userId" => $user->id,
+                    "userType" => $user->userType->id,
                     "jwt" => $jwt,
                 ];
 

@@ -2,9 +2,26 @@
 <template>
   <q-layout view="lHh LpR lFf">
 
-    <q-header reveal bordered class="bg-deep-purple-12 ">
+    <q-header reveal bordered class="bg-header-custom">
       <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+        <!-- <q-btn 
+          dense 
+          flat 
+          round 
+          icon="menu"
+          @click="toggleLeftDrawer" 
+        /> -->
+        
+        <q-btn 
+          dense
+          color="indigo-10"
+          round
+          unelevated
+          :icon="miniState ? 'navigate_next' : 'chevron_left'"
+          class="drawerBtn"
+          @click="toggleLeftDrawer"
+        />
+
         <q-space />
         <q-btn class="q-mr-sm" round dense flat icon="notifications">
             <q-badge floating color="red" rounded transparent>
@@ -20,7 +37,8 @@
 
     <q-drawer 
       show-if-above 
-      v-model="leftDrawerOpen" 
+      v-model="leftDrawerOpen"
+      :mini="miniState"
       side="left" 
       bordered
     >
@@ -69,109 +87,10 @@ const linksList = [
     ]
   },
   {
-    title: 'Create Invoice',
-    icon: 'receipt',
-    link: 'salesForm',
-    code: 101,
-    crumbs: [
-      {label: '', icon: 'home', link: '/'},
-      {label: 'OR Forms', icon: 'history_edu', link: 'forms'}
-    ]
-  },
-  {
-    title: 'Patient Management',
-    icon: 'pets',
-    code: 104,
-    children: [
-      {
-        title: 'Patient Records',
-        icon: 'source',
-        link: 'patientRecords',
-      },
-    ],
-    crumbs: [
-      {label: '', icon: 'home', link: '/'},
-      {label: 'Patient List', icon: 'view_list', link: 'mylist'}
-    ]
-  },
-  {
-    title: 'Inventory Management',
-    icon: 'inventory',
-    code: 104,
-    children: [
-      {
-        title: 'Stock List',
-        icon: 'view_list',
-        link: 'stockList',
-      },
-      {
-        title: 'Product List',
-        icon: 'sell',
-        link: 'productList',
-      },
-      {
-        title: 'Invoice',
-        icon: 'point_of_sale',
-        link: 'invoiceList',
-      },
-    ],
-    crumbs: [
-      {label: '', icon: 'home', link: '/'},
-      {label: 'Patient List', icon: 'view_list', link: 'mylist'}
-    ]
-  },
-  {
-    title: 'Mobile App Management',
-    icon: 'devices',
-    code: 104,
-    children: [
-      {
-        title: 'Agent Call Sync',
-        icon: 'contact_phone',
-        link: 'agentCallSync',
-      },
-      {
-        title: 'Client List',
-        icon: 'storefront',
-        link: 'clientList',
-      },
-    ],
-    crumbs: [
-      {label: '', icon: 'home', link: '/'},
-      {label: 'Patient List', icon: 'view_list', link: 'mylist'}
-    ]
-  },
-  {
-    title: 'Reports',
-    icon: 'analytics',
-    code: 104,
-    children: [
-      {
-        title: 'Agent Call Report',
-        icon: 'contact_phone',
-        link: 'mobileSync',
-      },
-      {
-        title: 'Summary Report',
-        icon: 'contact_phone',
-        link: 'mobileSync',
-      },
-      {
-        title: 'Sales Report',
-        icon: 'storefront',
-        link: 'salesReport',
-      },
-    ],
-    crumbs: [
-      {label: '', icon: 'home', link: '/'},
-      {label: 'Patient List', icon: 'view_list', link: 'mylist'}
-    ]
-  },
-  {
     title: 'Manage Users',
     icon: 'manage_accounts',
     link: 'usermanagement',
-    code: 106,
+    code: 102,
     crumbs: [
       {label: '', icon: 'home', link: '/'},
       {label: 'Manage Users', icon: 'manage_accounts', link: 'usermanagement'}
@@ -179,12 +98,12 @@ const linksList = [
   },
   {
     title: 'Configurations',
-    icon: 'display_settings',
+    icon: 'tune',
     link: 'crsmanagement',
-    code: 107,
+    code: 102,
     crumbs: [
       {label: '', icon: 'home', link: '/'},
-      {label: 'Manage CRS', icon: 'dynamic_form', link: 'crsmanagement'}
+      {label: 'Manage Users', icon: 'manage_accounts', link: 'usermanagement'}
     ]
   },
 ];
@@ -226,7 +145,7 @@ export default {
   },
   methods: {
     toggleLeftDrawer () {
-      this.leftDrawerOpen = !this.leftDrawerOpen
+      this.miniState = !this.miniState
     },
     setCrumbsItem(val){
       this.menuCrumbs = val;
@@ -239,3 +158,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.drawerBtn{
+  position: absolute;
+  left: -15px;
+}
+.bg-header-custom{
+  background: #003978;
+}
+</style>

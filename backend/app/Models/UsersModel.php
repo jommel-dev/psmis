@@ -20,7 +20,7 @@ class UsersModel extends Model
     protected $returnType     = 'array';
     protected $useSoftDeletes = false;
 
-    protected $allowedFields = ['username', 'password', 'firstName', 'lastName', 'middleName', 'suffix','userType', 'contact', 'address', 'branchId', 'profilePhoto', 'eSignature', 'status'];
+    protected $allowedFields = ['username', 'password', 'firstName', 'lastName', 'middleName', 'suffix','userType', 'contact', 'email','address', 'branchId', 'profilePhoto', 'eSignature', 'status'];
 
     protected $useTimestamps = false;
     protected $createdField  = 'createdDate';

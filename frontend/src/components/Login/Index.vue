@@ -134,7 +134,14 @@ export default{
                     LocalStorage.set('userData', data.jwt);
                     // Session Login with Expiration
                     SessionStorage.set('userDataLogin', data.jwt);
-                    this.$router.push('/dashboard')
+                    if(Number(data.userType) === 1){
+                        console.log('sadasd')
+                        this.$router.push('/dashboard')
+                    } else {
+                        console.log('ggg')
+                        this.$router.push('user/dashboard')
+                    }
+                    
                 } else {
                     this.$q.notify({
                         color: 'negative',

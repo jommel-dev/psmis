@@ -158,7 +158,8 @@ export default{
                 userType: '',
                 email: '',
                 contact: '',
-                eSignature: ''
+                branchId: 1
+                // eSignature: ''
             },
             fileRacker: '',
             typeList: [],
