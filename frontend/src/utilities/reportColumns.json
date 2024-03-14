@@ -1,0 +1,11 @@
+{
+    "salesReport": [
+        {
+            "name": "orNumber",
+            "required": true,
+            "label": "Reference Number",
+            "align": "left",
+            "sortable": true
+        },
+    ]
+}

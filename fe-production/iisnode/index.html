@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>iisnode logs</title>
+    <style type="text/css">
+        body
+        {
+            font-family: "Trebuchet MS" , Arial, Helvetica, sans-serif;
+        }
+        table
+        {
+            border-collapse: collapse;
+        }
+        td, th
+        {
+            border: 1px solid lightgray;
+            padding: 3px 7px 2px 7px;
+        }
+        th
+        {
+            text-align: left;
+            padding-top: 5px;
+            padding-bottom: 4px;
+            background-color: Gray;
+            color: #ffffff;
+        }
+        td.stderr
+        {
+            color: Red;
+        }
+    </style>
+</head>
+<body>
+    <table id="logFilesTable">
+        <tr>
+            <th>
+                Computer name
+            </th>
+            <th>
+                PID
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Created
+            </th>
+            <th>
+                Link
+            </th>
+        </tr>
+    </table>
+    <p id="lastUpdated"></p>
+    <script type="text/javascript">
+
+        // this is replaced with actual data at runtime by code in interceptor.js
+        var logFiles = [{"file":"LENOVO-LA0X1157-15324-stderr-1710426952034.txt","computername":"LENOVO-LA0X1157","pid":15324,"type":"stderr","created":1710426952034},{"file":"LENOVO-LA0X1157-15324-stdout-1710426952028.txt","computername":"LENOVO-LA0X1157","pid":15324,"type":"stdout","created":1710426952028},{"file":"LENOVO-LA0X1157-17768-stderr-1710419968847.txt","computername":"LENOVO-LA0X1157","pid":17768,"type":"stderr","created":1710419968847},{"file":"LENOVO-LA0X1157-17768-stdout-1710419968842.txt","computername":"LENOVO-LA0X1157","pid":17768,"type":"stdout","created":1710419968842},{"file":"LENOVO-LA0X1157-18144-stderr-1710432767774.txt","computername":"LENOVO-LA0X1157","pid":18144,"type":"stderr","created":1710432767774},{"file":"LENOVO-LA0X1157-18144-stdout-1710432767769.txt","computername":"LENOVO-LA0X1157","pid":18144,"type":"stdout","created":1710432767769},{"file":"LENOVO-LA0X1157-19960-stderr-1710437250863.txt","computername":"LENOVO-LA0X1157","pid":19960,"type":"stderr","created":1710437250863},{"file":"LENOVO-LA0X1157-19960-stdout-1710437250858.txt","computername":"LENOVO-LA0X1157","pid":19960,"type":"stdout","created":1710437250858},{"file":"LENOVO-LA0X1157-20132-stderr-1710412481428.txt","computername":"LENOVO-LA0X1157","pid":20132,"type":"stderr","created":1710412481428},{"file":"LENOVO-LA0X1157-20132-stdout-1710412481423.txt","computername":"LENOVO-LA0X1157","pid":20132,"type":"stdout","created":1710412481423},{"file":"LENOVO-LA0X1157-21088-stderr-1710438656354.txt","computername":"LENOVO-LA0X1157","pid":21088,"type":"stderr","created":1710438656354},{"file":"LENOVO-LA0X1157-21088-stdout-1710438656349.txt","computername":"LENOVO-LA0X1157","pid":21088,"type":"stdout","created":1710438656349},{"file":"LENOVO-LA0X1157-22572-stderr-1710429449320.txt","computername":"LENOVO-LA0X1157","pid":22572,"type":"stderr","created":1710429449320},{"file":"LENOVO-LA0X1157-22572-stdout-1710429449315.txt","computername":"LENOVO-LA0X1157","pid":22572,"type":"stdout","created":1710429449315},{"file":"LENOVO-LA0X1157-24108-stderr-1710400910995.txt","computername":"LENOVO-LA0X1157","pid":24108,"type":"stderr","created":1710400910995},{"file":"LENOVO-LA0X1157-24108-stdout-1710400910989.txt","computername":"LENOVO-LA0X1157","pid":24108,"type":"stdout","created":1710400910989},{"file":"LENOVO-LA0X1157-27436-stderr-1710404224795.txt","computername":"LENOVO-LA0X1157","pid":27436,"type":"stderr","created":1710404224795},{"file":"LENOVO-LA0X1157-27436-stdout-1710404224790.txt","computername":"LENOVO-LA0X1157","pid":27436,"type":"stdout","created":1710404224790},{"file":"LENOVO-LA0X1157-3928-stderr-1710418384928.txt","computername":"LENOVO-LA0X1157","pid":3928,"type":"stderr","created":1710418384928},{"file":"LENOVO-LA0X1157-3928-stdout-1710418384923.txt","computername":"LENOVO-LA0X1157","pid":3928,"type":"stdout","created":1710418384923},{"file":"LENOVO-LA0X1157-5248-stderr-1710405551855.txt","computername":"LENOVO-LA0X1157","pid":5248,"type":"stderr","created":1710405551855},{"file":"LENOVO-LA0X1157-5248-stdout-1710405551850.txt","computername":"LENOVO-LA0X1157","pid":5248,"type":"stdout","created":1710405551850}];
+        var lastUpdated = 1710438658689;
+        var date = new Date();
+
+        date.setTime(lastUpdated);
+        document.getElementById('lastUpdated').innerHTML = 'Index was last updated ' + date;
+
+        logFiles.sort(function (a, b) {
+            return b.created - a.created;
+        });
+
+        var logFilesTable = document.getElementById("logFilesTable");
+        for (var i = 0; i < logFiles.length; i++) {
+            var logFile = logFiles[i];
+            date.setTime(logFile.created);
+            var row = logFilesTable.insertRow(-1);
+            var computerNameCell = row.insertCell(0);
+            var pidCell = row.insertCell(1);
+            var typeCell = row.insertCell(2);
+            var dateCell = row.insertCell(3);
+            var logCell = row.insertCell(4);
+            computerNameCell.innerHTML = logFile.computername;
+            pidCell.innerHTML = logFile.pid.toString();
+            typeCell.innerHTML = logFile.type;
+            typeCell.setAttribute('class', logFile.type);
+            dateCell.innerHTML = date.toString();
+            logCell.innerHTML = '<a href="' + logFile.file + '">log</a>';
+        };
+
+    </script>
+</body>
+</html>
