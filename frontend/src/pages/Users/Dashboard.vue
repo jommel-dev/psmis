@@ -1,5 +1,61 @@
 <template>
     <div class="q-pa-md" style="width: 100%;">
+      <div class="row">
+           <!-- Cards -->
+          <div class="col-12 col-xs-12 col-sm-12 col-md-8 q-pa-sm">
+            <q-card
+                flat
+                class="my-card bg-white"
+            >
+              <q-card-section>
+                <span class="text-h6 text-bold">Today's Overview</span><br/>
+                <span class="text-caption text-grey">Daily User's transaction & Sales summary</span><br/>
+
+                <div class="row">
+                  <div
+                      v-for="(item, idx) in dailyCards"
+                      :key="idx"
+                      class="col-3 col-xs-12 col-sm-3 col-md-3 q-pa-xs"
+                  >
+                    <q-card
+                      flat
+                      class="my-card-item "
+                      :class="item.color"
+                    >
+                      <q-card-section>
+                          <q-avatar
+                              size="md"
+                              :color="item.iconBg"
+                              text-color="white"
+                              :icon="item.icon"
+                          />
+                          <br/>
+                          <span class="text-bold text-h6 text-blue-grey-9" >{{item.value}}</span>
+                          <br/>
+                          <span class="text-subtitle text-blue-grey-9" >{{item.title}}</span>
+                          <br/>
+                          <span class="text-caption ellipsis" :class="item.captionColor" >{{item.captions}}</span>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+
+           <!-- Cards -->
+          <div class="col-12 col-xs-12 col-sm-12 col-md-4 q-pa-sm">
+              <FullCalendar
+                  :options="calendarOptions"
+              >
+                  <!-- <template v-slot:eventContent='arg'>
+                      <b>{{ arg.event.title }}</b>
+                  </template> -->
+              </FullCalendar>
+          </div>
+
+
+        </div>
         <div class="row">
             <!-- Users Count Overview -->
             <div class="col-12 col-xs-12 col-sm-12 col-md-8 q-pa-sm">
@@ -68,62 +124,7 @@
                 </q-card>
             </div>
         </div>
-        <div class="row">
-           <!-- Cards -->
-          <div class="col-12 col-xs-12 col-sm-12 col-md-8 q-pa-sm">
-            <q-card
-                flat
-                class="my-card bg-white"
-            >
-              <q-card-section>
-                <span class="text-h6 text-bold">Today's Overview</span><br/>
-                <span class="text-caption text-grey">Daily User's transaction & Sales summary</span><br/>
 
-                <div class="row">
-                  <div
-                      v-for="(item, idx) in dailyCards"
-                      :key="idx"
-                      class="col-3 col-xs-12 col-sm-3 col-md-3 q-pa-xs"
-                  >
-                    <q-card
-                      flat
-                      class="my-card-item "
-                      :class="item.color"
-                    >
-                      <q-card-section>
-                          <q-avatar
-                              size="md"
-                              :color="item.iconBg"
-                              text-color="white"
-                              :icon="item.icon"
-                          />
-                          <br/>
-                          <span class="text-bold text-h6 text-blue-grey-9" >{{item.value}}</span>
-                          <br/>
-                          <span class="text-subtitle text-blue-grey-9" >{{item.title}}</span>
-                          <br/>
-                          <span class="text-caption ellipsis" :class="item.captionColor" >{{item.captions}}</span>
-                      </q-card-section>
-                    </q-card>
-                  </div>
-                </div>
-              </q-card-section>
-            </q-card>
-          </div>
-
-           <!-- Cards -->
-          <div class="col-12 col-xs-12 col-sm-12 col-md-4 q-pa-sm">
-              <FullCalendar
-                  :options="calendarOptions"
-              >
-                  <!-- <template v-slot:eventContent='arg'>
-                      <b>{{ arg.event.title }}</b>
-                  </template> -->
-              </FullCalendar>
-          </div>
-
-
-        </div>
 
 
         <!-- Modals -->

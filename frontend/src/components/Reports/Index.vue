@@ -140,7 +140,7 @@
                               icon="file_download"
                               color="green"
                               class="q-pl-md q-pr-md q-ml-sm"
-                              label="Export CSV"
+                              label="Export PDF"
                               :disabled="!reportShowResult"
                               @click="exportPDF"
                             />

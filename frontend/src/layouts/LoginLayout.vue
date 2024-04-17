@@ -4,15 +4,8 @@
 
     <q-header reveal bordered class="bg-header-custom">
       <q-toolbar>
-        <!-- <q-btn 
-          dense 
-          flat 
-          round 
-          icon="menu"
-          @click="toggleLeftDrawer" 
-        /> -->
-        
-        <q-btn 
+
+        <q-btn
           dense
           color="indigo-10"
           round
@@ -23,29 +16,42 @@
         />
 
         <q-space />
-        <q-btn class="q-mr-sm" round dense flat icon="notifications">
-            <q-badge floating color="red" rounded transparent>
-                3
-            </q-badge>
+        <q-btn
+          class="q-mr-sm q-pl-sm q-pr-sm"
+          dense color="primary"
+          icon="restart_alt"
+          @click="startDay"
+          :disabled="!startButtonEnable"
+        >
+            START OF DAY
+        </q-btn>
+        <q-btn
+          class="q-mr-sm q-pl-sm q-pr-sm"
+          dense color="red"
+          icon="content_cut"
+          @click="endDay"
+          :disabled="!endButtonEnable"
+        >
+            END OF DAY
         </q-btn>
       </q-toolbar>
       <!-- <q-bar dense>
         <Crumbs :contentLink.sync="menuCrumbs" />
       </q-bar> -->
     </q-header>
-    
 
-    <q-drawer 
-      show-if-above 
+
+    <q-drawer
+      show-if-above
       v-model="leftDrawerOpen"
       :mini="miniState"
-      side="left" 
+      side="left"
       bordered
     >
       <!-- drawer content -->
       <Profile v-bind="userProfile" />
       <q-separator dark />
-      <SideNav 
+      <SideNav
         v-for="link in filteredMenus"
         :key="link.title"
         v-bind="link"
@@ -70,10 +76,14 @@
 
 <script>
 import { LocalStorage, SessionStorage } from 'quasar'
+import { api } from 'boot/axios'
 import jwt_decode from 'jwt-decode'
 import SideNav from '../components/Templates/Sidenav.vue';
 import Profile from '../components/Templates/Profile.vue';
 import Crumbs from '../components/Templates/Breadcrumbs.vue';
+import moment from 'moment'
+
+const dateNow = moment().format('YYYY-MM-DD');
 
 const linksList = [
   {
@@ -158,7 +168,11 @@ export default {
         {label: 'Dashboard', icon: 'dashboard', link: 'dashboard'}
       ],
       leftDrawerOpen: true,
-      miniState: false
+      miniState: false,
+      startButtonEnable: false,
+      endButtonEnable: false,
+      dateOfStart: dateNow,
+      cutoffDetails: {}
     }
   },
   mounted(){},
@@ -178,10 +192,11 @@ export default {
 
     if(profile){
       this.userProfile = jwt_decode(profile);
+      this.checkCutOffDates();
     } else {
       this.$router.push('/')
     }
-    
+
   },
   methods: {
     toggleLeftDrawer () {
@@ -189,6 +204,63 @@ export default {
     },
     setCrumbsItem(val){
       this.menuCrumbs = val;
+    },
+    checkCutOffDates(){
+      let payload = {
+        checkDate: {
+          startDate: this.dateOfStart
+        }
+      }
+
+      api.post('misc/check/cutoffDate', payload).then((response) => {
+        const data = {...response.data};
+        if(!data.error){
+          this.endButtonEnable = data.endDate === ""
+          this.cutoffDetails = data
+        }
+      }).catch(e => {
+        this.startButtonEnable = true
+        this.endButtonEnable = false;
+      })
+    },
+    startDay(){
+      let payload = {
+        currDate: this.dateOfStart,
+        userId: this.userProfile.userId
+      }
+
+      api.post('misc/cutoff/startDate', payload).then((response) => {
+        const data = {...response.data};
+        if(!data.error){
+          this.startButtonEnable = false;
+
+          this.$nextTick(() => {
+            this.checkCutOffDates()
+          })
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    endDay(){
+      let payload = {
+        endDate: this.dateOfStart,
+        endSales: 0,
+        cutOffId: this.cutoffDetails.id
+      }
+
+      api.post('misc/cutoff/endDate', payload).then((response) => {
+        const data = {...response.data};
+        if(!data.error){
+          this.dateOfStart = moment(this.dateOfStart).add(1, 'd').format('YYYY-MM-DD')
+
+          this.$nextTick(() => {
+            this.checkCutOffDates()
+          })
+        }
+      }).catch(e => {
+        console.log(e)
+      })
     },
     logout(){
       localStorage.removeItem('userData');

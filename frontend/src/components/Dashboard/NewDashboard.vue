@@ -2,22 +2,6 @@
     <div class="q-pa-md" style="width: 100%;">
         <div class="row">
             <!-- Small cards -->
-            <!--
-            <div
-            v-for="(item, index) in dashCards"
-            :key="index"
-            class="col col-md-3 col-lg-3 q-pa-sm"
-            >
-                <q-card flat bordered class="my-card q-pa-sm">
-                <q-card-section  class="bg-white text-weight-light">
-                    <div class="text-subtitle2 text-grey-5">{{item.title}} <q-icon name="info" /></div>
-                    <div class="text-h6" :class="[item.color]">
-                    <span class="">{{item.value}}</span>
-                    <q-icon class="float-right" :color="item.iconColor" :name="item.icon" size="lg" />
-                    </div>
-                </q-card-section>
-                </q-card>
-            </div>-->
             <!-- Users Count Overview -->
             <div class="col-12 col-xs-12 col-sm-12 col-md-12 q-pa-sm">
                 <q-card
@@ -369,7 +353,7 @@ export default {
         checkLoanStatuses(){
             const vm = this
             let payload = {
-                currDate: dateNow
+              currDate: dateNow
             }
 
             api.post('misc/check/loans/expiry', payload).then((response) => {

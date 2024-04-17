@@ -6,6 +6,7 @@ use App\Models\AuthModel;
 use App\Models\LoanModel;
 use App\Models\AuctionModel;
 use App\Models\HistoryModel;
+use App\Models\CutoffModel;
 use \Firebase\JWT\JWT;
 
 class Dashboard extends BaseController
@@ -17,6 +18,139 @@ class Dashboard extends BaseController
         $this->loanModel = new LoanModel();
         $this->auctionModel = new AuctionModel();
         $this->historyModel = new HistoryModel();
+        $this->cutoffModel = new CutoffModel();
+    }
+
+    public function getCutoffDate(){
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        $payload = $this->request->getJSON();
+
+        $where = json_decode(json_encode($payload->checkDate), true);
+        $query = $this->cutoffModel->getCurrentCutOffDate($where);
+
+        if($query){
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($query));
+        } else {
+            $response = [
+                'title' => 'Error',
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(404)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+    }
+    public function startCutoffDate(){
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        $payload = $this->request->getJSON();
+
+        $cutoffDetails = [
+            "startDate" => $payload->currDate,
+            "startedBy" => $payload->userId
+        ];
+
+        // //INSERT QUERY TO APPLICATION
+        $query = $this->cutoffModel->insert($cutoffDetails);
+
+        if($query){
+            $response = [
+                'title' => 'Start of Day',
+                'message' => 'Date has been set'
+            ];
+
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        } else {
+            $response = [
+                'error' => 400,
+                'title' => 'Data Submit Failed',
+                'message' => 'Please contact the admin for concern'
+            ];
+
+            return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+    }
+    public function endCutoffDate(){
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+        
+        try {
+            $payload = $this->request->getJSON();
+
+            $where = ["id"=>$payload->cutOffId];
+            $setData = ["endDate"=>$payload->endDate];
+            $query = $this->cutoffModel->updateCutoffDate($where,$setData);
+            
+            if($query){
+                $response = [
+                    'title' => 'End of Day',
+                    'message' => 'Date has been set'
+                ];
+    
+                return $this->response
+                        ->setStatusCode(200)
+                        ->setContentType('application/json')
+                        ->setBody(json_encode($response));
+            } else {
+                $response = [
+                    'error' => 400,
+                    'title' => 'Data Submit Failed',
+                    'message' => 'Please contact the admin for concern'
+                ];
+    
+                return $this->response
+                        ->setStatusCode(400)
+                        ->setContentType('application/json')
+                        ->setBody(json_encode($response));
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        
     }
 
     public function getDashboard(){

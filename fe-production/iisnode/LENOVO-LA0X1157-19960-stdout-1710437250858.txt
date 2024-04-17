@@ -1,3 +1,0 @@
-
- READY  Server listening on http://localhost:\\.\pipe\66364fea-4ba3-48cf-9efc-a8af0cc12ac7
-

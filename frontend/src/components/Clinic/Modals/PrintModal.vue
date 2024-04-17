@@ -89,18 +89,21 @@ export default {
 
             // Draw a string of text toward the top of the page
             // OR Number
-            fpage.drawText(`${data.orNumber}`, {
+
+              fpage.drawText(`${data.oldTicket}`, {
                 x: 430,
                 y: 735,
                 size: 14,
                 color: rgb(0, 0, 0),
-            })
+              })
+
+
 
             // Loan Status
             fpage.drawText(`${data.loanStatus}`, {
                 x: 50,
                 y: 705,
-                size: 32,
+                size: 28,
                 color: rgb(0, 0, 0),
             })
 
@@ -235,7 +238,7 @@ export default {
             // Description of Pawn
             let list = [];
             data.itemDetails.forEach(el => {
-                let res = `${el.qty} ${el.unit.value} ${el.type.value} with ${el.weight}/${el.property}`;
+                let res = `${el.qty} ${el.unit.value} ${el.type.value} with ${el.weight}, ${el.property}`;
                 list.push(res);
             });
             fpage.drawText(list.join(", "), {

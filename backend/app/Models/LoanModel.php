@@ -16,6 +16,7 @@ class LoanModel extends Model
     protected $allowedFields = [
         'customerId', 
         'orNumber', 
+        'oldTicket', 
         'loanStatus', 
         'catId', 
         'identification', 

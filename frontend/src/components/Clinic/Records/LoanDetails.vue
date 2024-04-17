@@ -555,15 +555,16 @@ export default {
                 persistent: true
             }).onOk(() => {
                 let cloneData = Object.assign({}, this.loanData.origData)
-                let newMaturity =  moment().add(30, 'd').format('YYYY-MM-DD')
+                let newMaturity =  moment().add(29, 'd').format('YYYY-MM-DD')
                 let newExpiry = moment(newMaturity).add(this.loanData.terms, 'M').format('YYYY-MM-DD')
                 let newGrace = moment(newExpiry).add(15, 'd').format('YYYY-MM-DD')
-                // let amountPay = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
+                let amountPay = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
 
                 let payload = {
                     loanId: this.loanData.key,
                     createdBy: this.user.userId,
                     updateLoan: {
+                        oldTicket: cloneData.orNumber,
                         maturityDate: newMaturity,
                         expirationDate: newExpiry,
                         gracePeriodDate: newGrace,
@@ -573,12 +574,14 @@ export default {
                     },
                     transaction: {
                         loanId: Number(this.loanData.key),
+                        oldTicketNo: cloneData.orNumber,
                         dateMaturity: this.loanData.maturityDate,
                         orNumber: this.seriesDetatils.start,
                         officialReceipt:  this.officialReceipt,
                         discount:  this.discount,
                         orStatus: Number(this.seriesDetatils.reportStatus),
-                        amount: this.totalPrice,
+                        amount: amountPay,
+                        cashOnHand: this.totalPrice,
                         status: 'renew',
                         transactionType: 0,
                         createdBy: this.user.userId
@@ -636,6 +639,7 @@ export default {
                     loanId: this.loanData.key,
                     createdBy: this.user.userId,
                     updateLoan: {
+                        oldTicket: this.loanData.orNumber,
                         loanStatus: "Redeemed",
                         redeemDate: moment().format('YYYY-MM-DD'),
                         payStatus: 0,
@@ -643,6 +647,7 @@ export default {
                         status: 4
                     },
                     transaction: {
+                        oldTicketNo: this.loanData.orNumber,
                         loanId: Number(this.loanData.customerInfo.id),
                         dateMaturity: this.loanData.maturityDate,
                         orNumber: this.seriesDetatils.start,

@@ -113,9 +113,9 @@
                                         style="margin-top: -7px;"
                                     />
 
-                                    <span class="text-bold q-mr-lg">Maturity: <span class="text-green">{{form.maturityDate}}</span> </span>
-                                    <span class="text-bold q-mr-lg">Expiration: <span class="text-red">{{form.expirationDate}}</span> </span>
-                                    <span class="text-bold q-mr-lg">Grace: <span class="text-red">{{form.gracePeriodDate}}</span> </span>
+                                    <span class="text-bold q-mr-lg">Maturity: <span class="text-green">{{moment(form.maturityDate).format("LL")}}</span> </span>
+                                    <span class="text-bold q-mr-lg">Expiration: <span class="text-red">{{moment(form.expirationDate).format("LL")}}</span> </span>
+                                    <span class="text-bold q-mr-lg">Grace: <span class="text-red">{{moment(form.gracePeriodDate).format("LL")}}</span> </span>
 
                                     <!-- selection of Category -->
                                     <span class="text-bold q-mr-lg">
@@ -363,7 +363,7 @@ export default {
                     amountPercentage: 0,
                 },
                 totalAmount: 0,
-                maturityDate: moment().add(30, 'd').format('YYYY-MM-DD'),
+                maturityDate: moment().add(29, 'd').format('YYYY-MM-DD'),
                 expirationDate: moment().add(4, 'M').format('YYYY-MM-DD'),
                 gracePeriodDate: moment().add(4, 'M').add(15, 'd').format('YYYY-MM-DD'),
                 status: '1',
@@ -440,6 +440,7 @@ export default {
     },
 
     methods: {
+      moment,
         computeNewMaturity(term){
             this.form.expirationDate = moment(this.form.maturityDate).add(term, 'M').format('YYYY-MM-DD')
             this.form.gracePeriodDate = moment(this.form.expirationDate).add(15, 'd').format('YYYY-MM-DD')

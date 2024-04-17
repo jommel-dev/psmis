@@ -66,6 +66,11 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->post('dashboard', 'Dashboard::getDashboard');
 		$routes->post('dashboard/daily', 'Dashboard::getDailyDashboard');
 		$routes->post('check/loans/expiry', 'Dashboard::updateLoanApplicationTerms');
+		
+		// Start and End Date
+		$routes->post('check/cutoffDate', 'Dashboard::getCutoffDate');
+		$routes->post('cutoff/startDate', 'Dashboard::startCutoffDate');
+		$routes->post('cutoff/endDate', 'Dashboard::endCutoffDate');
 	});
 
 	// Applicant Module

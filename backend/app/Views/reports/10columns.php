@@ -29,7 +29,7 @@
         <span style="font-size: 9pt;font-weight: bold;">VIKING'S PAWNSHOP</span><br/>
         <span style="font-size: 9pt;"><i>Vireli Building, Del Pilar Street, Cabanatuan City</i></span> <br/>
         <span style="font-size: 9pt;"><i>TIN#160-963-246</i></span> <br/><br/>
-        <span style="font-size: 12pt;"><?= $generatedDate ?></span> <br/>
+        <span style="font-size: 15pt;"><?= $generatedDate ?></span> <br/>
     </div>
 
     <div style="text-align:center;">
@@ -62,7 +62,7 @@
             <tr>
                 <td style="text-align: center;"><?= $row['no'] ?></td>
                 <td><?= $row['pawnerName'] ?></td>
-                <td style="text-align: center;"><?= $row['date'] ?></td>
+                <td style="text-align: center;"><?= $generatedDate ?></td>
                 <td style="text-align: center;"><?= $row['pawnTicket'] ?></td>
                 <td style="text-align: center;"><?= $row['orNumber'] ?></td>
                 <td style="text-align: center;"><?= $row['cashOnHand'] ?></td>

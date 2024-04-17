@@ -9,7 +9,7 @@
             <q-card style="width: 30vw; max-width: 80vw;" >
                 <q-bar >
                     <div class="text-h6">Loan Terms</div>
-                    
+
                     <q-space />
                     <q-btn dense flat icon="close" @click="closeModal">
                         <q-tooltip class="bg-white text-primary">Close</q-tooltip>
@@ -70,7 +70,7 @@ export default {
             if(newVal){
                 this.getHistoryList()
             }
-            
+
         }
     },
     props: {
