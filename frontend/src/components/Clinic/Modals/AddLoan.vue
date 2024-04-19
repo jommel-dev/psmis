@@ -6,7 +6,7 @@
             transition-show="slide-up"
             transition-hide="slide-down"
         >
-            <q-card style="width: 60vw; max-width: 80vw;" >
+            <q-card style="width: 90vw; max-width: 100vw;" >
                 <q-bar class="q-mb-md">
                     <div class="text-h6">Add New Loan</div>
 
@@ -92,7 +92,7 @@
                         <div class="col col-md-12">
                             <span class="text-h6 q-mr-lg">Loan Details </span>
                         </div>
-                        <q-card class="my-card q-mb-md col col-md-12" flat bordered>
+                        <q-card class="my-card q-mb-md col col-md-9" flat bordered>
                             <q-card-section class="row">
                                 <div class="col col-md-12 q-mb-md">
 
@@ -112,10 +112,6 @@
                                         size="md"
                                         style="margin-top: -7px;"
                                     />
-
-                                    <span class="text-bold q-mr-lg">Maturity: <span class="text-green">{{moment(form.maturityDate).format("LL")}}</span> </span>
-                                    <span class="text-bold q-mr-lg">Expiration: <span class="text-red">{{moment(form.expirationDate).format("LL")}}</span> </span>
-                                    <span class="text-bold q-mr-lg">Grace: <span class="text-red">{{moment(form.gracePeriodDate).format("LL")}}</span> </span>
 
                                     <!-- selection of Category -->
                                     <span class="text-bold q-mr-lg">
@@ -307,6 +303,19 @@
                                 </div>
                             </q-card-section>
                         </q-card>
+                        <q-card class="my-card q-mb-md q-pa-md col col-md-3" flat bordered>
+                            <span class="text-h6 q-mr-lg">Loan Dates of Maturity</span>
+                            <q-timeline>
+                                <q-timeline-entry
+                                    v-for="(item, index) in form.datesOfMaturity"
+                                    :key="index"
+                                    :title="item.dateString"
+                                    color="primary"
+                                > 
+                                </q-timeline-entry>
+                            </q-timeline>
+                            <span class="text-bold q-mr-lg">Grace: <span class="text-red">{{moment(form.gracePeriodDate).format("LL")}}</span> </span>   
+                        </q-card>
                     </q-form>
                 </q-card-section>
 
@@ -326,7 +335,7 @@
 </template>
 <script>
 import moment from 'moment';
-import { LocalStorage } from 'quasar'
+import { LocalStorage, SessionStorage } from 'quasar'
 import jwt_decode from 'jwt-decode'
 import { api } from 'boot/axios'
 import chargesJson from '../../../utilities/charges.json'
@@ -363,18 +372,21 @@ export default {
                     amountPercentage: 0,
                 },
                 totalAmount: 0,
-                maturityDate: moment().add(29, 'd').format('YYYY-MM-DD'),
-                expirationDate: moment().add(4, 'M').format('YYYY-MM-DD'),
-                gracePeriodDate: moment().add(4, 'M').add(15, 'd').format('YYYY-MM-DD'),
+                datesOfMaturity: [],
+                maturityDate: "",
+                expirationDate: "",
+                gracePeriodDate: "",
                 status: '1',
                 orStatus: '',
                 createdBy: '',
                 officialReceipt: '',
+                cutoffDate:''
             },
             selectedItems: [],
             seriesDetatils:{},
             categoryOptions: [],
             unitOptions: [],
+            listOfDates: []
         }
     },
     watch:{
@@ -382,6 +394,7 @@ export default {
             this.openModal = newVal
             this.getReference()
             this.getCategories()
+            this.generateMaturityDates
         },
         'form.loanAmount'(newVal){
             this.computeStampCharge(newVal)
@@ -390,7 +403,7 @@ export default {
         'form.terms'(newVal){
             this.computeStampCharge(this.form.loanAmount)
             this.computeAmountInterest(this.form.loanAmount)
-            this.computeNewMaturity(newVal)
+            this.generateMaturityDat
         },
         'form.interest'(){
             this.computeStampCharge(this.form.loanAmount)
@@ -436,6 +449,31 @@ export default {
                 { name: 'property', label: 'Property', field: 'property' },
                 { name: 'remarks', label: 'Remarks', field: 'remarks' }
             ]
+        },
+        generateMaturityDates(){
+            const dateNow = moment().format('YYYY-MM-DD');
+            const dateName = 'd'
+            let currentDate = dateNow
+            
+            let list = []
+            for (let index = 0; index < this.form.terms; index++) {
+                let dayInmonth = moment(currentDate, "YYYY-MM").daysInMonth()
+                let dateDays = dayInmonth === 31 ? Number(dayInmonth) - 1 : 30
+
+                let mdate = moment(currentDate).add(dateDays, dateName).format('YYYY-MM-DD')
+                let obj = {
+                    dateFormatted: mdate,
+                    dateString: moment(mdate).format('LL'),
+                }
+                list.push(obj)
+                currentDate = mdate
+            }
+            this.form.datesOfMaturity = list
+
+            // Set Grace period
+            this.form.maturityDate = list.at(0).dateFormatted
+            this.form.expirationDate = list.at(-1).dateFormatted
+            this.form.gracePeriodDate = moment(list.at(-1).dateFormatted).add(15, dateName).format('YYYY-MM-DD')
         }
     },
 
@@ -611,6 +649,9 @@ export default {
 
         async addNewLoan(){
             this.$q.loading.show();
+            let cutOffDetails = SessionStorage.getItem("cutoff")
+            cutOffDetails = JSON.parse(cutOffDetails)
+            console.log(cutOffDetails)
             let payload = this.form
             payload.customerId = this.appId.key
             payload.identification = {
@@ -620,8 +661,10 @@ export default {
             }
             payload.catId = this.form.catId.id
             payload.createdBy = this.user.userId
+            payload.cutoffDate = cutOffDetails.startDate
 
-
+            // console.log(payload)
+            // return 
             api.post('loan/add/new', payload).then((response) => {
                 const data = {...response.data};
                 if(!data.error){

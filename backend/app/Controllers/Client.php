@@ -53,11 +53,6 @@ class Client extends BaseController
             $customerNumber =  $lastPreffix->value + 1;
         }
 
-        // print_r($payload);
-        // exit();
-
-        // Upload the KYC Images
-
         // Insert the customer Data
         $customerInfo = [
             "customerNo" => $customerNumber,
@@ -292,6 +287,7 @@ class Client extends BaseController
             $value->identification = json_decode($value->identification);
             $value->itemDetails = json_decode($value->itemDetails);
             $value->computationDetails = json_decode($value->computationDetails);
+            $value->datesOfMaturity = json_decode($value->datesOfMaturity);
             
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -426,13 +422,15 @@ class Client extends BaseController
             'interest' => $payload->interest, 
             'charge' => $payload->charge, 
             'computationDetails' => json_encode($payload->computationDetails), 
-            'totalAmount' => $payload->totalAmount - $payload->charge, 
+            'totalAmount' => $payload->totalAmount - $payload->charge,
+            'datesOfMaturity' => json_encode($payload->datesOfMaturity),  
             'maturityDate' => $payload->maturityDate, 
             'expirationDate' => $payload->expirationDate, 
             'gracePeriodDate' => $payload->gracePeriodDate, 
             'status' => $payload->status,
             'orStatus' => $payload->orStatus, 
-            'createdBy' => $payload->createdBy
+            'createdBy' => $payload->createdBy,
+            'cutoffDate' => $payload->cutoffDate
         ];
 
         // //INSERT QUERY TO APPLICATION
@@ -489,6 +487,7 @@ class Client extends BaseController
             $print->identification = json_decode($print->identification);
             $print->itemDetails = json_decode($print->itemDetails);
             $print->computationDetails = json_decode($print->computationDetails);
+            $print->datesOfMaturity = json_decode($print->datesOfMaturity);
             $print->customerInfo = $cinfo;
 
             // Response 

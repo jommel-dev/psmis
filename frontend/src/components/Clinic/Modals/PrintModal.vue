@@ -90,12 +90,32 @@ export default {
             // Draw a string of text toward the top of the page
             // OR Number
 
-              fpage.drawText(`${data.oldTicket}`, {
+            fpage.drawText(`${data.oldTicket}`, {
+              x: 430,
+              y: 735,
+              size: 14,
+              color: rgb(0, 0, 0),
+            })
+
+            let dateList = [];
+            data.datesOfMaturity.forEach((el, indx) => {
+                let pay = Number(data.computationDetails.amountPercentage) * (indx + 1)
+                let res = `${moment(el.dateFormatted).format("MM/DD/YY")} - ${Number(pay).toLocaleString('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+                })}`;
+                dateList.push(res);
+            });
+            fpage.drawText(dateList.join("\r\n"), {
                 x: 430,
                 y: 735,
-                size: 14,
+                size: 8,
+                spacing: 1,
+                lineHeight: 11,
+                maxWidth: 230,
                 color: rgb(0, 0, 0),
-              })
+            })
 
 
 

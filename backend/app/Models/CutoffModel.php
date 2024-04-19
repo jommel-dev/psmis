@@ -28,6 +28,12 @@ class CutoffModel extends Model
         return $results;
     }
 
+    public function getCurrentCutOffDateUser(){
+        $query = $this->db->table($this->table)->orderBy('id', 'DESC')->limit(1)->get();
+        $results = $query->getRow();
+        return $results;
+    }
+
     public function updateCutoffDate($where, $setData){
         $query = $this->db->table($this->table)->set($setData)->where($where)->update();
         return $query ? true : false;

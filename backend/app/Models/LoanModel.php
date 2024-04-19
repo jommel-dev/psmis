@@ -28,12 +28,14 @@ class LoanModel extends Model
         'payStatus', 
         'computationDetails', 
         'totalAmount', 
+        'datesOfMaturity',
         'maturityDate', 
         'expirationDate', 
         'gracePeriodDate', 
         'status', 
         'orStatus', 
-        'createdBy'
+        'createdBy',
+        'cutoffDate'
     ];
 
     protected $useAutoIncrement = true;

@@ -69,6 +69,7 @@ $routes->group('psmis/api/v1', function($routes){
 		
 		// Start and End Date
 		$routes->post('check/cutoffDate', 'Dashboard::getCutoffDate');
+		$routes->get('check/user/cutoffDate', 'Dashboard::getCutoffDateLast');
 		$routes->post('cutoff/startDate', 'Dashboard::startCutoffDate');
 		$routes->post('cutoff/endDate', 'Dashboard::endCutoffDate');
 	});

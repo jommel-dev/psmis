@@ -57,6 +57,40 @@ class Dashboard extends BaseController
                     ->setBody(json_encode($response));
         }
     }
+    public function getCutoffDateLast(){
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        $query = $this->cutoffModel->getCurrentCutOffDateUser();
+
+        if($query){
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($query));
+        } else {
+            $response = [
+                'title' => 'Error',
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(404)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+    }
+
     public function startCutoffDate(){
         $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
         if(!$authorization){

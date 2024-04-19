@@ -43,76 +43,82 @@ class Auth extends BaseController
         //Get API Request Data from NuxtJs
         $data = $this->request->getJSON(); 
         $hasPass = sha1($data->password);
-
-        //Select Query for finding User Information
-        $user = $this->authModel->where(['username' => $data->username, 'password' => $hasPass])->get()->getRow();
         
-        //Set Api Response return to the FE
-        if($user){
 
-            if($user->status == 1){
-                $user->userType = $this->miscModel->getUserType($user->userType);
-                $user->branch = $this->miscModel->getBranch($user->branchId);
+        try {
+            //Select Query for finding User Information
+            $user = $this->authModel->where(['username' => $data->username, 'password' => $hasPass])->get()->getRow();
+            
+            //Set Api Response return to the FE
+            if($user){
 
-                // //Set JWT Authorization
-                $secretKey = $this->privateKey();
-                $issueTimeClaim = time();
-                $notBeforeClaim = $issueTimeClaim + 10;
-                $expiryClaim = $issueTimeClaim + 3600;
+                if($user->status == 1){
+                    $user->userType = $this->miscModel->getUserType($user->userType);
+                    $user->branch = $this->miscModel->getBranch($user->branchId);
 
-                // //Generate Token
-                $token = [
-                    "fullName" => $user->firstName .' '. $user->lastName,
-                    "iss" => $user->username,
-                    "aud" => $user->username,
-                    "iat" => $issueTimeClaim,
-                    "nbf" => $notBeforeClaim,
-                    "exp" => $expiryClaim,
-                    "userId" => $user->id,
-                    "userType" => $user->userType->id,
-                    "branchId" => $user->branchId,
-                    "modules" =>  $user->userType->modules
-                ];
+                    // //Set JWT Authorization
+                    $secretKey = $this->privateKey();
+                    $issueTimeClaim = time();
+                    $notBeforeClaim = $issueTimeClaim + 10;
+                    $expiryClaim = $issueTimeClaim + 3600;
 
-                $jwt = JWT::encode($token, $secretKey, 'RS256');
+                    // //Generate Token
+                    $token = [
+                        "fullName" => $user->firstName .' '. $user->lastName,
+                        "iss" => $user->username,
+                        "aud" => $user->username,
+                        "iat" => $issueTimeClaim,
+                        "nbf" => $notBeforeClaim,
+                        "exp" => $expiryClaim,
+                        "userId" => $user->id,
+                        "userType" => $user->userType->id,
+                        "branchId" => $user->branchId,
+                        "modules" =>  $user->userType->modules
+                    ];
 
-                $result = [
-                    "fullName" => $user->firstName .' '. $user->lastName,
-                    "userId" => $user->id,
-                    "userType" => $user->userType->id,
-                    "jwt" => $jwt,
-                ];
+                    $jwt = JWT::encode($token, $secretKey, 'RS256');
+
+                    $result = [
+                        "fullName" => $user->firstName .' '. $user->lastName,
+                        "userId" => $user->id,
+                        "userType" => $user->userType->id,
+                        "jwt" => $jwt,
+                    ];
 
 
-                return $this->response 
-                        ->setHeader('jwt', $jwt)
-                        ->setStatusCode(200)
-                        ->setContentType('application/json')
-                        ->setBody(json_encode($result));
+                    return $this->response 
+                            ->setHeader('jwt', $jwt)
+                            ->setStatusCode(200)
+                            ->setContentType('application/json')
+                            ->setBody(json_encode($result));
+                } else {
+                    $response = [
+                        'error' => 401,
+                        'title' => 'Account Deactivated',
+                        'message' => 'Please contact your adminitrator for more information'
+                    ];
+        
+                    return $this->response
+                            ->setStatusCode(200)
+                            ->setContentType('application/json')
+                            ->setBody(json_encode($response));
+                }
+                
             } else {
                 $response = [
-                    'error' => 401,
-                    'title' => 'Account Deactivated',
-                    'message' => 'Please contact your adminitrator for more information'
+                    'error' => 404,
+                    'title' => 'Invalid Credentials',
+                    'message' => 'Please check your username or password, If its forgotten please contact your adminitrator for more information.'
                 ];
-    
+
                 return $this->response
                         ->setStatusCode(200)
                         ->setContentType('application/json')
                         ->setBody(json_encode($response));
             }
-            
-        } else {
-            $response = [
-                'error' => 404,
-                'title' => 'Invalid Credentials',
-                'message' => 'Please check your username or password, If its forgotten please contact your adminitrator for more information.'
-            ];
-
-            return $this->response
-                    ->setStatusCode(200)
-                    ->setContentType('application/json')
-                    ->setBody(json_encode($response));
+        } catch (\Throwable $th) {
+            print_r($th);
+            throw $th;
         }
     } 
 

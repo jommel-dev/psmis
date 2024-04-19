@@ -4,6 +4,7 @@
 
     <q-header reveal bordered class="bg-header-custom">
       <q-toolbar>
+        
         <!-- <q-btn 
           dense 
           flat 
@@ -21,7 +22,10 @@
           class="drawerBtn"
           @click="toggleLeftDrawer"
         />
-
+        <span class="q-ml-lg">
+          Cut-off Date: {{cutOffDate}}
+        </span>
+        
         <q-space />
         <q-btn class="q-mr-sm" round dense flat icon="notifications">
             <q-badge floating color="red" rounded transparent>
@@ -74,6 +78,10 @@ import jwt_decode from 'jwt-decode'
 import SideNav from '../components/Templates/Sidenav.vue';
 import Profile from '../components/Templates/Profile.vue';
 import Crumbs from '../components/Templates/Breadcrumbs.vue';
+import { api } from 'boot/axios'
+import moment from 'moment';
+
+const dateNow = moment().format('YYYY-MM-DD');
 
 const linksList = [
   {
@@ -118,7 +126,8 @@ export default {
         {label: 'Dashboard', icon: 'dashboard', link: 'dashboard'}
       ],
       leftDrawerOpen: true,
-      miniState: false
+      miniState: false,
+      cutOffDate: ""
     }
   },
   mounted(){},
@@ -138,12 +147,24 @@ export default {
 
     if(profile){
       this.userProfile = jwt_decode(profile);
+      this.checkCutOffDates();
     } else {
       this.$router.push('/')
     }
     
   },
   methods: {
+    checkCutOffDates(){
+      api.get('misc/check/user/cutoffDate').then((response) => {
+        const data = {...response.data};
+        if(!data.error){
+          SessionStorage.set("cutoff", JSON.stringify(data))
+          this.cutOffDate = data.startDate
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+    },
     toggleLeftDrawer () {
       this.miniState = !this.miniState
     },
