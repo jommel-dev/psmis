@@ -344,8 +344,7 @@
 
                                             <q-item-section top side>
                                             <div class="text-grey-8 q-gutter-xs">
-                                                <q-btn class="gt-xs" color="red" size="12px" flat dense round icon="delete" />
-                                                <q-btn class="gt-xs" size="12px" flat dense round icon="done" />
+                                                <q-btn @click="removeId(index)" class="gt-xs" color="red" size="12px" flat dense round icon="delete" />
                                             </div>
                                             </q-item-section>
 
@@ -520,6 +519,9 @@ export default {
             defineCustomElements(window).then(()=>{
                 vm.playCamera()
             })
+        },
+        removeId(index){
+            this.form.identifications.splice(index, 1)
         },
         async playCamera(){
             const image = await Camera.getPhoto({

@@ -37,7 +37,6 @@
         <Crumbs :contentLink.sync="menuCrumbs" />
       </q-bar> -->
     </q-header>
-    
 
     <q-drawer 
       show-if-above 
@@ -58,6 +57,17 @@
     </q-drawer>
 
     <q-page-container>
+      <div v-if="notifStartDay" class="q-pa-md q-gutter-sm">
+        <q-banner inline-actions rounded class="bg-orange text-black">
+          The cutoff is not yet started, do you want to take action on this process? <br>
+          <span class="text-caption"><i>Note: if <strong>NO</strong> kindly reach out to your Administrator.</i></span>
+
+          <template v-slot:action>
+            <q-btn @click="startDay" flat label="START THE DAY" />
+            <q-btn @click="notifStartDay = false" flat label="Dismiss" />
+          </template>
+        </q-banner>
+      </div>
       <q-page class="q-pa-sm">
         <div style="height: 88vh;">
           <router-view />
@@ -127,7 +137,8 @@ export default {
       ],
       leftDrawerOpen: true,
       miniState: false,
-      cutOffDate: ""
+      cutOffDate: "",
+      notifStartDay: false
     }
   },
   mounted(){},
@@ -160,6 +171,26 @@ export default {
         if(!data.error){
           SessionStorage.set("cutoff", JSON.stringify(data))
           this.cutOffDate = data.startDate
+        }
+      }).catch(e => {
+        this.notifStartDay = true
+        console.log(e)
+      })
+    },
+    startDay(){
+      let payload = {
+        currDate: dateNow,
+        userId: this.userProfile.userId
+      }
+
+      api.post('misc/cutoff/startDate', payload).then((response) => {
+        const data = {...response.data};
+        if(!data.error){
+          this.notifStartDay = false;
+
+          this.$nextTick(() => {
+            this.checkCutOffDates()
+          })
         }
       }).catch(e => {
         console.log(e)

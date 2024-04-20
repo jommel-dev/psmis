@@ -250,9 +250,13 @@
                                                 :rows="form.itemDetails"
                                                 :columns="columns"
                                                 row-key="name"
-                                                selection="multiple"
-                                                v-model:selected="selectedItems"
-                                            />
+                                            >
+                                                <template v-slot:body-cell-action="props">
+                                                    <q-td key="action" :props="props">
+                                                        <q-btn @click="removeId(props.row)" color="red" size="12px" flat dense round icon="delete" />
+                                                    </q-td>
+                                                </template>
+                                            </q-table>
                                         </div>
                                     </div>
                                 </div>
@@ -447,7 +451,8 @@ export default {
                 },
                 { name: 'weight', label: 'Weight', field: 'weight' },
                 { name: 'property', label: 'Property', field: 'property' },
-                { name: 'remarks', label: 'Remarks', field: 'remarks' }
+                { name: 'remarks', label: 'Remarks', field: 'remarks' },
+                { name: 'action',  field: 'action' }
             ]
         },
         generateMaturityDates(){
@@ -478,7 +483,11 @@ export default {
     },
 
     methods: {
-      moment,
+        moment,
+        removeId(item){
+            let indexOfItem = this.form.itemDetails.indexOf(item)
+            this.form.itemDetails.splice(indexOfItem, 1)
+        },
         computeNewMaturity(term){
             this.form.expirationDate = moment(this.form.maturityDate).add(term, 'M').format('YYYY-MM-DD')
             this.form.gracePeriodDate = moment(this.form.expirationDate).add(15, 'd').format('YYYY-MM-DD')

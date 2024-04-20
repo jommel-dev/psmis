@@ -138,7 +138,7 @@
                             size="lg" 
                             color="warning" 
                         /> 
-                        {{`${props.row.firstName} ${props.row.lastName}`}}
+                        {{`(${props.row.customerNo}) - ${props.row.firstName} ${props.row.lastName}`}}
                     </q-card-section>
                     <q-popup-proxy context-menu>
                         <q-list dense  style="min-width: 100px">
