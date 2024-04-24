@@ -187,7 +187,7 @@ class Misc extends BaseController
 
         //Select Query for finding User Information
         $where = [
-            "seriesDate" => $payload->date,
+            // "seriesDate" => $payload->date,
             "status" => 1,
         ];
         $list = [];

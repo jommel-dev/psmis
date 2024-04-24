@@ -18,7 +18,7 @@ const routes = [
       { path: 'loans/list', name: 'loanslist', component: () => import('pages/Loans.vue') },
       { path: 'sales/list', name: 'saleslist', component: () => import('pages/UserManage.vue') },
       { path: 'reports', name: 'reports', component: () => import('pages/Reports.vue') },
-      { path: 'configuration', name: 'configuration', component: () => import('pages/UserManage.vue') },
+      { path: 'configuration', name: 'configuration', component: () => import('pages/Configurations.vue') },
     ]
   },
   
