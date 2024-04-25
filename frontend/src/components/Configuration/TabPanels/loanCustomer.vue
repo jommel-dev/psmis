@@ -55,7 +55,7 @@
                       autofocus 
                       counter 
                       @keyup.enter="scope.set"
-                      @blur="updateReference(props.row)"
+                      @update:model-value="updateReference(props.row.id, scope.value)"
                     />
                   </q-popup-edit>
                 </q-td>
@@ -215,8 +215,26 @@ export default {
       addNewSeries(){
         this.modalComponents.modalStatus = true;
       },
-      async updateReference(data){
-        console.log(data.start, data.id)
+      async updateReference(id, value){
+        let payload = {
+          sid: id,
+          start: value
+        }
+
+        api.post('misc/update/reference', payload).then((response) => {
+            const data = {...response.data};
+            if(!data.error){
+              this.getSchedules();
+            } else {
+              this.$q.notify({
+                  color: 'negative',
+                  position: 'top-right',
+                  title:data.title,
+                  message: this.$t(`errors.${data.error}`),
+                  icon: 'report_problem'
+              })
+            }
+        })
       },
       async getSchedules(){
           let payload = {

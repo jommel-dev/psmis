@@ -1,22 +1,44 @@
 {
   "origData": {
-    "oldTicket": "",
-    "loanStatus": "",
+    "oldTicket": {
+      "name": "Old Ticket Number",
+      "value": "",
+      "type": "text"
+    },
     "identification": {
-      "idNumber": "444444",
-      "type": "1333asaa",
-      "validUntil": "dsdsad"
+      "name": "ID Details",
+      "value": {
+        "idNumber": "444444",
+        "type": "1333asaa",
+        "validUntil": "dsdsad"
+      },
+      "type": "object"
     },
     "itemDetails": [],
-    "loanAmount": "4000",
-    "terms": "4",
-    "payStatus": "1",
-    "gracePeriod": "15",
-    "interest": "5",
-    "charge": "20",
-    "computationDetails": {
-      "principal": 4200,
-      "amountPercentage": "200.00"
+    "loanAmount": {
+      "name": "Loan Amount",
+      "value": "",
+      "type": "number"
+    },
+    "interest": {
+      "name": "Interest",
+      "value": "",
+      "type": "number"
+    },
+    "charge": {
+      "name": "Charge",
+      "value": "",
+      "type": "text"
+    },
+    "principal": {
+      "name": "Loan Principal",
+      "value": "",
+      "type": "number"
+    },
+    "amountPercentage": {
+      "name": "Monthly Renewal",
+      "value": "",
+      "type": "number"
     },
     "totalAmount": "3980",
     "createdDate": "2024-04-19 15:02:16",
@@ -40,57 +62,6 @@
     ],
     "maturityDate": "2024-05-19",
     "expirationDate": "2024-08-17",
-    "gracePeriodDate": "2024-09-01",
-    "redeemDate": "",
-    "status": "1",
-    "orStatus": "1",
-    "createdBy": "3",
-    "cutoffDate": "2024-04-19",
-    "customerInfo": {
-      "id": "4",
-      "customerNo": "8795",
-      "firstName": "Lorem",
-      "lastName": "Ipsum",
-      "middleName": "",
-      "suffix": "",
-      "addressLine": "test",
-      "addressDetails": {
-        "region": {
-          "label": "Region III (Central Luzon)",
-          "value": "03"
-        },
-        "province": {
-          "label": "Nueva Ecija",
-          "value": "0349"
-        },
-        "city": {
-          "label": "Cabanatuan City",
-          "value": "034903"
-        },
-        "barangay": {
-          "label": "Barrera District (Pob.)",
-          "value": "034903013"
-        }
-      },
-      "contactNo": "09263693909",
-      "sex": "FEMALE",
-      "birthDate": "1997-06-16",
-      "otherDetails": {
-        "occupation": "NA",
-        "civilStatus": {
-          "label": "Single",
-          "value": "Single"
-        },
-        "email": ""
-      },
-      "kycId": "0",
-      "identifications": [],
-      "eSignature": "",
-      "profile": "",
-      "createdBy": "3",
-      "createdDate": "2024-01-13 00:53:39",
-      "status": "1"
-    },
     "amountWord": "four thousand",
     "interestWord": "five"
   },

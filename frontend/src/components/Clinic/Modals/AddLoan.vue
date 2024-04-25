@@ -663,10 +663,14 @@ export default {
             console.log(cutOffDetails)
             let payload = this.form
             payload.customerId = this.appId.key
-            payload.identification = {
+            payload.identification = this.appId.length > 0 ? {
                 idNumber: this.appId.identifications[0].idNumber,
                 type: this.appId.identifications[0].type,
                 validUntil: this.appId.identifications[0].validUntil,
+            } : {
+                idNumber: "N/A",
+                type: "N/A",
+                validUntil: "",
             }
             payload.catId = this.form.catId.id
             payload.createdBy = this.user.userId

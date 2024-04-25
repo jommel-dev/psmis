@@ -92,7 +92,7 @@ export default {
 
             fpage.drawText(`${data.oldTicket}`, {
               x: 430,
-              y: 735,
+              y: 765,
               size: 14,
               color: rgb(0, 0, 0),
             })
@@ -108,7 +108,7 @@ export default {
                 dateList.push(res);
             });
             fpage.drawText(dateList.join("\r\n"), {
-                x: 430,
+                x: 450,
                 y: 735,
                 size: 8,
                 spacing: 1,
@@ -123,7 +123,7 @@ export default {
             fpage.drawText(`${data.loanStatus}`, {
                 x: 50,
                 y: 705,
-                size: 28,
+                size: 30,
                 color: rgb(0, 0, 0),
             })
 

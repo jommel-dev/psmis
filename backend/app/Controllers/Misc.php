@@ -343,6 +343,53 @@ class Misc extends BaseController
                     ->setBody(json_encode($response));
         }
         
-    }  
+    }
+
+    public function updateSeries(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        $payload = $this->request->getJSON();
+
+        //Select Query for finding User Information
+        $where = [
+            "id" => $payload->sid,
+        ];
+        $data = [
+            "start" => $payload->start
+        ];
+        $query = $this->seriesModel->updateSeriesInfo($where, $data);
+
+        //Set Api Response return to the FE
+        if($query){
+            //Update
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($query));
+        } else {
+            $response = [
+                'error' => 404,
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+        
+    }
 
 }

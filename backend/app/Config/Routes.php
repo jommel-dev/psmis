@@ -61,6 +61,7 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->post('set/user/reference', 'Misc::setDailySeries');
 		$routes->post('set/reference/list', 'Misc::getDateSeriesList');
 		$routes->post('get/user/reference', 'Misc::getDailySeries');
+		$routes->post('update/reference', 'Misc::updateSeries');
 		$routes->post('get/admin/reference', 'Misc::getAdminUserSeries');
 
 		$routes->post('dashboard', 'Dashboard::getDashboard');

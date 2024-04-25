@@ -1,9 +1,9 @@
 <template>
-  <div class="q-pa-xs">
+  <div class="">
     <q-card flat>
       <q-card-section class="q-pt-none">
         <div class="row">
-          <div class="col col-xs-12 col-md-3 q-pa-sm">
+          <div class="col col-xs-12 col-md-3 q-pa-sm ">
             <label>Loan Status Type</label>
             <q-select
               outlined 
@@ -13,17 +13,58 @@
               dense 
               :options-dense="true"
             />
+           
           </div>
-          <div class="col col-xs-12 col-md-3 q-pa-sm">
+          <!-- <div class="col col-xs-12 col-md-3 q-pa-sm">
             <label>Loan Key Parameter</label>
             <q-select
               outlined 
               bottom-slots
               v-model="paramSelected" 
-              :options="printParamsOptions"
+              :options="paramSelectedOpt"
               dense 
               :options-dense="true"
+              @update:model-value="keyParamChange"
             />
+          </div> -->
+          <div class="col col-xs-12 col-md-12 q-pa-md">
+            <q-stepper
+              v-model="step"
+              vertical
+              color="primary"
+              animated
+            >
+              <q-step
+                :name="1"
+                title="Select print preview values"
+                icon="settings"
+                :done="step > 1"
+              >
+                For each ad campaign that you create, you can control how much you're willing to
+                spend on clicks and conversions, which networks and geographical locations you want
+                your ads to show on, and more.
+
+                <q-stepper-navigation>
+                  <q-btn @click="step = 2" color="primary" label="Continue" />
+                </q-stepper-navigation>
+              </q-step>
+
+              <q-step
+                :name="2"
+                title="Configuration"
+                icon="settings"
+                :done="step > 2"
+              >
+                For each ad campaign that you create, you can control how much you're willing to
+                spend on clicks and conversions, which networks and geographical locations you want
+                your ads to show on, and more.
+
+                <q-stepper-navigation>
+                  <q-btn flat @click="step = 1" color="primary" label="Back" class="q-mr-sm" />
+                  <q-btn @click="step = 2" color="primary" label="Continue" />
+                </q-stepper-navigation>
+              </q-step>
+            </q-stepper>
           </div>
           
         </div>
@@ -49,12 +90,16 @@ export default {
     data(){
       return {
         // Print
-        
+        step: 1,
         isLoading: false,
         rows: [],
         previewPDF: false,
         previewType: {value:"new", label:"New"},
         paramSelected: {value:"oldTicket", label:"oldTicket"},
+        paramSelectedOpt:[],
+        paramObjectVal: {},
+        paramObjectType: {},
+        printSettings:[],
         previewTypes: [
           {
             label: "New",
@@ -88,11 +133,25 @@ export default {
       }
     },
     created(){
-      this.createPDF();
       this.printParamsOptions
     },
     methods:{
       moment,
+      keyParamChange(val){
+        const keyParams = {...printSettingJSON.origData}
+        // let objects = {
+        //   x: 10,
+        //   y: 10,
+        //   size: 11,
+        //   color: rgb(0, 0, 0),
+        // }
+        // this.paramObjectType = typeof keyParams[val.value]
+        // if(typeof keyParams[val.value] === "object"){
+
+        // } else {
+          
+        // }
+      },
       async createPDF(){
         const url = 'files/printReceipt.pdf'
         const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
@@ -109,6 +168,7 @@ export default {
         const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
         document.getElementById('pdf').src = pdfDataUri;
       },
+      
     }
 }
 </script>
@@ -119,5 +179,8 @@ export default {
 .itemHover:hover{
     background: aliceblue;
 }
-
+.my-bordered{
+    border-radius: 10px;
+    box-shadow: 0px 0px 3px -2px !important;
+}
 </style>
