@@ -660,10 +660,9 @@ export default {
             this.$q.loading.show();
             let cutOffDetails = SessionStorage.getItem("cutoff")
             cutOffDetails = JSON.parse(cutOffDetails)
-            console.log(cutOffDetails)
             let payload = this.form
             payload.customerId = this.appId.key
-            payload.identification = this.appId.length > 0 ? {
+            payload.identification = this.appId.identifications.length > 0 ? {
                 idNumber: this.appId.identifications[0].idNumber,
                 type: this.appId.identifications[0].type,
                 validUntil: this.appId.identifications[0].validUntil,
