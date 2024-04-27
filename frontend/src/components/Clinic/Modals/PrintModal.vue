@@ -258,7 +258,7 @@ export default {
             // Description of Pawn
             let list = [];
             data.itemDetails.forEach(el => {
-                let res = `${el.qty} ${el.unit.value} ${el.type.value} with ${el.weight}, ${el.property}`;
+                let res = `${el.qty} ${el.unit.value} ${el.type.value}, ${el.description} with ${el.weight}, ${el.property}`;
                 list.push(res);
             });
             fpage.drawText(list.join(", "), {
