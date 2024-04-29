@@ -737,7 +737,7 @@ export default {
                 identification: {},
                 itemDetails: [],
                 loanAmount: 0,
-                terms: 1,
+                terms: 4,
                 interest: 5,
                 charge: 0,
                 computationDetails: {
@@ -745,11 +745,15 @@ export default {
                     amountPercentage: 0,
                 },
                 totalAmount: 0,
-                maturityDate: moment().add(30, 'd').format('YYYY-MM-DD'),
-                expirationDate: moment().add(4, 'M').format('YYYY-MM-DD'),
+                datesOfMaturity: [],
+                maturityDate: "",
+                expirationDate: "",
+                gracePeriodDate: "",
                 status: '1',
                 orStatus: '',
-                createdBy: ''
+                createdBy: '',
+                officialReceipt: '',
+                cutoffDate:''
             }
         }
     }
