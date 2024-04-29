@@ -45,7 +45,7 @@ class Client extends BaseController
 
         // Get the last inserted Client
         $checkReference = $this->reqModel->getLastinsertedReference();
-        $lastPreffix = $this->settingsModel->getLastCustomerID(["settingName" => "lastCustomerId"]);
+        $lastPreffix = $this->settingsModel->getSettingValue(["settingName" => "lastCustomerId"]);
 
         if($checkReference){
             $customerNumber = $checkReference[0]->customerNo + 1;
@@ -675,12 +675,15 @@ class Client extends BaseController
 
         // Check if there was starting loan application on the user
         $result = [];
-        $query = $this->loanModel->getLastinsertedReference(["createdBy" => $payload->uid]);
+        $firstReference = $this->settingsModel->getSettingValue(["settingName" => "ticketNo"]);
+        $query = $this->loanModel->getLastinsertedReference([]);
         $series = $this->seriesModel->getSeriesInfo(["userId" => $payload->uid]);
 
         // if the series is not yet started
         if($query){
-            $series->start = sprintf('%06d', $query[0]->orNumber + 1);
+            $series->start = sprintf('%07d', $query[0]->orNumber + 1);
+        } else {
+            $series->start = sprintf('%07d', $firstReference->value);
         }
 
         $result = $series;

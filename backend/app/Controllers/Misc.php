@@ -3,6 +3,7 @@
 use CodeIgniter\HTTP\IncomingRequest;
 use App\Models\MiscModel;
 use App\Models\SeriesModel;
+use App\Models\SettingsModel;
 
 class Misc extends BaseController
 {
@@ -10,7 +11,46 @@ class Misc extends BaseController
     public function __construct(){
         $this->miscModel = new MiscModel();
         $this->seriesModel = new SeriesModel();
+        $this->settingsModel = new SettingsModel();
     }
+
+    public function getSettings(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Select Query for finding User Information
+        $settingList = $this->settingsModel->getSettingValues();
+
+        //Set Api Response return to the FE
+        if($settingList){
+            //Update
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($settingList));
+        } else {
+            $response = [
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(404)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+        
+    }   
 
     public function getUserTypes(){
         // Check Auth header bearer
@@ -370,6 +410,52 @@ class Misc extends BaseController
             "start" => $payload->start
         ];
         $query = $this->seriesModel->updateSeriesInfo($where, $data);
+
+        //Set Api Response return to the FE
+        if($query){
+            //Update
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($query));
+        } else {
+            $response = [
+                'error' => 404,
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+        
+    }
+    public function updateSettings(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        $payload = $this->request->getJSON();
+
+        //Select Query for finding User Information
+        $where = [
+            "settingName" => $payload->settingName,
+        ];
+        $data = [
+            "value" => $payload->settingValue
+        ];
+        $query = $this->settingsModel->updateSettingInfo($where, $data);
 
         //Set Api Response return to the FE
         if($query){

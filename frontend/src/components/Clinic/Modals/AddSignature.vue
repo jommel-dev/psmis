@@ -6,8 +6,8 @@
             transition-show="slide-up"
             transition-hide="slide-down"
         >
-            <q-card style="width: 700px; max-width: 80vw;" >
-                <q-bar class="q-mb-md">
+            <q-card style="width: 100vw; max-width: 100vw;" >
+                <q-bar>
                     <div class="text-h6">Customer Signature</div>
                     <q-space />
                     <q-btn dense flat icon="close" @click="closeModal">
@@ -16,7 +16,7 @@
                 </q-bar>
 
                 <q-card-section style="max-height: 70vh; height: 100%;" class="q-pt-none scroll">
-                    <canvas id="signature-pad" class="signPad" width=650></canvas>
+                    <canvas id="signature-pad" class="signPad" width=1080 height="500"></canvas>
                 </q-card-section>
 
                 <q-separator />
@@ -104,5 +104,6 @@ export default {
 <style scoped>
 .signPad{
     border: 1px solid;
+    width: 94vw;
 }
 </style>

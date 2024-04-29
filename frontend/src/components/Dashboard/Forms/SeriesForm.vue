@@ -17,7 +17,7 @@
                 :options="typeList"
             />
 
-            <div class="col col-xs-12 col-sm-12 col-md-12 q-mt-lg">
+            <!-- <div class="col col-xs-12 col-sm-12 col-md-12 q-mt-lg">
                 <span class="text-h6">SERIES DETAILS</span>
             </div>
             
@@ -34,11 +34,11 @@
                 v-model="form.end"
                 label="End Series *"
                 :rules="[ val => val && val.length > 0 || 'This field is required']"
-            />
+            /> -->
 
             
             <q-select
-                class="col col-xs-12 col-md-12 q-pa-sm"
+                class="col col-xs-12 col-md-6 q-pa-sm"
                 bottom-slots
                 v-model="form.reportStatus" 
                 :options="reportOptions" 
@@ -65,8 +65,8 @@ export default{
             isPwd: true,
             form: {
                 userId: "",
-                start: "",
-                end: "",
+                start: "0",
+                end: "0",
                 reportStatus: "",
                 status: 1
             },

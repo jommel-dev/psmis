@@ -73,6 +73,10 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->get('check/user/cutoffDate', 'Dashboard::getCutoffDateLast');
 		$routes->post('cutoff/startDate', 'Dashboard::startCutoffDate');
 		$routes->post('cutoff/endDate', 'Dashboard::endCutoffDate');
+
+		// Settings
+		$routes->get('site/settings', 'Misc::getSettings');
+		$routes->post('update/settings', 'Misc::updateSettings');
 	});
 
 	// Applicant Module

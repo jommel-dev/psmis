@@ -9,15 +9,27 @@
           class="row"
         >
           <div class="col col-12 q-mt-md q-mb-sm">
-            <span class="text-h6"> Customer Settings</span>
+            <span class="text-h6"> Global Settings</span>
 
             <div class="row">
-              <div class="col col-md-3 q-pa-sm">
+              <div class="col col-md-12 q-pa-sm">
+                <label>Customer Numer Starting</label>
                 <q-input
+                  v-model="setting.lastCustomerId"
                   outlined 
-                  label="Customer Number" 
                   stack-label 
                   dense
+                  @blur="updateSettingValue('lastCustomerId', setting.lastCustomerId)"
+                />
+              </div>
+              <div class="col col-md-12 q-pa-sm">
+                <label>Ticket Number Starting</label>
+                <q-input
+                  v-model="setting.ticketNo"
+                  outlined 
+                  stack-label 
+                  dense
+                  @blur="updateSettingValue('ticketNo', setting.ticketNo)"
                 />
               </div>
             </div>
@@ -154,13 +166,15 @@ export default {
         usersList:[],
         categoryList: [],
         setting:{
+          lastCustomerId: "0000000",
+          ticketNo: "0000000",
           loanReference: []
         },
         modalComponents: {
           modalStatus: false,
           appId: 0,
           userDetails: {},
-          modalTitle: 'Add Ticket No. Reference to User'
+          modalTitle: 'Assign User Privilleges'
         }
 
       }
@@ -181,7 +195,7 @@ export default {
             format: val => `${val.firstName} ${val.lastName}`,
             sortable: true
           },
-          { name: 'start', label: 'Ticket No.', field: 'start' },
+          // { name: 'start', label: 'Ticket No.', field: 'start' },
           { name: 'reportStatus', label: 'Report Privileges', field: 'reportStatus' },
           { name: 'status', label: 'Status', field: 'status' },
           { name: 'action',  field: 'action' }
@@ -202,10 +216,11 @@ export default {
       },
     },
     created(){
-      this.getSchedules().then(() => {
-        this.getCategories()
-      });
-
+      this.getSettings().then(() => {
+        this.getSchedules().then(() => {
+          this.getCategories()
+        });
+      })
     },
     methods:{
       moment,
@@ -225,6 +240,27 @@ export default {
             const data = {...response.data};
             if(!data.error){
               this.getSchedules();
+            } else {
+              this.$q.notify({
+                  color: 'negative',
+                  position: 'top-right',
+                  title:data.title,
+                  message: this.$t(`errors.${data.error}`),
+                  icon: 'report_problem'
+              })
+            }
+        })
+      },
+      async updateSettingValue(settingName, value){
+        let payload = {
+          settingName: settingName,
+          settingValue: value
+        }
+
+        api.post('misc/update/settings', payload).then((response) => {
+            const data = {...response.data};
+            if(!data.error){
+              this.getSettings();
             } else {
               this.$q.notify({
                   color: 'negative',
@@ -261,6 +297,27 @@ export default {
             const data = {...response.data};
             if(!data.error){
               this.categoryList = data.list
+            } else {
+                this.$q.notify({
+                    color: 'negative',
+                    position: 'top-right',
+                    title:data.title,
+                    message: this.$t(`errors.${data.error}`),
+                    icon: 'report_problem'
+                })
+            }
+
+        })
+      },
+      async getSettings(){
+        api.get('misc/site/settings').then((response) => {
+            const data = {...response.data};
+            if(!data.error){
+              for (const [key, value] of Object.entries(data)) {
+                if(this.setting[value.settingName]){
+                  this.setting[value.settingName] = value.value
+                }
+              }
             } else {
                 this.$q.notify({
                     color: 'negative',
