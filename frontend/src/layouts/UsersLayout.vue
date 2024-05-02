@@ -75,7 +75,7 @@
       </q-page>
     </q-page-container>
 
-    <!-- <q-footer reveal class="bg-grey-5 text-weight-thin text-blue-white-9 text-center q-pt-lg q-pb-lg">
+    <!-- <q-footer reveal class="bg-text-weight-thin text-blue-white-9 text-center q-pt-lg q-pb-lg">
       <div>{{ `Centralize Distribution and Sales Inventory System ©2023 Created by FWDS` }}</div>
     </q-footer> -->
 
@@ -118,6 +118,16 @@ const linksList = [
     title: 'Auction',
     icon: 'sell',
     link: 'auctionList',
+    code: 102,
+    crumbs: [
+      {label: '', icon: 'home', link: '/'},
+      {label: 'Dashboard', icon: 'dashboard', link: 'dashboard'}
+    ]
+  },
+  {
+    title: 'Print Pawn Tickets',
+    icon: 'print',
+    link: 'printList',
     code: 102,
     crumbs: [
       {label: '', icon: 'home', link: '/'},

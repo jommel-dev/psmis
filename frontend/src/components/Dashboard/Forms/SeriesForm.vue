@@ -17,7 +17,7 @@
                 :options="typeList"
             />
 
-            <!-- <div class="col col-xs-12 col-sm-12 col-md-12 q-mt-lg">
+            <div class="col col-xs-12 col-sm-12 col-md-12 q-mt-lg">
                 <span class="text-h6">SERIES DETAILS</span>
             </div>
             
@@ -34,7 +34,7 @@
                 v-model="form.end"
                 label="End Series *"
                 :rules="[ val => val && val.length > 0 || 'This field is required']"
-            /> -->
+            />
 
             
             <q-select

@@ -41,6 +41,11 @@ const routes = [
         name: 'auctionList',
         component: () => import('pages/Users/Auctions.vue') 
       },
+      { 
+        path: 'printList',
+        name: 'printList',
+        component: () => import('pages/Users/PrintList.vue') 
+      },
     ]
   },
   

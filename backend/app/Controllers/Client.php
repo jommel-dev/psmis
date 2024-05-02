@@ -331,6 +331,82 @@ class Client extends BaseController
         }
     }
 
+    public function getLoanListForPrint(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+        
+        $list = [];
+        
+        $query = $this->loanModel->getAllLoans([]);
+        // print_r($query);
+        // exit;
+
+        foreach ($query as $key => $value) {
+            $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
+            $value->amountWord = $fmoneyword->format($value->loanAmount);
+            $value->interestWord = $fmoneyword->format($value->interest);
+            $cinfo = $value->customerInfo;
+            $cinfo->addressDetails = json_decode($cinfo->addressDetails);
+            $cinfo->identifications = json_decode($cinfo->identifications);
+            $cinfo->otherDetails = json_decode($cinfo->otherDetails);
+            $value->identification = json_decode($value->identification);
+            $value->itemDetails = json_decode($value->itemDetails);
+            $value->computationDetails = json_decode($value->computationDetails);
+            $value->datesOfMaturity = json_decode($value->datesOfMaturity);
+            
+            $list['list'][$key] = [
+                "key" => $value->id,
+                'customerInfo' => $cinfo, 
+                'orNumber' => $value->orNumber, 
+                'catId' => $value->catId, 
+                'identification' => $value->identification, 
+                'itemDetails' => $value->itemDetails, 
+                'loanAmount' => $value->loanAmount, 
+                'terms' => $value->terms, 
+                'interest' => $value->interest, 
+                'charge' => $value->charge, 
+                'payStatus' => $value->payStatus, 
+                'computationDetails' => $value->computationDetails, 
+                'totalAmount' => $value->totalAmount, 
+                'maturityDate' => $value->maturityDate, 
+                'expirationDate' => $value->expirationDate, 
+                'gracePeriodDate' => $value->gracePeriodDate, 
+                'status' => $value->status,
+                'orStatus' => $value->orStatus, 
+                'createdBy' => $value->createdBy,
+                'origData' => $value
+            ];
+        }
+
+        if($list){
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($list));
+        } else {
+            $response = [
+                'title' => 'Error',
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(404)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+    }
+
     public function getLoanHistory(){
         // Check Auth header bearer
         $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
