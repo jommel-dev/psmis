@@ -337,7 +337,7 @@ export default {
       },
     },
     created(){
-        this.getReference();
+        // this.getReference();
         this.getRenewHistoryList();
         this.getAllHistoryList();
         this.setDetails
@@ -643,14 +643,14 @@ export default {
                         loanStatus: "Redeemed",
                         redeemDate: moment().format('YYYY-MM-DD'),
                         payStatus: 0,
-                        orNumber: this.seriesDetatils.start,
+                        orNumber: this.loanData.orNumber,
                         status: 4
                     },
                     transaction: {
                         oldTicketNo: this.loanData.orNumber,
                         loanId: Number(this.loanData.customerInfo.id),
                         dateMaturity: this.loanData.maturityDate,
-                        orNumber: this.seriesDetatils.start,
+                        orNumber: this.loanData.orNumber,
                         officialReceipt:  this.officialReceipt,
                         orStatus: Number(this.seriesDetatils.reportStatus),
                         amount: totalAmount,
