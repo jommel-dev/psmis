@@ -13,147 +13,157 @@
                     {{statusLabel(loanDetails.status)}}
                 </q-chip>
             </span>
-
         </div>
-        <q-card class="my-card q-mb-md col col-md-12" flat bordered>
-            <q-item>
-                <q-item-section avatar>
-                    <q-avatar>
-                        <q-icon name="account_box" size="lg" />
-                    </q-avatar>
-                </q-item-section>
-
-                <q-item-section>
-                    <q-item-label>{{`${loanDetails.customerInfo.firstName} ${loanDetails.customerInfo.lastName}`}}</q-item-label>
-                    <q-item-label caption>
-                        {{ `${loanDetails.customerInfo.addressLine} ${loanDetails.customerInfo.addressDetails?.barangay.label} ${loanDetails.customerInfo.addressDetails?.city.label} ${loanDetails.customerInfo.addressDetails?.province.label}` }}
-                    </q-item-label>
-                </q-item-section>
-            </q-item>
-
-            <q-separator />
-
-            <q-card-section horizontal>
+        <div class="q-mb-md col col-md-3 q-pa-sm">
+            <q-card class="my-card" flat bordered>
                 <q-card-section>
-                    <span class="text-bold">Contact Number: </span>
+                    <q-img 
+                        v-if="userProfile.profile !== ''"
+                        class="imageStyleView q-mb-sm" 
+                        :src="userProfile.profile" 
+                    />
+                    <q-img 
+                        v-if="loanDetails.customerInfo.identifications[0].image !== ''" 
+                        class="imageStyleView q-mb-sm" 
+                        :src="loanDetails.customerInfo.identifications[0].image" 
+                    />
+                    <q-img 
+                        v-if="userProfile.eSignature !== ''" 
+                        class="imageStyleView q-mb-sm" 
+                        :src="userProfile.eSignature" 
+                    />
                 </q-card-section>
-                <q-separator vertical />
-                <q-card-section class="col-4">
-                    <span>{{loanDetails.customerInfo.contactNo || "N/A"}}</span>
-                </q-card-section>
-                <q-separator vertical />
-                <q-card-section>
-                    <span class="text-bold">Presented ID: </span>
-                </q-card-section>
-                <q-separator vertical />
-                <q-card-section class="col-4">
-                    <span>{{`${loanDetails.customerInfo.identifications[0].type} (${loanDetails.customerInfo.identifications[0].idNumber})` || "N/A"}}</span>
-                </q-card-section>
-            </q-card-section>
-
-            <q-separator />
-
-            <q-card-section >
-              <span class="text-h5">Loan Items</span>
-              <q-table
-                  flat
-                  bordered
-                  dense
-                  :rows="loanDetails.itemDetails"
-                  :columns="columns"
-                  row-key="name"
-              />
-            </q-card-section>
-
-        </q-card>
-        <div class="col col-md-12">
-            <q-tabs
-                inline-label
-                v-model="tab"
-                indicator-color="transparent"
-                active-color="blue"
-                class="text-grey-5"
-            >
-                <q-tab name="renewal" icon="restart_alt" label="Renewal" />
-                <q-tab name="transaction" icon="receipt_long" label="Transactions" />
-            </q-tabs>
+            </q-card>
         </div>
-        <div class="col col-md-12">
-            <q-tab-panels v-model="tab" animated>
+        <div class=" q-mb-md col col-md-9 q-pa-sm">
+            <q-card class="my-card" flat bordered>
+                <q-item>
+                    <q-item-section avatar>
+                        <q-avatar>
+                            <q-icon name="account_box" size="lg" />
+                        </q-avatar>
+                        
+                    </q-item-section>
 
-                <q-tab-panel name="renewal">
-                    <div class="row">
-                        <div class="col col-md-3">
-                            <q-card class="my-card" flat bordered>
-                                <q-card-section>
+                    <q-item-section>
+                        <q-item-label>{{`${loanDetails.customerInfo.firstName} ${loanDetails.customerInfo.lastName}`}}</q-item-label>
+                        <q-item-label caption>
+                            {{ `${loanDetails.customerInfo.addressLine} ${loanDetails.customerInfo.addressDetails?.barangay.label} ${loanDetails.customerInfo.addressDetails?.city.label} ${loanDetails.customerInfo.addressDetails?.province.label}` }}
+                        </q-item-label>
+                        
+                    </q-item-section>
+                </q-item>
 
-                                    <div class="row no-wrap items-center">
-                                        <div class="col text-h6 ellipsis">
-                                            Renewal Form
-                                        </div>
-                                    </div>
+                <q-separator />
 
-                                    <!-- <q-rating v-model="stars" :max="5" size="32px" /> -->
-                                </q-card-section>
+                <q-card-section horizontal>
+                    <q-card-section>
+                        <span class="text-bold">Contact Number: </span>
+                    </q-card-section>
+                    <q-separator vertical />
+                    <q-card-section class="col-4">
+                        <span>{{loanDetails.customerInfo.contactNo || "N/A"}}</span>
+                    </q-card-section>
+                    <q-separator vertical />
+                    <q-card-section>
+                        <span class="text-bold">Presented ID: </span>
+                    </q-card-section>
+                    <q-separator vertical />
+                    <q-card-section class="col-4">
+                        <span>{{`${loanDetails.customerInfo.identifications[0].type} (${loanDetails.customerInfo.identifications[0].idNumber})` || "N/A"}}</span>
+                    </q-card-section>
+                </q-card-section>
 
-                                <q-card-section class="q-pt-none">
+                <q-separator />
+
+                <q-card-section >
+                    <span class="text-h5">Loan Items</span>
+                    <q-table
+                        flat
+                        bordered
+                        dense
+                        :rows="loanDetails.itemDetails"
+                        :columns="columns"
+                        row-key="name"
+                    />
+                </q-card-section>
+                <q-card-section >
+                    <q-tabs
+                        inline-label
+                        v-model="tab"
+                        indicator-color="transparent"
+                        active-color="blue"
+                        class="text-grey-5"
+                    >
+                        <q-tab name="renewal" icon="restart_alt" label="Renewal" />
+                        <q-tab name="transaction" icon="receipt_long" label="Transactions" />
+                    </q-tabs>
+
+                    <q-tab-panels v-model="tab" animated>
+
+                        <q-tab-panel name="renewal">
+                            <div class="row">
+                                <div class="col col-md-3 q-pl-md q-mt-sm">
                                     <div class="text-subtitle1">
                                     Amount Interest: {{convertCurrency(Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))}}
                                     </div>
                                     <div class="text-caption text-grey">
                                     Maturity Date: {{loanDetails.maturityDate}}
                                     </div>
-                                </q-card-section>
-
-                                <q-card-section class="q-pt-none">
+                                    <q-btn
+                                        v-if="loanDetails.status !== '4' && Number(user.userId) === Number(loanDetails.createdBy)"
+                                        @click="openRenewLoan"
+                                        class="full-width"
+                                        color="primary"
+                                    >
+                                        Renew Loan
+                                    </q-btn>
+                                </div>
+                                <div class="col col-md-3 q-pl-md q-mt-sm">
                                     <div class="text-subtitle1">
                                     Amount Loan in Full: {{convertCurrency(Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))}}
                                     </div>
                                     <div class="text-caption text-grey">
                                     Expiration Date: {{loanDetails.expirationDate}}
                                     </div>
-                                </q-card-section>
-
-                                <q-separator />
-
-                                <q-card-actions v-if="loanDetails.status !== '4' && Number(user.userId) === Number(loanDetails.createdBy)">
                                     <q-btn
-                                      @click="openRenewLoan"
-                                      flat
-                                      color="primary"
+                                        v-if="loanDetails.status !== '4' && Number(user.userId) === Number(loanDetails.createdBy)"
+                                        @click="openFullPayLoan" 
+                                        class="full-width" 
+                                        color="green"
                                     >
-                                        Renew Loan
-                                    </q-btn>
-                                    <q-space />
-                                    <q-btn @click="openFullPayLoan" flat color="primary">
                                         Pay in Full
                                     </q-btn>
-                                </q-card-actions>
-                            </q-card>
-                        </div>
-                        <div class="col col-md-9 q-pl-md">
+                                </div>
+                                <div class="col col-md-12 q-pl-md q-mt-md">
+                                    <q-table
+                                        flat
+                                        bordered
+                                        dense
+                                        :rows="renewTransaction"
+                                        :columns="tableColumns"
+                                        row-key="key"
+                                        separator="cell"
+                                    />
+                                </div>
+                            </div>
+                        </q-tab-panel>
+
+                        <q-tab-panel name="transaction">
                             <q-table
-                                :rows="renewTransaction"
+                                flat
+                                bordered
+                                dense
+                                :rows="allTransaction"
                                 :columns="tableColumns"
-                                row-key="key"
+                                row-key="name"
                                 separator="cell"
                             />
-                        </div>
-                    </div>
-                </q-tab-panel>
+                        </q-tab-panel>
+                    </q-tab-panels>
+                </q-card-section>
 
-                <q-tab-panel name="transaction">
-                    <q-table
-                        flat
-                        bordered
-                        dense
-                        :rows="allTransaction"
-                        :columns="tableColumns"
-                        row-key="name"
-                        separator="cell"
-                    />
-                </q-tab-panel>
-            </q-tab-panels>
+            </q-card>
         </div>
     </div>
     <printModal
@@ -326,6 +336,10 @@ export default {
             officialReceipt: '',
             // Full Payment
             openModalFull: false,
+            userProfile: {
+                profile: "",
+                eSignature: "",
+            }
         }
     },
     watch:{
@@ -340,6 +354,7 @@ export default {
         // this.getReference();
         this.getRenewHistoryList();
         this.getAllHistoryList();
+        this.getProfile();
         this.setDetails
     },
     computed: {
@@ -526,6 +541,15 @@ export default {
 
 
         // Actions for Transactions
+        getProfile(){
+            let payload = {
+                uid: this.loanData.origData.customerId
+            }
+            api.post('loan/get/profile', payload).then((response) => {
+                const data = {...response.data};
+                this.userProfile = data
+            })
+        },
         getReference(){
             // loan/get/reference
             let payload = {
@@ -691,5 +715,8 @@ export default {
 .modalItemBorder{
   border-radius: 10px;
   border: 1px solid grey;
+}
+.imageStyleView{
+    border-radius: 20px;
 }
 </style>

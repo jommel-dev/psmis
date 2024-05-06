@@ -120,11 +120,11 @@
                             row-key="orNumber"
                             :rows-per-page-options="[20]"
                         >
-                          <template v-slot:body-cell-items="props">
+                          <!-- <template v-slot:body-cell-items="props">
                               <q-td :props="props">
                                 {{ generateItemList(props.row.items) }}
                               </q-td>
-                          </template>
+                          </template> -->
                           <template v-slot:top-right>
                             <q-btn
                               dense

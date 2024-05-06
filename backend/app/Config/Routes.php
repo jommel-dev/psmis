@@ -104,6 +104,7 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->post('sold/item', 'Client::soldAuctionedItem');
 		$routes->post('update/item', 'Client::updateAuctionedItem');
 
+		$routes->post('get/profile', 'Client::getUserProfile');
 
 		$routes->get('get/loans/list', 'Client::getLoansList'); // 1
 		$routes->get('get/sales/list', 'Client::getSalesList'); // transaction logs

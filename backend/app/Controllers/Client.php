@@ -3,6 +3,7 @@
 use CodeIgniter\HTTP\IncomingRequest;
 use App\Models\UsersModel;
 use App\Models\HistoryModel;
+use App\Models\ProfileModel;
 use App\Models\RequestModel;
 use App\Models\ClientModel;
 use App\Models\LoanModel;
@@ -23,6 +24,7 @@ class Client extends BaseController
         $this->auctionModel = new AuctionModel();
         $this->settingsModel = new SettingsModel();
         $this->seriesModel = new SeriesModel();
+        $this->profileModel = new ProfileModel();
     }
 
     public function registerClient(){
@@ -76,6 +78,15 @@ class Client extends BaseController
         $query = $this->clientModel->insert($customerInfo);
 
         if($query){
+            $lastInserted = $this->clientModel->insertID();
+            $profileData = [
+                "appId" => $lastInserted,
+                "profile" => $payload->profile,
+                "eSignature" => $payload->eSignature,
+            ];
+            $this->profileModel->insert($profileData);
+
+
             $response = [
                 'title' => 'Customer Information',
                 'message' => 'Your application has been added.'
@@ -98,6 +109,44 @@ class Client extends BaseController
                     ->setBody(json_encode($response));
         }
 
+    }
+
+    public function getUserProfile(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from NuxtJs
+        $payload = $this->request->getJSON();
+        
+        $query = $this->profileModel->getDetails(['appId' => $payload->uid]);
+
+        if($query){
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($query));
+        } else {
+            $response = [
+                'title' => 'Error',
+                'message' => $query
+            ];
+
+            return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
     }
 
     public function getAllClientList(){

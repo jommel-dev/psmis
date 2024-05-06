@@ -500,6 +500,10 @@ class Generate extends BaseController
             $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
             $value->itemDetails = json_decode($value->itemDetails);
+            $item = [];
+            foreach ($value->itemDetails as $ikey => $ivalue) {
+                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property ." with ". $ivalue->remarks;
+            }
             
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -638,6 +642,10 @@ class Generate extends BaseController
             $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
             $value->itemDetails = json_decode($value->itemDetails);
+            $item = [];
+            foreach ($value->itemDetails as $ikey => $ivalue) {
+                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property ." with ". $ivalue->remarks;
+            }
             
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -651,7 +659,7 @@ class Generate extends BaseController
                 "canceled" => "",
                 "spoiled" => "",
                 "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label,
-                "items" => $value->itemDetails
+                "items" => implode(" ", $item)
             ];
         }
 
