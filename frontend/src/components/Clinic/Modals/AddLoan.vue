@@ -330,6 +330,7 @@
                         flat
                         label="Submit"
                         color="primary"
+                        :disabled="enableContinue"
                         @click="submitModalClick"
                     />
                 </q-card-actions>
@@ -407,7 +408,7 @@ export default {
         'form.terms'(newVal){
             this.computeStampCharge(this.form.loanAmount)
             this.computeAmountInterest(this.form.loanAmount)
-            this.generateMaturityDat
+            this.generateMaturityDates
         },
         'form.interest'(){
             this.computeStampCharge(this.form.loanAmount)
@@ -429,6 +430,21 @@ export default {
         user: function(){
             let profile = LocalStorage.getItem('userData');
             return jwt_decode(profile);
+        },
+        enableContinue(){
+            let checkItemVal = 0;
+            let unvalidate = "customerId,orNumber,identification,computationDetails,datesOfMaturity,status,orStatus,createdBy,officialReceipt,cutoffDate"
+            for(const obj in this.form){
+                
+                if(
+                    (this.form[obj] === "" || this.form[obj] ===  0 || this.form[obj].length === 0) &&
+                    !unvalidate.includes(obj)
+                ){
+                    console.log(obj)
+                    checkItemVal += 1
+                }
+            }
+            return checkItemVal > 1;
         },
         columns(){
             return [

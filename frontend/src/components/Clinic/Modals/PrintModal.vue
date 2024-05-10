@@ -226,14 +226,14 @@ export default {
             })
             // Principal
             fpage.drawText(`${data.loanAmount}`, {
-                x: 450,
+                x: 480,
                 y: 535,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Interest per month
             fpage.drawText(`${data.computationDetails.amountPercentage}/MONTH`, {
-                x: 450,
+                x: 480,
                 y: 522,
                 size: 11,
                 color: rgb(0, 0, 0),
@@ -253,12 +253,18 @@ export default {
                 size: 11,
                 color: rgb(0, 0, 0),
             })
+            fpage.drawText(moment(data.gracePeriodDate).add(15, "d").format("LL"), {
+                x: 480,
+                y: 390,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
 
 
             // Description of Pawn
             let list = [];
             data.itemDetails.forEach(el => {
-                let res = `${el.qty} ${el.unit.value} ${el.type.value}, ${el.description} with ${el.weight}, ${el.property}`;
+                let res = `${el.qty} ${el.unit.value} ${el.type.value}, ${el.description}, ${el.weight}, ${el.property}`;
                 list.push(res);
             });
             fpage.drawText(list.join(", "), {

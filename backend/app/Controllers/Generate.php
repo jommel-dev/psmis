@@ -93,8 +93,7 @@ class Generate extends BaseController
             "status" => $payload->status,
             "type" => $payload->type,
         ]);
-        print_r($query);
-        exit;
+        
 
         foreach ($query as $key => $value) {
             $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
@@ -259,7 +258,7 @@ class Generate extends BaseController
         ob_start();
         $dompdf = new \Dompdf\Dompdf(['enable_font_subsetting' => true]); 
         $dompdf->loadHtml(view('reports/10columns', $list));
-        $dompdf->setPaper('Legal', 'landscape');
+        $dompdf->setPaper(array(0, 0, 612, 936), 'landscape');
         $dompdf->render();
         $dompdf->stream('24 Column Report', ["Attachment" => false]);
     }
@@ -502,7 +501,7 @@ class Generate extends BaseController
             $value->itemDetails = json_decode($value->itemDetails);
             $item = [];
             foreach ($value->itemDetails as $ikey => $ivalue) {
-                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property ." with ". $ivalue->remarks;
+                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
             }
             
             $list['list'][$key] = [
@@ -523,7 +522,7 @@ class Generate extends BaseController
         ob_start();
         $dompdf = new \Dompdf\Dompdf(['enable_font_subsetting' => true]); 
         $dompdf->loadHtml(view('reports/24columns', $list));
-        $dompdf->setPaper('Legal', 'landscape');
+        $dompdf->setPaper(array(0, 0, 612, 936), 'landscape');
         $dompdf->render();
         $dompdf->stream('24 Column Report', ["Attachment" => false]);
     }
@@ -644,7 +643,7 @@ class Generate extends BaseController
             $value->itemDetails = json_decode($value->itemDetails);
             $item = [];
             foreach ($value->itemDetails as $ikey => $ivalue) {
-                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property ." with ". $ivalue->remarks;
+                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
             }
             
             $list['list'][$key] = [

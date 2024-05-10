@@ -662,6 +662,7 @@ class Client extends BaseController
 
         // Update the Loan Data and Insert Transaction
         $where = ['id' => $payload->loanId];
+        $payload->updateLoan->datesOfMaturity = json_encode($payload->updateLoan->datesOfMaturity);
         $loanDataUpdate = json_decode(json_encode($payload->updateLoan), true);
         $transactionData = json_decode(json_encode($payload->transaction), true);
 

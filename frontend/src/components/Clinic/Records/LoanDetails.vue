@@ -240,7 +240,7 @@
         <q-card-section class="q-pt-none">
             <div class="row">
               <div class="col-12 col-sm-12 q-pa-sm">
-                <span class="text-h5">Loan Renew Amount: <br>
+                <span class="text-h5">Loan Amount To Be Paid: <br>
                   {{convertCurrency(Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))}}
                 </span>
               </div>
@@ -339,6 +339,12 @@ export default {
             userProfile: {
                 profile: "",
                 eSignature: "",
+            },
+            renewForm: {
+                datesOfMaturity: [],
+                maturityDate: "",
+                expirationDate: "",
+                gracePeriodDate: ""
             }
         }
     },
@@ -440,6 +446,31 @@ export default {
                     sortable: true
                 },
             ]
+        },
+        generateMaturityDates(){
+            const dateNow = moment().format('YYYY-MM-DD');
+            const dateName = 'd'
+            let currentDate = dateNow
+            
+            let list = []
+            for (let index = 0; index < this.loanData.terms; index++) {
+                let dayInmonth = moment(currentDate, "YYYY-MM").daysInMonth()
+                let dateDays = dayInmonth === 31 ? Number(dayInmonth) - 1 : 30
+
+                let mdate = moment(currentDate).add(dateDays, dateName).format('YYYY-MM-DD')
+                let obj = {
+                    dateFormatted: mdate,
+                    dateString: moment(mdate).format('LL'),
+                }
+                list.push(obj)
+                currentDate = mdate
+            }
+            this.renewForm.datesOfMaturity = list
+
+            // Set Grace period
+            this.renewForm.maturityDate = list.at(0).dateFormatted
+            this.renewForm.expirationDate = list.at(-1).dateFormatted
+            this.renewForm.gracePeriodDate = moment(list.at(-1).dateFormatted).add(15, dateName).format('YYYY-MM-DD')
         }
     },
     methods:{
@@ -565,6 +596,7 @@ export default {
         },
         renewLoan(){
             this.getReference();
+            this.generateMaturityDates
             // Confirm
             this.$q.dialog({
                 title: 'Renew Loan',
@@ -579,19 +611,16 @@ export default {
                 persistent: true
             }).onOk(() => {
                 let cloneData = Object.assign({}, this.loanData.origData)
-                let newMaturity =  moment().add(29, 'd').format('YYYY-MM-DD')
-                let newExpiry = moment(newMaturity).add(this.loanData.terms, 'M').format('YYYY-MM-DD')
-                let newGrace = moment(newExpiry).add(15, 'd').format('YYYY-MM-DD')
-                let amountPay = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
 
                 let payload = {
                     loanId: this.loanData.key,
                     createdBy: this.user.userId,
                     updateLoan: {
                         oldTicket: cloneData.orNumber,
-                        maturityDate: newMaturity,
-                        expirationDate: newExpiry,
-                        gracePeriodDate: newGrace,
+                        maturityDate: this.renewForm.maturityDate,
+                        expirationDate: this.renewForm.expirationDate,
+                        gracePeriodDate: this.renewForm.gracePeriodDate,
+                        datesOfMaturity: this.renewForm.datesOfMaturity,
                         loanStatus: "Renew",
                         payStatus: 1,
                         orNumber: this.seriesDetatils.start,
@@ -604,8 +633,8 @@ export default {
                         officialReceipt:  this.officialReceipt,
                         discount:  this.discount,
                         orStatus: Number(this.seriesDetatils.reportStatus),
-                        amount: amountPay,
-                        cashOnHand: this.totalPrice,
+                        amount: this.totalPrice,
+                        cashOnHand: this.price,
                         status: 'renew',
                         transactionType: 0,
                         createdBy: this.user.userId
@@ -643,7 +672,6 @@ export default {
           this.openModalFull = true
         },
         fullPaidLoan(){
-            this.getReference();
             // Confirm
             this.$q.dialog({
                 title: 'Fully Paid Loan',
@@ -657,8 +685,7 @@ export default {
                 },
                 persistent: true
             }).onOk(() => {
-                let amountPay = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
-                let totalAmount = amountPay + Number(this.loanData.loanAmount)
+                let totalAmount = Number(this.totalPrice) + Number(this.discount)
                 let payload = {
                     loanId: this.loanData.key,
                     createdBy: this.user.userId,
@@ -677,9 +704,9 @@ export default {
                         orNumber: this.loanData.orNumber,
                         officialReceipt:  this.officialReceipt,
                         orStatus: Number(this.seriesDetatils.reportStatus),
-                        amount: totalAmount,
+                        amount: this.totalPrice,
                         discount:  Number(this.discount),
-                        cashOnHand: this.totalPrice,
+                        cashOnHand: this.price,
                         status: 'redeem',
                         transactionType: 0,
                         createdBy: this.user.userId
