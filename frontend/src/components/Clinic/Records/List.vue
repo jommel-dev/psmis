@@ -153,12 +153,12 @@
                             </q-item>
                             <q-item 
                                 clickable 
-                                v-close-popup
+                                @click="openEditClient(props.row)"
                             >
                                 <q-item-section side>
                                     <q-icon name="help" size="xs" />
                                 </q-item-section>
-                                <q-item-section>Show Details</q-item-section>
+                                <q-item-section>Edit Details</q-item-section>
                             </q-item>
                             <q-separator />
                             <q-item 
@@ -258,6 +258,8 @@
 
     <addClient
         :modalStatus="openAddClientModal"
+        :processType="processType"
+        :appData="updateData"
         @updateModalStatus="closeClientModal"
         @refreshData="getList"
     />
@@ -330,6 +332,8 @@ export default {
             openLoanTermsModal: false,
             // Add Client Controller
             openAddClientModal: false,
+            processType: "",
+            updateData: {},
 
             // Others
             filterOR: {
@@ -383,6 +387,12 @@ export default {
         },
         openAddClient(){
             this.openAddClientModal = true
+            this.processType="ADD"
+        },
+        openEditClient(data){
+            this.updateData = data;
+            this.openAddClientModal = true
+            this.processType="UPDATE"
         },
         openItemHistory(row){
             this.loanId = row.key

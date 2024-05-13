@@ -470,10 +470,19 @@ export default {
         modalStatus(newVal, oldVal){
             this.openModal = newVal
             this.loadRegion();
+            if(this.processType === "UPDATE" && newVal){
+                console.log(this.appData)
+                this.fillExistingData().then(() => {
+                    this.getProfile()
+                })
+                
+            } else {
+                this.clearForm()
+            }
         }
     },
     props: {
-        appId: {
+        appData: {
             type: Object
         },
         modalStatus: {
@@ -505,6 +514,21 @@ export default {
     },
 
     methods: {
+        async fillExistingData(){
+            for(const key in this.form){
+                this.form[key] = this.appData[key]
+            }
+        },
+        getProfile(){
+            let payload = {
+                uid: this.appData.key
+            }
+            api.post('loan/get/profile', payload).then((response) => {
+                const data = {...response.data};
+                this.form.profile = data.profile
+                this.form.eSignature = data.eSignature
+            })
+        },
         renderSignModal(){
             this.openSignModal = true;
         },

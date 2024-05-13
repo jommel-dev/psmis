@@ -278,15 +278,15 @@ export default {
             })
 
             // ID & Contact
-            fpage.drawText(`${data.identification.type} (${data.identification.idNumber})`, {
-                x: 130,
-                y: 450,
-                size: 11,
-                spacing: 1,
-                lineHeight: 11,
-                maxWidth: 230,
-                color: rgb(0, 0, 0),
-            })
+            // fpage.drawText(`${data.identification.type} (${data.identification.idNumber})`, {
+            //     x: 130,
+            //     y: 450,
+            //     size: 11,
+            //     spacing: 1,
+            //     lineHeight: 11,
+            //     maxWidth: 230,
+            //     color: rgb(0, 0, 0),
+            // })
             fpage.drawText(`${data.customerInfo.contactNo}`, {
                 x: 369,
                 y: 434,

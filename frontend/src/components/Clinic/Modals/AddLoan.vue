@@ -56,7 +56,8 @@
                                 </q-card-section>
                                 <q-separator vertical />
                                 <q-card-section class="col-4">
-                                    <span>{{`${appId.identifications[0].type} (${appId.identifications[0].idNumber})` || "N/A"}}</span>
+                                    ID not yet available as of the moment
+                                    <!-- <span>{{`${appId.identifications[0].type} (${appId.identifications[0].idNumber})` || "N/A"}}</span> -->
 
                                     <!-- <q-popup-edit v-model="form.catId" v-slot="scope">
                                         <q-select
@@ -366,7 +367,7 @@ export default {
                     label:'Select Category',
                     value:'',
                 },
-                identification: {},
+                // identification: {},
                 itemDetails: [],
                 loanAmount: 0,
                 terms: 4,
@@ -433,14 +434,13 @@ export default {
         },
         enableContinue(){
             let checkItemVal = 0;
-            let unvalidate = "customerId,orNumber,identification,computationDetails,datesOfMaturity,status,orStatus,createdBy,officialReceipt,cutoffDate"
+            let unvalidate = "customerId,orNumber,computationDetails,datesOfMaturity,status,orStatus,createdBy,officialReceipt,cutoffDate"
             for(const obj in this.form){
                 
                 if(
                     (this.form[obj] === "" || this.form[obj] ===  0 || this.form[obj].length === 0) &&
                     !unvalidate.includes(obj)
                 ){
-                    console.log(obj)
                     checkItemVal += 1
                 }
             }
@@ -678,15 +678,15 @@ export default {
             cutOffDetails = JSON.parse(cutOffDetails)
             let payload = this.form
             payload.customerId = this.appId.key
-            payload.identification = this.appId.identifications.length > 0 ? {
-                idNumber: this.appId.identifications[0].idNumber,
-                type: this.appId.identifications[0].type,
-                validUntil: this.appId.identifications[0].validUntil,
-            } : {
-                idNumber: "N/A",
-                type: "N/A",
-                validUntil: "",
-            }
+            // payload.identification = this.appId.identifications.length > 0 ? {
+            //     idNumber: this.appId.identifications[0].idNumber,
+            //     type: this.appId.identifications[0].type,
+            //     validUntil: this.appId.identifications[0].validUntil,
+            // } : {
+            //     idNumber: "N/A",
+            //     type: "N/A",
+            //     validUntil: "",
+            // }
             payload.catId = this.form.catId.id
             payload.createdBy = this.user.userId
             payload.cutoffDate = cutOffDetails.startDate
@@ -750,7 +750,7 @@ export default {
                     label:'Select Category',
                     value:'',
                 },
-                identification: {},
+                // identification: {},
                 itemDetails: [],
                 loanAmount: 0,
                 terms: 4,

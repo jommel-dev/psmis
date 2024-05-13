@@ -82,6 +82,7 @@ $routes->group('psmis/api/v1', function($routes){
 	// Applicant Module
 	$routes->group('application', function($routes){
 		$routes->post('register', 'Client::registerClient');
+		$routes->post('updateClient', 'Client::updateClientDetails');
 		$routes->post('clientList', 'Client::getAllClientList');
 		$routes->post('filter/list', 'Client::getClientListFilter');
 		$routes->post('get/patient/list', 'Client::getClientPatientList');

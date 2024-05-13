@@ -19,7 +19,7 @@ class LoanModel extends Model
         'oldTicket', 
         'loanStatus', 
         'catId', 
-        'identification', 
+        // 'identification', 
         'itemDetails', 
         'loanAmount', 
         'terms', 

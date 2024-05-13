@@ -4,6 +4,7 @@ use CodeIgniter\HTTP\IncomingRequest;
 use App\Models\UsersModel;
 use App\Models\HistoryModel;
 use App\Models\ProfileModel;
+use App\Models\KycModel;
 use App\Models\RequestModel;
 use App\Models\ClientModel;
 use App\Models\LoanModel;
@@ -25,6 +26,7 @@ class Client extends BaseController
         $this->settingsModel = new SettingsModel();
         $this->seriesModel = new SeriesModel();
         $this->profileModel = new ProfileModel();
+        $this->kycModel = new KycModel();
     }
 
     public function registerClient(){
@@ -69,7 +71,6 @@ class Client extends BaseController
             "sex" => $payload->sex,
             "birthDate" => $payload->birthDate,
             "otherDetails" => json_encode($payload->otherDetails),
-            "identifications" =>  json_encode($payload->identifications),
             "createdBy" => $payload->createdBy,
             "status" => 1
         ];
@@ -78,6 +79,7 @@ class Client extends BaseController
         $query = $this->clientModel->insert($customerInfo);
 
         if($query){
+            // json_encode($payload->identifications)
             $lastInserted = $this->clientModel->insertID();
             $profileData = [
                 "appId" => $lastInserted,
@@ -85,6 +87,19 @@ class Client extends BaseController
                 "eSignature" => $payload->eSignature,
             ];
             $this->profileModel->insert($profileData);
+
+            foreach ($payload->identifications as $key => $value) {
+                $kycValues = [
+                    "customerId" => $lastInserted,
+                    "idType" => $value->type,
+                    "idNumber" => $value->idNumber,
+                    "validityDate" => $value->validUntil,
+                    "file" => $value->image,
+                    "uploadedBy" => $payload->createdBy,
+                ];
+                $this->kycModel->insert($kycValues);
+            }
+            
 
 
             $response = [
@@ -188,7 +203,7 @@ class Client extends BaseController
                 "sex" => $value->sex,
                 "birthDate" => $value->birthDate,
                 "otherDetails" => json_decode($value->otherDetails),
-                "identifications" =>  json_decode($value->identifications),
+                // "identifications" =>  json_decode($value->identifications),
                 "createdBy" => $value->createdBy,
                 "status" => $value->status
             ];
@@ -337,13 +352,14 @@ class Client extends BaseController
             $value->itemDetails = json_decode($value->itemDetails);
             $value->computationDetails = json_decode($value->computationDetails);
             $value->datesOfMaturity = json_decode($value->datesOfMaturity);
+            unset($value->identification);
             
             $list['list'][$key] = [
                 "key" => $value->id,
                 'customerInfo' => $cinfo, 
                 'orNumber' => $value->orNumber, 
                 'catId' => $value->catId, 
-                'identification' => $value->identification, 
+                // 'identification' => $value->identification, 
                 'itemDetails' => $value->itemDetails, 
                 'loanAmount' => $value->loanAmount, 
                 'terms' => $value->terms, 
@@ -407,9 +423,8 @@ class Client extends BaseController
             $value->interestWord = $fmoneyword->format($value->interest);
             $cinfo = $value->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $value->identification = json_decode($value->identification);
+            // $value->identification = json_decode($value->identification);
             $value->itemDetails = json_decode($value->itemDetails);
             $value->computationDetails = json_decode($value->computationDetails);
             $value->datesOfMaturity = json_decode($value->datesOfMaturity);
@@ -419,7 +434,7 @@ class Client extends BaseController
                 'customerInfo' => $cinfo, 
                 'orNumber' => $value->orNumber, 
                 'catId' => $value->catId, 
-                'identification' => $value->identification, 
+                // 'identification' => $value->identification, 
                 'itemDetails' => $value->itemDetails, 
                 'loanAmount' => $value->loanAmount, 
                 'terms' => $value->terms, 
@@ -1192,16 +1207,17 @@ class Client extends BaseController
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
             $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $value->identification = json_decode($value->identification);
+            // $value->identification = json_decode($value->identification);
             $value->itemDetails = json_decode($value->itemDetails);
             $value->computationDetails = json_decode($value->computationDetails);
+            unset($value->identification);
             
             $list['list'][$key] = [
                 "key" => $value->id,
                 'customerInfo' => $cinfo, 
                 'orNumber' => $value->orNumber, 
                 'catId' => $value->catId, 
-                'identification' => $value->identification, 
+                // 'identification' => $value->identification, 
                 'itemDetails' => $value->itemDetails, 
                 'loanAmount' => $value->loanAmount, 
                 'terms' => $value->terms, 

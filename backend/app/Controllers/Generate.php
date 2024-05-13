@@ -499,10 +499,12 @@ class Generate extends BaseController
             $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
             $value->itemDetails = json_decode($value->itemDetails);
+            $addressText = $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label;
             $item = [];
             foreach ($value->itemDetails as $ikey => $ivalue) {
                 $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
             }
+            $item = implode(" ", $item);
             
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -514,8 +516,8 @@ class Generate extends BaseController
                 "redeemed" => $value->redeemDate,
                 "canceled" => "",
                 "spoiled" => "",
-                "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label,
-                "items" => $value->itemDetails
+                "address" => $this->truncateString($addressText, 25),
+                "items" => $this->truncateString($item, 52)
             ];
         }
 
@@ -679,5 +681,20 @@ class Generate extends BaseController
                     ->setContentType('application/json')
                     ->setBody(json_encode($response));
         }
+    }
+
+    public function truncateString($string, $length, $ellipsis = '...') {
+        if (strlen($string) <= $length) {
+            return $string;
+        }
+    
+        $truncatedString = substr($string, 0, $length);
+        $lastSpace = strrpos($truncatedString, ' ');
+    
+        if ($lastSpace !== false) {
+            $truncatedString = substr($truncatedString, 0, $lastSpace);
+        }
+    
+        return $truncatedString . $ellipsis;
     }
 }

@@ -47,15 +47,15 @@
         <tr style="border-bottom: 1px solid black;">
             <td style="width: 2%; padding: 5px; text-align: center;">NO.</td>
             <td style="width: 15%; padding: 5px; text-align: center;">NAME OF THE PAWNER</td>
-            <td style="width: 10%; padding: 5px; text-align: center;">DATE</td>
+            <td style="width: 7%; padding: 5px; text-align: center;">DATE</td>
             <td style="width: 5%; padding: 5px; text-align: center;">PAWN TICKET NO.</td>
-            <td style="width: 5%; padding: 5px; text-align: center;">SERVICE CHARGE</td>
+            <td style="width: 3%;  text-align: center; font-size:7pt;">SERVICE CHARGE</td>
             <td style="width: 8%; padding: 5px; text-align: center;">PRINCIPAL LOAN</td>
-            <td style="width: 12%; padding: 5px; text-align: center;">REDEEMED</td>
-            <td style="width: 12%; padding: 5px; text-align: center;">CANCELED</td>
+            <td style="width: 8%; padding: 5px; text-align: center;">REDEEMED</td>
+            <td style="width: 8%; padding: 5px; text-align: center;">CANCELED</td>
             <td style="width: 5%; padding: 5px; text-align: center;">SPOILED</td>
-            <td style="width: 13%; padding: 5px; text-align: center;">ADDRESS OF PAWNER</td>
-            <td style="width: 13%; padding: 5px; text-align: center;">DESCRIPTION OF PAWN</td>
+            <td style="width: 11%; padding: 5px; text-align: center;">ADDRESS OF PAWNER</td>
+            <td style="width: 27%; padding: 5px; text-align: center;">DESCRIPTION OF PAWN</td>
         </tr>
         <!-- data -->
         <?php foreach($list as $row): ?>
@@ -70,13 +70,8 @@
                 <td style="text-align: center;"><?= $row['canceled'] ?></td>
                 <td style="text-align: center;"><?= $row['spoiled'] ?></td>
                 <td style="text-align: left;"><?= $row['address'] ?></td>
-                <td style="text-align: left;">
-                    <?php foreach($row['items'] as $itm): ?>
-                        <span>
-                            <?= $itm->qty ." ". strtoupper($itm->unit->value) ." ". $itm->type->value .", ". $itm->description .", ". $itm->weight ."/". $itm->property ." WITH ". $itm->remarks ?>
-                        </span>
-                    <?php endforeach; ?> 
-                </td>
+                <td style="text-align: left;"><?= $row['items'] ?></td>
+                
             </tr>
         <?php endforeach ?>
     </table>

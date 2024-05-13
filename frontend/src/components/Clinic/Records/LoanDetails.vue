@@ -22,11 +22,11 @@
                         class="imageStyleView q-mb-sm" 
                         :src="userProfile.profile" 
                     />
-                    <q-img 
+                    <!-- <q-img 
                         v-if="loanDetails.customerInfo.identifications[0].image !== ''" 
                         class="imageStyleView q-mb-sm" 
                         :src="loanDetails.customerInfo.identifications[0].image" 
-                    />
+                    /> -->
                     <q-img 
                         v-if="userProfile.eSignature !== ''" 
                         class="imageStyleView q-mb-sm" 
@@ -70,7 +70,7 @@
                     </q-card-section>
                     <q-separator vertical />
                     <q-card-section class="col-4">
-                        <span>{{`${loanDetails.customerInfo.identifications[0].type} (${loanDetails.customerInfo.identifications[0].idNumber})` || "N/A"}}</span>
+                        <!-- <span>{{`${loanDetails.customerInfo.identifications[0].type} (${loanDetails.customerInfo.identifications[0].idNumber})` || "N/A"}}</span> -->
                     </q-card-section>
                 </q-card-section>
 
