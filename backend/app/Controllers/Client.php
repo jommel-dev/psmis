@@ -255,7 +255,7 @@ class Client extends BaseController
         foreach ($query as $key => $value) {
             $cinfo = $value->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
+            // $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
             
             $list['list'][$key] = [
@@ -273,13 +273,13 @@ class Client extends BaseController
                     "sex" => $cinfo->sex,
                     "birthDate" => $cinfo->birthDate,
                     "otherDetails" => $cinfo->otherDetails,
-                    "identifications" => $cinfo->identifications,
+                    // "identifications" => $cinfo->identifications,
                     "createdBy" => $cinfo->createdBy,
                     "status" => $cinfo->status
                 ],
                 'orNumber' => $value->orNumber, 
                 'catId' => $value->catId, 
-                'identification' => json_decode($value->identification), 
+                // 'identification' => json_decode($value->identification), 
                 'itemDetails' => json_decode($value->itemDetails), 
                 'loanAmount' => $value->loanAmount, 
                 'terms' => $value->terms, 
@@ -341,18 +341,19 @@ class Client extends BaseController
         // exit;
 
         foreach ($query as $key => $value) {
+            unset($value->identification);
             $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
             $value->amountWord = $fmoneyword->format($value->loanAmount);
             $value->interestWord = $fmoneyword->format($value->interest);
             $cinfo = $value->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
+            // $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $value->identification = json_decode($value->identification);
+            // $value->identification = json_decode($value->identification);
             $value->itemDetails = json_decode($value->itemDetails);
             $value->computationDetails = json_decode($value->computationDetails);
             $value->datesOfMaturity = json_decode($value->datesOfMaturity);
-            unset($value->identification);
+            
             
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -555,7 +556,7 @@ class Client extends BaseController
             'customerId' => $payload->customerId, 
             'orNumber' => $payload->orNumber, 
             'catId' => $payload->catId, 
-            'identification' => json_encode($payload->identification), 
+            // 'identification' => json_encode($payload->identification), 
             'itemDetails' => json_encode($payload->itemDetails), 
             'loanAmount' => $payload->loanAmount, 
             'terms' => $payload->terms, 
@@ -622,9 +623,9 @@ class Client extends BaseController
             $print->interestWord = $fmoneyword->format($print->interest);
             $cinfo = $print->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
+            // $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $print->identification = json_decode($print->identification);
+            // $print->identification = json_decode($print->identification);
             $print->itemDetails = json_decode($print->itemDetails);
             $print->computationDetails = json_decode($print->computationDetails);
             $print->datesOfMaturity = json_decode($print->datesOfMaturity);
@@ -896,7 +897,7 @@ class Client extends BaseController
             $snaps = json_decode($value->snapShot);
             if($value->actionType === "0"){
                 $snaps->computationDetails = json_decode($snaps->computationDetails);
-                $snaps->identification = json_decode($snaps->identification);
+                // $snaps->identification = json_decode($snaps->identification);
                 $snaps->itemDetails = json_decode($snaps->itemDetails);
             }
             
@@ -958,7 +959,7 @@ class Client extends BaseController
             $snaps = json_decode($value->snapShot);
             if($value->actionType === "0"){
                 $snaps->computationDetails = json_decode($snaps->computationDetails);
-                $snaps->identification = json_decode($snaps->identification);
+                // $snaps->identification = json_decode($snaps->identification);
                 $snaps->itemDetails = json_decode($snaps->itemDetails);
             }
             
@@ -1200,17 +1201,18 @@ class Client extends BaseController
         // exit;
 
         foreach ($query as $key => $value) {
+            unset($value->identification);
             $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
             $value->amountWord = $fmoneyword->format($value->loanAmount);
             $value->interestWord = $fmoneyword->format($value->interest);
             $cinfo = $value->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
+            // $cinfo->identifications = json_decode($cinfo->identifications);
             $cinfo->otherDetails = json_decode($cinfo->otherDetails);
             // $value->identification = json_decode($value->identification);
             $value->itemDetails = json_decode($value->itemDetails);
             $value->computationDetails = json_decode($value->computationDetails);
-            unset($value->identification);
+            
             
             $list['list'][$key] = [
                 "key" => $value->id,
