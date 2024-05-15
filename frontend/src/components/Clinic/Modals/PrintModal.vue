@@ -209,7 +209,7 @@ export default {
                 size: 11,
                 color: rgb(0, 0, 0),
             })
-            fpage.drawText(`${data.terms}`, {
+            fpage.drawText(`1`, {
                 x: 260,
                 y: 585,
                 size: 11,
