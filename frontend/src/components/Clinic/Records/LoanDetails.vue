@@ -132,7 +132,7 @@
                                         class="full-width" 
                                         color="green"
                                     >
-                                        Pay in Full
+                                        Pay in Full (Redeem)
                                     </q-btn>
                                 </div>
                                 <div class="col col-md-12 q-pl-md q-mt-md">
@@ -246,6 +246,16 @@
               </div>
               <div class="col-12 col-sm-6 q-pa-sm">
                 <q-input
+                    type="date"
+                    class="q-mb-sm"
+                    outlined
+                    v-model="redeemDate"
+                    label="Date Redeem"
+                    stack-label
+                    dense
+                    hint="Note: Only modify this if needed."
+                />
+                <q-input
                   class="q-mb-sm"
                   outlined
                   v-model="officialReceipt"
@@ -334,6 +344,7 @@ export default {
             discount: 0,
             totalPrice: 0,
             officialReceipt: '',
+            redeemDate: moment().format('YYYY-MM-DD'),
             // Full Payment
             openModalFull: false,
             userProfile: {
@@ -632,7 +643,7 @@ export default {
                         orNumber: this.seriesDetatils.start,
                         officialReceipt:  this.officialReceipt,
                         discount:  this.discount,
-                        orStatus: Number(this.seriesDetatils.reportStatus),
+                        orStatus: Number(this.loanData.orStatus),
                         amount: this.totalPrice,
                         cashOnHand: this.price,
                         status: 'renew',
@@ -692,22 +703,23 @@ export default {
                     updateLoan: {
                         oldTicket: this.loanData.orNumber,
                         loanStatus: "Redeemed",
-                        redeemDate: moment().format('YYYY-MM-DD'),
+                        redeemDate: moment(this.redeemDate).format('YYYY-MM-DD'),
                         payStatus: 0,
                         orNumber: this.loanData.orNumber,
                         status: 4
                     },
                     transaction: {
                         oldTicketNo: this.loanData.orNumber,
-                        loanId: Number(this.loanData.customerInfo.id),
+                        loanId: Number(this.loanData.key),
                         dateMaturity: this.loanData.maturityDate,
                         orNumber: this.loanData.orNumber,
                         officialReceipt:  this.officialReceipt,
-                        orStatus: Number(this.seriesDetatils.reportStatus),
+                        orStatus: Number(this.loanData.orStatus),
                         amount: this.totalPrice,
                         discount:  Number(this.discount),
                         cashOnHand: this.price,
                         status: 'redeem',
+                        createdDate: moment(this.redeemDate).format('YYYY-MM-DD h:mm:ss'),
                         transactionType: 0,
                         createdBy: this.user.userId
                     }

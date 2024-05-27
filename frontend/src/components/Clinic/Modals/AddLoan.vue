@@ -466,6 +466,7 @@ export default {
                     sortable: true
                 },
                 { name: 'weight', label: 'Weight', field: 'weight' },
+                { name: 'description', label: 'Description', field: 'description' },
                 { name: 'property', label: 'Property', field: 'property' },
                 { name: 'remarks', label: 'Remarks', field: 'remarks' },
                 { name: 'action',  field: 'action' }
