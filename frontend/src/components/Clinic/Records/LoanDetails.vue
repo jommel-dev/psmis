@@ -432,9 +432,18 @@ export default {
                 {
                     name: 'orNumber',
                     required: true,
-                    label: 'Pawn Ticket No.',
+                    label: 'New Ticket No.',
                     align: 'left',
                     field: row => row.snapShot.orNumber,
+                    format: val => `${val}`,
+                    sortable: true
+                },
+                {
+                    name: 'orNumber',
+                    required: true,
+                    label: 'Old Ticket No.',
+                    align: 'left',
+                    field: row => row.snapShot.oldTicketNo || '-',
                     format: val => `${val}`,
                     sortable: true
                 },
@@ -656,8 +665,9 @@ export default {
                     const data = {...response.data};
                     if(!data.error){
                         cloneData.orNumber = this.seriesDetatils.start;
-                        cloneData.maturityDate = newMaturity;
-                        cloneData.expirationDate = newExpiry;
+                        cloneData.maturityDate = this.renewForm.maturityDate;
+                        cloneData.expirationDate = this.renewForm.datesOfMaturity;
+                        cloneData.gracePeriodDate = this.renewForm.gracePeriodDate;
                         cloneData.loanStatus = "RENEW";
                         this.formDetails = cloneData;
                         this.openPrintModal = true;
