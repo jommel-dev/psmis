@@ -89,7 +89,6 @@ export default {
 
             // Draw a string of text toward the top of the page
             // OR Number
-
             fpage.drawText(`${data.oldTicket}`, {
               x: 430,
               y: 765,
@@ -129,7 +128,7 @@ export default {
 
             // Dates
             // Date Granted
-            let grantDate = data.createdDate !== undefined ?  moment(data.createdDate).format("LL") : moment().format("LL"); //Need to clarify
+            let grantDate = moment().format("LL");
             fpage.drawText(`${grantDate}`, {
                 x: 140,
                 y: 660,

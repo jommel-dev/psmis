@@ -247,7 +247,7 @@
                             <template v-slot:after>
                                 <q-toolbar class="bg-primary text-white">
                                     <q-btn flat round dense icon="badge">
-                                        <q-badge floating color="red">{{form.identifications.length}}</q-badge>
+                                        <q-badge floating color="red">{{form?.identifications?.length}}</q-badge>
                                     </q-btn>
                                     <q-toolbar-title>
                                         Presented ID's
@@ -255,7 +255,7 @@
                                     <q-btn flat round dense icon="add_photo_alternate" @click="openAddIDCamera" />
                                 </q-toolbar>
                                 <!-- ID Content -->
-                                <div v-if="form.identifications.length !== 0">
+                                <div v-if="form?.identifications?.length !== 0">
                                     <q-list bordered class="rounded-borders" style="max-width: 100%">
 
                                         <q-item v-for="(item, index) in form.identifications" :key="index">
@@ -471,7 +471,6 @@ export default {
             this.openModal = newVal
             this.loadRegion();
             if(this.processType === "UPDATE" && newVal){
-                console.log(this.appData)
                 this.fillExistingData().then(() => {
                     this.getProfile()
                 })

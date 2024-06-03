@@ -666,7 +666,7 @@ export default {
                     if(!data.error){
                         cloneData.orNumber = this.seriesDetatils.start;
                         cloneData.maturityDate = this.renewForm.maturityDate;
-                        cloneData.expirationDate = this.renewForm.datesOfMaturity;
+                        cloneData.expirationDate = this.renewForm.expirationDate;
                         cloneData.gracePeriodDate = this.renewForm.gracePeriodDate;
                         cloneData.loanStatus = "RENEW";
                         this.formDetails = cloneData;
