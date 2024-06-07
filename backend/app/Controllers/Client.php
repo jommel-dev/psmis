@@ -793,6 +793,73 @@ class Client extends BaseController
 
     }
 
+    public function spoiledTicket(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from UI
+        $payload = $this->request->getJSON();
+       
+
+        // Update the Loan Data and Insert Transaction
+        $where = ['id' => $payload->loanId];
+        $loanDataUpdate = json_decode(json_encode($payload->updateLoan), true);
+        $updateTransaction = json_decode(json_encode($payload->updateTransaction), true);
+
+        // //INSERT QUERY TO APPLICATION
+        $query = $this->loanModel->updateLoanApplication($where, $loanDataUpdate);
+
+        if($query){
+            // Add History
+            $history = [
+                "loanId" => $payload->loanId,
+                "actionTaken" => "Spoiled Ticket",
+                "actionType" => 6,
+                "snapShot" => json_encode($updateTransaction),
+                "createdBy" => $payload->createdBy,
+            ];
+            $this->createHistory($history);
+
+            // Add Transaction
+            $this->updateTransactionOnly($updateTransaction, ['orNumber' => $payload->orNumber]);
+            
+            
+            // Response 
+            $response = [
+                'title' => 'Loan Renewal',
+                'message' => 'Your loan application has been renewed.'
+            ];
+
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        } else {
+            $response = [
+                'error' => 400,
+                'title' => 'Data Submit Failed',
+                'message' => 'Please contact the admin for concern'
+            ];
+
+            return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+
+    }
+
     public function getReferenceSequence(){
         // Check Auth header bearer
         $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
@@ -853,6 +920,9 @@ class Client extends BaseController
 
     public function createTransactionOnly($data, $message){
         $this->loanModel->addLoanTransaction($data);
+    }
+    public function updateTransactionOnly($data, $where){
+        $this->loanModel->updateLoanTransaction($data, $where);
     }
 
     public function createTransaction($data, $message){

@@ -134,7 +134,10 @@ class LoanModel extends Model
         $query = $this->db->table($this->tableTransaction)->insert($transactionData);
         return $query ? true : false;
     }
-
+    public function updateLoanTransaction($setData, $where){
+        $query = $this->db->table($this->tableTransaction)->set($setData)->where($where)->update();
+        return $query ? true : false;
+    }
 
     // Reports
     public function getSalesReportList($params){

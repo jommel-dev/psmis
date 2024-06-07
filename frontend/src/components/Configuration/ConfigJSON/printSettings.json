@@ -5,20 +5,15 @@
       "value": "",
       "type": "text"
     },
-    "identification": {
-      "name": "ID Details",
-      "value": {
-        "idNumber": "444444",
-        "type": "1333asaa",
-        "validUntil": "dsdsad"
-      },
-      "type": "object"
+    "itemDetails": {
+      "name": "Item Details",
+      "value": "",
+      "type": "text"
     },
-    "itemDetails": [],
     "loanAmount": {
       "name": "Loan Amount",
       "value": "",
-      "type": "number"
+      "type": "currency"
     },
     "interest": {
       "name": "Interest",
@@ -28,42 +23,52 @@
     "charge": {
       "name": "Charge",
       "value": "",
-      "type": "text"
+      "type": "currency"
     },
     "principal": {
       "name": "Loan Principal",
       "value": "",
-      "type": "number"
+      "type": "currency"
     },
     "amountPercentage": {
       "name": "Monthly Renewal",
       "value": "",
       "type": "number"
     },
-    "totalAmount": "3980",
-    "createdDate": "2024-04-19 15:02:16",
-    "datesOfMaturity": [
-      {
-        "dateFormatted": "2024-05-19",
-        "dateString": "May 19, 2024"
-      },
-      {
-        "dateFormatted": "2024-06-18",
-        "dateString": "June 18, 2024"
-      },
-      {
-        "dateFormatted": "2024-07-18",
-        "dateString": "July 18, 2024"
-      },
-      {
-        "dateFormatted": "2024-08-17",
-        "dateString": "August 17, 2024"
-      }
-    ],
-    "maturityDate": "2024-05-19",
-    "expirationDate": "2024-08-17",
-    "amountWord": "four thousand",
-    "interestWord": "five"
-  },
-  "defaultPrintPositions": {}
+    "totalAmount": {
+      "name": "Total Loan Amount",
+      "value": "",
+      "type": "currency"
+    },
+    "createdDate": {
+      "name": "Date Loan Granted",
+      "value": "",
+      "type": "dateTime"
+    },
+    "datesOfMaturity": {
+      "name": "Date of Maturities",
+      "value": "",
+      "type": "text"
+    },
+    "maturityDate": {
+      "name": "Maturity Date",
+      "value": "",
+      "type": "text"
+    },
+    "expirationDate": {
+      "name": "Expiration Date",
+      "value": "",
+      "type": "text"
+    },
+    "amountWord": {
+      "name": "Loan Amount In Words",
+      "value": "",
+      "type": "text"
+    },
+    "interestWord": {
+      "name": "Interest In Words",
+      "value": "",
+      "type": "text"
+    }
+  }
 }

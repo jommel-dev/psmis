@@ -107,9 +107,9 @@ export default {
                 dateList.push(res);
             });
             fpage.drawText(dateList.join("\r\n"), {
-                x: 450,
+                x: 470,
                 y: 735,
-                size: 8,
+                size: 9,
                 spacing: 1,
                 lineHeight: 11,
                 maxWidth: 230,
@@ -179,7 +179,7 @@ export default {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
                 })}`, {
-                x: 466,
+                x: 496,
                 y: 604,
                 size: 11,
                 color: rgb(0, 0, 0),
@@ -189,7 +189,7 @@ export default {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
                 })}`, {
-                x: 470,
+                x: 496,
                 y: 575,
                 size: 11,
                 color: rgb(0, 0, 0),
@@ -218,7 +218,7 @@ export default {
             // Pay Details
             // Interest 2%
             fpage.drawText(`2%`, {
-                x: 480,
+                x: 493,
                 y: 560,
                 size: 11,
                 color: rgb(0, 0, 0),

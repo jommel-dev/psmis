@@ -15,22 +15,10 @@
             />
            
           </div>
-          <!-- <div class="col col-xs-12 col-md-3 q-pa-sm">
-            <label>Loan Key Parameter</label>
-            <q-select
-              outlined 
-              bottom-slots
-              v-model="paramSelected" 
-              :options="paramSelectedOpt"
-              dense 
-              :options-dense="true"
-              @update:model-value="keyParamChange"
-            />
-          </div> -->
+          
           <div class="col col-xs-12 col-md-12 q-pa-md">
             <q-stepper
               v-model="step"
-              vertical
               color="primary"
               animated
             >
@@ -40,9 +28,30 @@
                 icon="settings"
                 :done="step > 1"
               >
-                For each ad campaign that you create, you can control how much you're willing to
-                spend on clicks and conversions, which networks and geographical locations you want
-                your ads to show on, and more.
+                <div class="row">
+                  <div class="col col-xs-12 col-md-3 q-pa-sm">
+                    <label>Loan Key Parameter</label>
+                    <q-select
+                      outlined 
+                      bottom-slots
+                      v-model="paramSelected" 
+                      :options="printParamsOptions"
+                      dense 
+                      :options-dense="true"
+                      @update:model-value="keyParamChange"
+                    />
+                  </div>
+                  <div class="col col-xs-12 col-md-3 q-pa-sm">
+                    <label>Default Value</label>
+                    <q-input
+                      hint="Do not fill if its not required"
+                      outlined 
+                      stack-label 
+                      dense
+                      v-model="paramObjectVal.default"
+                    />
+                  </div>
+                </div>
 
                 <q-stepper-navigation>
                   <q-btn @click="step = 2" color="primary" label="Continue" />
@@ -95,10 +104,13 @@ export default {
         rows: [],
         previewPDF: false,
         previewType: {value:"new", label:"New"},
-        paramSelected: {value:"oldTicket", label:"oldTicket"},
+        paramSelected: {value:"oldTicket", label:"Old Ticket Number"},
         paramSelectedOpt:[],
-        paramObjectVal: {},
-        paramObjectType: {},
+        paramObjectVal: {
+          name: "Old Ticket Number",
+          value: "",
+          type: "text"
+        },
         printSettings:[],
         previewTypes: [
           {
@@ -127,30 +139,17 @@ export default {
         return keyParams.map((el) => {
           return {
             value: el,
-            label: el,
+            label: printSettingJSON.origData[el].name,
           }
         })
       }
     },
-    created(){
-      this.printParamsOptions
-    },
+    created(){},
     methods:{
       moment,
       keyParamChange(val){
         const keyParams = {...printSettingJSON.origData}
-        // let objects = {
-        //   x: 10,
-        //   y: 10,
-        //   size: 11,
-        //   color: rgb(0, 0, 0),
-        // }
-        // this.paramObjectType = typeof keyParams[val.value]
-        // if(typeof keyParams[val.value] === "object"){
-
-        // } else {
-          
-        // }
+        this.paramObjectVal = keyParams[val.value]
       },
       async createPDF(){
         const url = 'files/printReceipt.pdf'

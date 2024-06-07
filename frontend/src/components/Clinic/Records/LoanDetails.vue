@@ -135,6 +135,22 @@
                                         Pay in Full (Redeem)
                                     </q-btn>
                                 </div>
+                                <div class="col col-md-6 q-pl-md q-mt-sm">
+                                    <div class="text-subtitle1">
+                                    Invalid Transaction
+                                    </div>
+                                    <div class="text-caption text-grey">
+                                    <i>Note:</i> Invalid, Wrong details, and accidentally printed.
+                                    </div>
+                                    <q-btn
+                                        v-if="Number(user.userId) === Number(loanDetails.createdBy)"
+                                        @click="openSpoiledTicket" 
+                                        class="full-width" 
+                                        color="red"
+                                    >
+                                        Spoiled Ticket
+                                    </q-btn>
+                                </div>
                                 <div class="col col-md-12 q-pl-md q-mt-md">
                                     <q-table
                                         flat
@@ -750,6 +766,52 @@ export default {
                         })
                     }
                 })
+            })
+        },
+        openSpoiledTicket(){
+            // Confirm
+            this.$q.dialog({
+                title: 'Spoiled Ticket',
+                message: 'Would you like to take this action?',
+                ok: {
+                    label: 'Yes'
+                },
+                cancel: {
+                    label: 'No',
+                    color: 'negative'
+                },
+                persistent: true
+            }).onOk(() => {
+                
+                let payload = {
+                    loanId: this.loanData.key,
+                    createdBy: this.user.userId,
+                    orNumber: this.loanData.orNumber,
+                    updateLoan: {
+                        loanStatus: "Spoiled",
+                    },
+                    updateTransaction: {
+                        status: 'spoiled',
+                        transactionType: 5,
+                        createdBy: this.user.userId
+                    }
+                }
+                console.log(payload)
+                return
+                // api.post('loan/paid', payload).then((response) => {
+                //     const data = {...response.data};
+                //     if(!data.error){
+                //         this.$emit('refreshData')
+                //     } else {
+                //         this.$q.notify({
+                //             color: 'negative',
+                //             position: 'top-right',
+                //             title:data.title,
+                //             message: this.$t(`errors.${data.error}`),
+                //             icon: 'report_problem'
+                //         })
+                //     }
+                // })
             })
         },
     }

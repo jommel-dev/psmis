@@ -422,6 +422,7 @@ export default {
             this.openPrintModal = true;
         },
         openFolder(row){
+            this.filter = ""
             if(this.tableView === 'clientList'){
                 this.appId = row
                 this.tableView = 'patientList'

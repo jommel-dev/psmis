@@ -93,6 +93,7 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->post('add/new', 'Client::addLoan');
 		$routes->post('renew', 'Client::renewLoan');
 		$routes->post('paid', 'Client::fullPaidLoan');
+		$routes->post('spoiled', 'Client::spoiledTicket');
 		$routes->post('get/list', 'Client::getLoanList');
 		$routes->get('get/list/printing', 'Client::getLoanListForPrint');
 		$routes->post('get/history', 'Client::getLoanHistory');
