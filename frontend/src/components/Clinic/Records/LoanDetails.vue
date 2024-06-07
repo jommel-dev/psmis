@@ -680,6 +680,7 @@ export default {
                 api.post('loan/renew', payload).then((response) => {
                     const data = {...response.data};
                     if(!data.error){
+                        cloneData.oldTicket = payload.updateLoan.oldTicket;
                         cloneData.orNumber = this.seriesDetatils.start;
                         cloneData.maturityDate = this.renewForm.maturityDate;
                         cloneData.expirationDate = this.renewForm.expirationDate;
