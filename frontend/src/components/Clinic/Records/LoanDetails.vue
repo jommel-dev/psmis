@@ -677,7 +677,7 @@ export default {
                     }
                 }
 
-                api.post('loan/renew', payload).then((response) => {
+                api.post('loan/renew', payload).then((response) => {e
                     const data = {...response.data};
                     if(!data.error){
                         cloneData.oldTicket = payload.updateLoan.oldTicket;
@@ -685,6 +685,7 @@ export default {
                         cloneData.maturityDate = this.renewForm.maturityDate;
                         cloneData.expirationDate = this.renewForm.expirationDate;
                         cloneData.gracePeriodDate = this.renewForm.gracePeriodDate;
+                        cloneData.datesOfMaturity = this.renewForm.datesOfMaturity
                         cloneData.loanStatus = "RENEW";
                         this.formDetails = cloneData;
                         this.openPrintModal = true;
