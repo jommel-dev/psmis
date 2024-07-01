@@ -677,7 +677,7 @@ export default {
                     }
                 }
 
-                api.post('loan/renew', payload).then((response) => {e
+                api.post('loan/renew', payload).then((response) => {
                     const data = {...response.data};
                     if(!data.error){
                         cloneData.oldTicket = payload.updateLoan.oldTicket;
