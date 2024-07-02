@@ -74,6 +74,22 @@ class LoanModel extends Model
 
         // return $results;
     }
+    public function getAllSpoiledTickets($where){
+
+        $query = $this->db->table($this->tableTransaction)->where($where)->orderBy('id', 'DESC')->get();
+        $results = $query->getResult();
+        $all = array_map(function($el){
+            foreach($el as $key => $val){
+                $loanInfo = $this->db->table($this->table)->where('id', $el->loanId)->get();
+                $el->loanInfo = $loanInfo->getRow();
+            }
+            return $el;
+        }, $results);
+
+        return $all;
+
+        // return $results;
+    }
     public function getLoanData($where){
 
         $query = $this->db->table($this->table)->where($where)->orderBy('id', 'DESC')->get();
@@ -129,6 +145,11 @@ class LoanModel extends Model
         $query = $this->db->table($this->tableHistory)->insert($hisotryData);
         return $query ? true : false;
     }
+    public function updateLoanHistory($setData, $where){
+        $query = $this->db->table($this->tableHistory)->set($setData)->where($where)->update();
+        return $query ? true : false;
+    }
+
     // Insert Transactions
     public function addLoanTransaction($transactionData){
         $query = $this->db->table($this->tableTransaction)->insert($transactionData);
@@ -168,7 +189,7 @@ class LoanModel extends Model
         $sql = "SELECT * FROM ".$this->tableTransaction." a
         INNER JOIN ".$this->table." b ON a.loanId = b.id
         WHERE a.status IN ('renew', 'redeem') AND 
-        a.orStatus = 1 AND 
+        a.orStatus = :status: AND 
         DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
        
         $query = $this->db->query($sql, $params);
@@ -189,8 +210,8 @@ class LoanModel extends Model
 
         $sql = "SELECT * FROM ".$this->tableTransaction." a
         INNER JOIN ".$this->table." b ON a.loanId = b.id
-        WHERE a.status IN ('new') AND 
-        a.orStatus = 1 AND 
+        WHERE a.status IN ('new', 'spoiled') AND 
+        a.orStatus = :status: AND 
         DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
        
         $query = $this->db->query($sql, $params);

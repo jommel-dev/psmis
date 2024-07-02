@@ -813,32 +813,28 @@ class Client extends BaseController
        
 
         // Update the Loan Data and Insert Transaction
-        $where = ['id' => $payload->loanId];
-        $loanDataUpdate = json_decode(json_encode($payload->updateLoan), true);
+        $where = ['orNumber' => $payload->ticketNumber];
         $updateTransaction = json_decode(json_encode($payload->updateTransaction), true);
 
-        // //INSERT QUERY TO APPLICATION
-        $query = $this->loanModel->updateLoanApplication($where, $loanDataUpdate);
+        
+        $query = $this->loanModel->getLoanData($where);
 
         if($query){
             // Add History
             $history = [
-                "loanId" => $payload->loanId,
-                "actionTaken" => "Spoiled Ticket",
+                "loanId" => $query->id,
+                "actionTaken" => $payload->reason,
                 "actionType" => 6,
                 "snapShot" => json_encode($updateTransaction),
                 "createdBy" => $payload->createdBy,
             ];
             $this->createHistory($history);
+            $this->updateTransactionOnly($updateTransaction, ['orNumber' => $payload->ticketNumber]);
 
-            // Add Transaction
-            $this->updateTransactionOnly($updateTransaction, ['orNumber' => $payload->orNumber]);
-            
-            
             // Response 
             $response = [
-                'title' => 'Loan Renewal',
-                'message' => 'Your loan application has been renewed.'
+                'title' => 'Spoiled Ticket',
+                'message' => 'Your ticket number has been spoiled.'
             ];
 
             return $this->response
@@ -848,7 +844,7 @@ class Client extends BaseController
         } else {
             $response = [
                 'error' => 400,
-                'title' => 'Data Submit Failed',
+                'title' => 'Process Failed',
                 'message' => 'Please contact the admin for concern'
             ];
 
@@ -1135,7 +1131,7 @@ class Client extends BaseController
         }
     }
 
-
+    
     public function soldAuctionedItem(){
         // Check Auth header bearer
         $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
@@ -1246,6 +1242,63 @@ class Client extends BaseController
     }
 
     // --------------------- End of Auction Action ------------------- //
+    // Spoiled Actions
+    public function getSpoiledList(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from UI
+        $payload = $this->request->getJSON();
+
+        $list = [];
+        
+        $query = $this->loanModel->getAllSpoiledTickets(["transactionType"=>5]);
+        
+        // print_r($query);
+        // exit;
+
+        foreach ($query as $key => $value) {
+            $items = json_decode($value->loanInfo->itemDetails);
+            $list['list'][$key] = [
+                "key" => $value->id,
+                "loanId" => $value->loanId,
+                'orNumber' => $value->orNumber,
+                'loanValue' => $value->loanInfo,
+                'itemInfo' => $items
+            ];
+        }
+
+        if($list){
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($list));
+        } else {
+            $response = [
+                'error' => 404,
+                'title' => 'Error',
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(404)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+    }
+    // --------------------- End of Spoiled Action ------------------- //
+
     public function getLoansList(){
         // Check Auth header bearer
         $authorization = $this->request->getServer('HTTP_AUTHORIZATION');

@@ -69,7 +69,6 @@
                                 outlined
                                 v-model="formFilter.status"
                                 :options="statusOpt"
-                                use-chips
                                 stack-label
                                 label="Status"
                             />
@@ -177,7 +176,7 @@ export default {
                 to: ""
             },
             formFilter: {
-                status: null,
+                status: {label: 'Reported', value: 1},
                 type: null
             },
             selected: "10 Column Report",
@@ -247,9 +246,12 @@ export default {
 
             let payload = {
               ...this.dateSelected,
-              status: this.formFilter.status?.value || 1,
+              status: this.formFilter.status.value,
               type: this.formFilter.type?.value || 0,
             }
+            // console.log(this.formFilter)
+            // console.log(payload)
+            // return
 
             api.post(getApiUrl.api, payload).then((response) => {
                 const data = {...response.data};
@@ -311,7 +313,7 @@ export default {
           getApiUrl = getApiUrl.length > 0 ? {...getApiUrl[0]} : false;
           const link = document.createElement('a');
           link.id = "downloadResult";
-          link.href = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}`;
+          link.href = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}/${this.formFilter.status.value}`;
           link.target = "_blank";
 
           link.click();
@@ -361,7 +363,8 @@ export default {
         },
         statusOpt(){
             let opt = [];
-            if(this.selected === "Sales Report"){
+            let columnReports = "10 Column Report, 24 Column Report"
+            if(columnReports.includes(this.selected)){
                 opt = [
                     {label: 'Recorded', value: 0},
                     {label: 'Reported', value: 1},

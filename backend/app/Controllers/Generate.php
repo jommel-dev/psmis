@@ -151,7 +151,7 @@ class Generate extends BaseController
     }
 
     // 10 Columns
-    public function generateTenCoulumn($date){
+    public function generateTenCoulumn($date, $reportType){
         $list = [
             "generatedDate" => date("F j, Y", strtotime($date)),
             "columns" => [
@@ -222,6 +222,7 @@ class Generate extends BaseController
         ];
         
         $query = $this->loanModel->getTenColumnReportList([
+            "status" => $reportType,
             "dateFrom" => $date,
             "dateTo" => $date
         ]);
@@ -404,7 +405,7 @@ class Generate extends BaseController
     }
 
     // 24 Column Report
-    public function generateTwentyFourCoulumn($date){
+    public function generateTwentyFourCoulumn($date, $reportType){
         $list = [
             "generatedDate" => date("F j, Y", strtotime($date)),
             "columns" => [
@@ -489,6 +490,7 @@ class Generate extends BaseController
         ];
         
         $query = $this->loanModel->getTwentyFourColumnReportList([
+            "status" => $reportType,
             "dateFrom" => $date,
             "dateTo" => $date
         ]);
@@ -506,6 +508,8 @@ class Generate extends BaseController
             }
             $item = implode(" ", $item);
             
+            $spoiledValue = $value->transactionType == 5 ? "ST" : "";
+
             $list['list'][$key] = [
                 "key" => $value->id,
                 "no" => $key + 1,
@@ -515,7 +519,7 @@ class Generate extends BaseController
                 "principal" => number_format($value->loanAmount, 2, '.', ','),
                 "redeemed" => $value->redeemDate,
                 "canceled" => "",
-                "spoiled" => "",
+                "spoiled" => $spoiledValue,
                 "address" => $this->truncateString($addressText, 25),
                 "items" => $this->truncateString($item, 52)
             ];
@@ -647,6 +651,7 @@ class Generate extends BaseController
             foreach ($value->itemDetails as $ikey => $ivalue) {
                 $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
             }
+            $spoiledValue = $value->transactionType == 5 ? "ST" : "";
             
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -658,7 +663,7 @@ class Generate extends BaseController
                 "principal" => number_format($value->loanAmount, 2, '.', ','),
                 "redeemed" => $value->redeemDate,
                 "canceled" => "",
-                "spoiled" => "",
+                "spoiled" => $spoiledValue,
                 "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label,
                 "items" => implode(" ", $item)
             ];

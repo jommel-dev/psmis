@@ -103,6 +103,7 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->post('get/allRecord', 'Client::getAllRecordList');
 
 		$routes->post('get/auction/list', 'Client::getAuctionedList');
+		$routes->post('get/spoiled/list', 'Client::getSpoiledList');
 		$routes->post('sold/item', 'Client::soldAuctionedItem');
 		$routes->post('update/item', 'Client::updateAuctionedItem');
 
@@ -131,10 +132,10 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->post('report/expired', 'Generate::expiredList');
 
 		$routes->post('report/10columns', 'Generate::tenColumnReport');
-		$routes->get('print/10columns/(:any)', 'Generate::generateTenCoulumn/$1');
+		$routes->get('print/10columns/(:any)/(:any)', 'Generate::generateTenCoulumn/$1/$2');
 
 		$routes->post('report/24columns', 'Generate::twentyFourCoulumnReport');
-		$routes->get('print/24columns/(:any)', 'Generate::generateTwentyFourCoulumn/$1');
+		$routes->get('print/24columns/(:any)/(:any)', 'Generate::generateTwentyFourCoulumn/$1/$2');
 		// Report Columns
 	});
 

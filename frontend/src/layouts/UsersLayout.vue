@@ -125,6 +125,16 @@ const linksList = [
     ]
   },
   {
+    title: 'Spoiled Ticket',
+    icon: 'subtitles_off',
+    link: 'spoiledTicket',
+    code: 102,
+    crumbs: [
+      {label: '', icon: 'home', link: '/'},
+      {label: 'Dashboard', icon: 'dashboard', link: 'dashboard'}
+    ]
+  },
+  {
     title: 'Print Pawn Tickets',
     icon: 'print',
     link: 'printList',

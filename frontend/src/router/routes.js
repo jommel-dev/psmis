@@ -42,6 +42,11 @@ const routes = [
         component: () => import('pages/Users/Auctions.vue') 
       },
       { 
+        path: 'spoiledTicket',
+        name: 'spoiledTicket',
+        component: () => import('pages/Users/Spoiled.vue') 
+      },
+      { 
         path: 'printList',
         name: 'printList',
         component: () => import('pages/Users/PrintList.vue') 
