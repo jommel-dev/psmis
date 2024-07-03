@@ -135,7 +135,7 @@
                                         Pay in Full (Redeem)
                                     </q-btn>
                                 </div>
-                                <div class="col col-md-6 q-pl-md q-mt-sm">
+                                <!-- <div class="col col-md-6 q-pl-md q-mt-sm">
                                     <div class="text-subtitle1">
                                     Invalid Transaction
                                     </div>
@@ -150,7 +150,7 @@
                                     >
                                         Spoiled Ticket
                                     </q-btn>
-                                </div>
+                                </div> -->
                                 <div class="col col-md-12 q-pl-md q-mt-md">
                                     <q-table
                                         flat

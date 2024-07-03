@@ -196,6 +196,7 @@ export default {
                     reason: `Spoiled ticket due to: ${this.reasonSpoiled}`,
                     createdBy:this.user.userId,
                     updateTransaction: {
+                        orNumber: this.ticketNumber,
                         transactionType: 5,
                         status: 'spoiled'
                     }
