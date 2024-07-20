@@ -280,6 +280,8 @@
                                         label="Loan Principal"
                                         stack-label
                                         dense
+                                        lazy-rules
+                                        :rules="[ val => val && val.length > 0 || 'Please type something']"
                                     />
                                     <q-input
                                         class="q-mb-sm"
@@ -288,6 +290,8 @@
                                         label="Terms"
                                         stack-label
                                         dense
+                                        lazy-rules
+                                        :rules="[ val => val && val.length > 0 || 'Please type something']"
                                     />
                                     <q-input
                                         class="q-mb-sm"
@@ -646,8 +650,17 @@ export default {
                     this.$q.notify({
                         color: 'negative',
                         position: 'top-right',
-                        title: 'Incomplete Form',
-                        message: 'Please fill the required fields',
+                        message: 'Incomplete Form',
+                        caption: 'Please fill the required fields',
+                        icon: 'report_problem'
+                    })
+                    return false;
+                } else if(vm.form.itemDetails.length === 0){
+                    this.$q.notify({
+                        color: 'negative',
+                        position: 'top-right',
+                        message: 'Incomplete Form',
+                        caption: 'Loan Item must be added before proceeding',
                         icon: 'report_problem'
                     })
                     return false;

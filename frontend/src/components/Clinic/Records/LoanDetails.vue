@@ -111,7 +111,7 @@
                                     Maturity Date: {{loanDetails.maturityDate}}
                                     </div>
                                     <q-btn
-                                        v-if="loanDetails.status !== '4' && Number(user.userId) === Number(loanDetails.createdBy)"
+                                        v-if="(loanDetails.status !== '4' || loanDetails.status !== '5') && Number(user.userId) === Number(loanDetails.createdBy)"
                                         @click="openRenewLoan"
                                         class="full-width"
                                         color="primary"
@@ -127,7 +127,7 @@
                                     Expiration Date: {{loanDetails.expirationDate}}
                                     </div>
                                     <q-btn
-                                        v-if="loanDetails.status !== '4' && Number(user.userId) === Number(loanDetails.createdBy)"
+                                        v-if="(loanDetails.status !== '4' || loanDetails.status !== '5') && Number(user.userId) === Number(loanDetails.createdBy)"
                                         @click="openFullPayLoan" 
                                         class="full-width" 
                                         color="green"
