@@ -56,6 +56,12 @@ class ClientModel extends Model
         return $results;
     }
 
+    public function updateCustomerInfo($where, $setData){
+        $query = $this->db->table($this->table)->set($setData)->where($where)->update();
+        return $query ? true : false;
+    }
+    
+
     public function getFilteredClientTransaction($req){
         $sql = "SELECT * FROM tblloans WHERE customerId = (SELECT id FROM tblapplicants WHERE customerNo = :customerNo:) AND orNumber = :orNumber:";
        

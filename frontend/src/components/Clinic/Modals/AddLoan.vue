@@ -281,7 +281,6 @@
                                         stack-label
                                         dense
                                         lazy-rules
-                                        :rules="[ val => val && val.length > 0 || 'Please type something']"
                                     />
                                     <q-input
                                         class="q-mb-sm"
@@ -291,7 +290,6 @@
                                         stack-label
                                         dense
                                         lazy-rules
-                                        :rules="[ val => val && val.length > 0 || 'Please type something']"
                                     />
                                     <q-input
                                         class="q-mb-sm"

@@ -408,6 +408,8 @@ export default {
             provinceList: [],
             cityList: [],
             brgyList: [],
+            customerId: null,
+            modalType: "add",
             form: {
                 firstName: '',
                 lastName: '',
@@ -514,8 +516,20 @@ export default {
 
     methods: {
         async fillExistingData(){
+            this.modalType = "edit"
+            this.customerId = this.appData.key
             for(const key in this.form){
-                this.form[key] = this.appData[key]
+                if(key === "sex"){
+                    this.form[key] = {
+                        value: this.appData[key],
+                        label: this.appData[key]
+                    }
+                } else if(key === "identifications"){
+                    this.form.identifications = []
+                }else {
+                    this.form[key] = this.appData[key]
+                }
+                
             }
         },
         getProfile(){
@@ -598,6 +612,7 @@ export default {
             this.form.age = ageMonth
         },
         async closeModal(){
+            this.modalType = "add"
             this.$emit('updateModalStatus', false);
         },
         async submitModalClick(){
@@ -628,7 +643,12 @@ export default {
                         persistent: true
                     }).onOk(() => {
                         // this.$emit('submitModalClick', vm.form);
-                        this.addNewPatient();
+                        if(this.modalType === "edit"){
+                            this.updatePatient();
+                        } else {
+                            this.addNewPatient();
+                        }
+                        
                     })
                 }
             })
@@ -642,6 +662,33 @@ export default {
             payload.createdBy = this.user.userId
             
             api.post('application/register', payload).then((response) => {
+                const data = {...response.data};
+                if(!data.error){
+                    this.$emit('refreshData')
+                    this.clearForm();
+                    this.closeModal();
+                } else {
+                    this.$q.notify({
+                        color: 'negative',
+                        position: 'top-right',
+                        title:data.title,
+                        message: this.$t(`errors.${data.error}`),
+                        icon: 'report_problem'
+                    })
+                }
+
+            })
+
+            // this.$q.loading.hide();
+        },
+        async updatePatient(){
+            // this.$q.loading.show();
+            let payload = this.form
+            payload.clientId = Number(this.customerId)
+            payload.sex = payload.sex.value
+            payload.createdBy = this.user.userId
+            
+            api.post('application/updateClient', payload).then((response) => {
                 const data = {...response.data};
                 if(!data.error){
                     this.$emit('refreshData')

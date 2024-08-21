@@ -126,6 +126,101 @@ class Client extends BaseController
 
     }
 
+    public function updateClientDetails(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from NuxtJs
+        $payload = $this->request->getJSON();
+
+        // Insert the customer Data
+        $customerInfo =  [
+            "firstName" => $payload->firstName,
+            "lastName" => $payload->lastName,
+            "middleName" => $payload->middleName,
+            "suffix" => $payload->suffix,
+            "addressLine" => $payload->addressLine,
+            "addressDetails" => json_encode($payload->addressDetails),
+            "contactNo" => $payload->contactNo,
+            "sex" => $payload->sex,
+            "birthDate" => $payload->birthDate,
+            "otherDetails" => json_encode($payload->otherDetails),
+            "createdBy" => $payload->createdBy,
+            "status" => 1
+        ];
+
+        // //INSERT QUERY TO APPLICATION
+        $query = $this->clientModel->where(["id" => $payload->clientId])->set($customerInfo)->update();
+
+        if($query){
+            
+            $checkProfile = $this->profileModel->getDetails(['appId' => $payload->clientId]);
+
+            if($checkProfile){
+                $profileData = [
+                    "profile" => $payload->profile,
+                    "eSignature" => $payload->eSignature,
+                ];
+                $this->profileModel->where("appId", $payload->clientId)->set($profileData)->update();
+            } else {
+                $profileData = [
+                    "appId" => $payload->clientId,
+                    "profile" => $payload->profile,
+                    "eSignature" => $payload->eSignature,
+                ];
+                $this->profileModel->insert($profileData);
+            }
+            
+            
+
+            // foreach ($payload->identifications as $key => $value) {
+            //     $kycValues = [
+            //         "idType" => $value->type,
+            //         "idNumber" => $value->idNumber,
+            //         "validityDate" => $value->validUntil,
+            //         "file" => $value->image,
+            //         "uploadedBy" => $payload->createdBy,
+            //     ];
+            //     $this->kycModel->where("customerId", $payload->clientId)->insert($kycValues);
+            // }
+            
+
+
+            $response = [
+                'title' => 'Customer Information',
+                'message' => 'Your application has been updated.'
+            ];
+
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        } else {
+            $response = [
+                'error' => 400,
+                'title' => 'Data Submit Failed',
+                'message' => 'Please contact the admin for concern'
+            ];
+
+            return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+
+    }
+
     public function getUserProfile(){
         // Check Auth header bearer
         $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
