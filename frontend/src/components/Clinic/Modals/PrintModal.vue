@@ -121,7 +121,7 @@ export default {
             // Loan Status
             fpage.drawText(`${data.loanStatus}`, {
                 x: 50,
-                y: 705,
+                y: 690,
                 size: 30,
                 color: rgb(0, 0, 0),
             })
