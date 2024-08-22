@@ -255,7 +255,7 @@ export default {
 
             // Grace Period
             let graceMonth = moment(data.gracePeriodDate).format("YYYY-MM-15")
-            fpage.drawText(moment(graceMonth).add(1, "months").format("LL"), {
+            fpage.drawText(moment(graceMonth).format("LL"), {
                 x: 480,
                 y: 380,
                 size: 11,
