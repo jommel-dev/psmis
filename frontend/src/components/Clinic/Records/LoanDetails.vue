@@ -103,6 +103,14 @@
 
                         <q-tab-panel name="renewal">
                             <div class="row">
+                                <div class="col-12 col-md-12 q-pl-md">
+                                    <div class="text-subtitle1 text-bold">
+                                    Loan Amount: {{convertCurrency(Number(loanDetails.loanAmount))}}
+                                    </div>
+                                    <div class="text-subtitle1 text-bold">
+                                    Loan Interest per Month: {{convertCurrency(Number(loanData.computationDetails.amountPercentage))}}
+                                    </div>
+                                </div>
                                 <div class="col col-md-3 q-pl-md q-mt-sm">
                                     <div class="text-subtitle1">
                                     Amount Interest: {{convertCurrency(computeRenewAmount())}}
