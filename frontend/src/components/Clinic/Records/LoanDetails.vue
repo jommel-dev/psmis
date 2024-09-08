@@ -105,7 +105,10 @@
                             <div class="row">
                                 <div class="col col-md-3 q-pl-md q-mt-sm">
                                     <div class="text-subtitle1">
-                                    Amount Interest: {{convertCurrency(Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))}}
+                                    Amount Interest: {{convertCurrency(computeRenewAmount())}}
+                                    </div>
+                                    <div v-show="isExpired" class="text-subtitle1">
+                                    Amount Penalty (2%): {{convertCurrency(computeRenewPenaltyAmount())}}
                                     </div>
                                     <div class="text-caption text-grey">
                                     Maturity Date: {{loanDetails.maturityDate}}
@@ -121,7 +124,10 @@
                                 </div>
                                 <div class="col col-md-3 q-pl-md q-mt-sm">
                                     <div class="text-subtitle1">
-                                    Amount Loan in Full: {{convertCurrency(Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))}}
+                                    Amount Loan in Full: {{convertCurrency(computeFullAmount())}}
+                                    </div>
+                                    <div v-show="isExpired" class="text-subtitle1">
+                                    Amount Penalty (2%): {{convertCurrency(computeRenewPenaltyAmount())}}
                                     </div>
                                     <div class="text-caption text-grey">
                                     Expiration Date: {{loanDetails.expirationDate}}
@@ -198,7 +204,8 @@
         <q-card-section class="q-pt-none">
             <div class="row">
               <div class="col-12 col-sm-12 q-pa-sm">
-                <span class="text-h5">Loan Renew Amount: <br>{{convertCurrency(Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))}}</span>
+                <span class="text-h5">Loan Renew Amount: {{computeRenewAmount()}}</span><br/>
+                <span class="text-h5">Penalty: {{computeRenewPenaltyAmount()}}</span>
               </div>
               <div class="col-12 col-sm-6 q-pa-sm">
                 <q-input
@@ -231,7 +238,7 @@
               <div class="col-12 col-sm-6 q-pa-sm modalItemBorder">
                 <span class="text-title">Summary</span><br>
                 <q-separator />
-                <span class="text-title"><strong>Renew Amount: </strong> {{Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)}}</span><br>
+                <span class="text-title"><strong>Renew Amount: </strong> {{convertCurrency(computeRenewAmount() + computeRenewPenaltyAmount())}}</span><br>
                 <span class="text-title"><strong>Cash On Hand: </strong> {{ this.price }}</span><br>
                 <span class="text-title"><strong>Discount: </strong> {{ this.discount }}</span><br><br>
                 <q-separator />
@@ -257,8 +264,9 @@
             <div class="row">
               <div class="col-12 col-sm-12 q-pa-sm">
                 <span class="text-h5">Loan Amount To Be Paid: <br>
-                  {{convertCurrency(Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))}}
-                </span>
+                  {{convertCurrency(computeFullAmount())}}
+                </span><br/>
+                <span class="text-h5">Penalty: {{convertCurrency(computeRenewPenaltyAmount())}}</span>
               </div>
               <div class="col-12 col-sm-6 q-pa-sm">
                 <q-input
@@ -301,7 +309,7 @@
               <div class="col-12 col-sm-6 q-pa-sm modalItemBorder">
                 <span class="text-title">Summary</span><br>
                 <q-separator />
-                <span class="text-title"><strong>Amount in Full: </strong> {{Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))}}</span><br>
+                <span class="text-title"><strong>Amount in Full: </strong> {{convertCurrency(computeFullAmount() + computeRenewPenaltyAmount())}}</span><br>
                 <span class="text-title"><strong>Cash On Hand: </strong> {{ this.price }}</span><br>
                 <span class="text-title"><strong>Discount: </strong> {{ this.discount }}</span><br><br>
                 <q-separator />
@@ -397,6 +405,9 @@ export default {
         },
         setDetails(){
           this.loanDetails = this.loanData
+        },
+        isExpired(){
+            return this.loanData.terms <= this.loanData.payStatus
         },
         columns(){
             return [
@@ -510,6 +521,34 @@ export default {
         }
     },
     methods:{
+        computeRenewAmount(){
+            let amount = 0;
+            if(this.loanData.terms <= this.loanData.payStatus){
+                amount = Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)+1)
+            } else {
+                amount = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
+            }
+            
+            return amount;
+        },
+        computeFullAmount(){
+            let amount = 0;
+            // convertCurrency(Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))
+            if(this.loanData.terms <= this.loanData.payStatus){
+                amount = Number(this.loanDetails.loanAmount) + Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)+1)
+            } else {
+                amount = Number(this.loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))
+            }
+            
+            return amount;
+        },
+        computeRenewPenaltyAmount(){
+            let amount = 0;
+            if(this.loanData.terms <= this.loanData.payStatus){
+                amount = Number(this.loanData.loanAmount) * 0.02
+            }
+            return amount;
+        },
         computeTotalPrice(){
           this.totalPrice = Number(this.price) - Number(this.discount)
         },
@@ -724,7 +763,6 @@ export default {
                 },
                 persistent: true
             }).onOk(() => {
-                let totalAmount = Number(this.totalPrice) + Number(this.discount)
                 let payload = {
                     loanId: this.loanData.key,
                     createdBy: this.user.userId,
