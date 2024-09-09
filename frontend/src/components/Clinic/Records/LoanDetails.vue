@@ -344,6 +344,8 @@ import jwt_decode from 'jwt-decode'
 import { api } from 'boot/axios'
 import printModal from '../Modals/PrintModal.vue'
 
+const dateNow = moment().format('YYYY-MM-DD');
+
 export default {
     name: 'LoanDetails',
     components: {
@@ -415,7 +417,7 @@ export default {
           this.loanDetails = this.loanData
         },
         isExpired(){
-            return this.loanData.terms <= this.loanData.payStatus
+            return this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate 
         },
         columns(){
             return [
@@ -531,7 +533,7 @@ export default {
     methods:{
         computeRenewAmount(){
             let amount = 0;
-            if(this.loanData.terms <= this.loanData.payStatus){
+            if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate ){
                 amount = Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)+1)
             } else {
                 amount = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
@@ -542,7 +544,7 @@ export default {
         computeFullAmount(){
             let amount = 0;
             // convertCurrency(Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))
-            if(this.loanData.terms <= this.loanData.payStatus){
+            if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate){
                 amount = Number(this.loanDetails.loanAmount) + Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)+1)
             } else {
                 amount = Number(this.loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))
@@ -552,7 +554,7 @@ export default {
         },
         computeRenewPenaltyAmount(){
             let amount = 0;
-            if(this.loanData.terms <= this.loanData.payStatus){
+            if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate){
                 amount = Number(this.loanData.loanAmount) * 0.02
             }
             return amount;

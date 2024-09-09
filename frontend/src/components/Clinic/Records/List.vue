@@ -197,7 +197,7 @@
                             size="lg" 
                             :color="statusColor(props.row.status)" 
                         /> 
-                        {{`${props.row.orNumber} - ${props.row.itemDetails.length} Item(s)`}}
+                        {{`${props.row.orNumber} (${props.row.origData.loanStatus || 'New'}) - ${props.row.itemDetails.length} Item(s)`}}
                     </q-card-section>
                     <q-popup-proxy context-menu>
                         <q-list dense  style="min-width: 100px">
