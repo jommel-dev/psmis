@@ -386,6 +386,14 @@ class Dashboard extends BaseController
                             'status' => 0,
                         ];
                         $qUpdate = $this->loanModel->updateLoanApplication(['id' => $value->id], $updateDate);
+                        // $history = [
+                        //     "loanId" => $value->id,
+                        //     "actionTaken" => "Loan gets expired and moved to Auction List",
+                        //     "actionType" => 2,
+                        //     "snapShot" => json_encode($value),
+                        //     "createdBy" => 0,
+                        // ];
+                        // $this->createHistory($history);
                         $this->insertToAuctionList($value);
                     }
                 } else {
@@ -420,6 +428,10 @@ class Dashboard extends BaseController
             throw $th;
         }
         
+    }
+
+    public function createHistory($data){
+        $this->loanModel->addLoanHistory($data);
     }
 
     public function insertToAuctionList($dataItem){

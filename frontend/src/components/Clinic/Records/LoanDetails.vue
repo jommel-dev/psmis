@@ -141,7 +141,7 @@
                                     Expiration Date: {{loanDetails.expirationDate}}
                                     </div>
                                     <q-btn
-                                        v-if="(loanDetails.status !== '4' || loanDetails.status !== '5') && Number(user.userId) === Number(loanDetails.createdBy)"
+                                        v-if="(loanDetails.status !== '4' || loanDetails.status !== '5' || loanDetails.status !== '0') && Number(user.userId) === Number(loanDetails.createdBy)"
                                         @click="openFullPayLoan" 
                                         class="full-width" 
                                         color="green"
@@ -724,6 +724,10 @@ export default {
                         transactionType: 0,
                         createdBy: this.user.userId
                     }
+                }
+
+                if(this.loanData.status === 0){
+                    payload.updateLoan.status = 1
                 }
 
                 api.post('loan/renew', payload).then((response) => {
