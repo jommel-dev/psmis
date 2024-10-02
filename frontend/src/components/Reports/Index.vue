@@ -198,6 +198,7 @@ export default {
                             icon: 'description',
                             header: 'generic',
                             api: "generate/report/auctions",
+                            pdfprint: "generate/print/auctions",
                             key: "acutionColumn"
                         },
                         // {
@@ -305,18 +306,24 @@ export default {
             return `"${formatted}"`
         },
         async exportPDF(){
-          let getApiUrl = this.reportTypes[0]
-                          .children
-                          .filter(el => {
-                              return el.label === this.selected
-                          });
-          getApiUrl = getApiUrl.length > 0 ? {...getApiUrl[0]} : false;
-          const link = document.createElement('a');
-          link.id = "downloadResult";
-          link.href = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}/${this.formFilter.status.value}`;
-          link.target = "_blank";
+            let getApiUrl = this.reportTypes[0]
+                            .children
+                            .filter(el => {
+                                return el.label === this.selected
+                            });
+            getApiUrl = getApiUrl.length > 0 ? {...getApiUrl[0]} : false;
+            let url = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}/${this.formFilter.status.value}`;
+            // 
+            if(getApiUrl.label === "Auction Item Report"){
+                url = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}/${this.dateSelected.to}`
+            }
 
-          link.click();
+            const link = document.createElement('a');
+            link.id = "downloadResult";
+            link.href = url;
+            link.target = "_blank";
+
+            link.click();
         },
         async generateReport(){
             this.rowColumns

@@ -726,7 +726,7 @@ export default {
                     }
                 }
 
-                if(this.loanData.status === 0){
+                if(Number(this.loanData.status) === 0){
                     payload.updateLoan.status = 1
                 }
 

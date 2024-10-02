@@ -128,8 +128,10 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->get('print/invoice/(:any)', 'Generate::generateInvoicePdf/$1');
 		// Reports
 		$routes->post('report/sales', 'Generate::salesReport');
-		$routes->post('report/auctions', 'Generate::auctionList');
 		$routes->post('report/expired', 'Generate::expiredList');
+
+		$routes->post('report/auctions', 'Generate::auctionList');
+		$routes->get('print/auctions/(:any)/(:any)', 'Generate::generateAuctionList/$1/$2');
 
 		$routes->post('report/10columns', 'Generate::tenColumnReport');
 		$routes->get('print/10columns/(:any)/(:any)', 'Generate::generateTenCoulumn/$1/$2');

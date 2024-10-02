@@ -688,6 +688,208 @@ class Generate extends BaseController
         }
     }
 
+
+    public function auctionList(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from NuxtJs
+        $payload = $this->request->getJSON();
+
+        $list = [
+            "columns" => [
+                [ 
+                    "name"=>'no', 
+                    "label" => 'NO', 
+                    "field" => 'no',
+                    "align" => 'left',
+                    "type" => 'Number',
+                ],
+                [ 
+                    "name"=>'date', 
+                    "label" => 'DATE', 
+                    "field" => 'date',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'pawnTicket', 
+                    "label" => 'TICKET NO.', 
+                    "field" => 'pawnTicket',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'pawnerName', 
+                    "label" => 'CUSTOMER', 
+                    "field" => 'pawnerName',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'category', 
+                    "label" => 'CATEGORY', 
+                    "field" => 'category',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'itemPawn', 
+                    "label" => 'ITEM', 
+                    "field" => 'itemPawn',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'principal', 
+                    "label" => 'PRINCIPAL', 
+                    "field" => 'principal',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+            ],
+        ];
+        
+        $query = $this->auctionModel->getAuctionListReport([
+            "status" => $payload->status,
+            "dateFrom" => $payload->from,
+            "dateTo" => $payload->to
+        ]);
+        // print_r($query);
+        // exit;
+
+        foreach ($query as $key => $value) {
+            $cinfo = $value->customerInfo;
+            $cinfo->addressDetails = json_decode($cinfo->addressDetails);
+            // $value->catInfo = json_decode($value->categoryInfo);
+            
+            $list['list'][$key] = [
+                "key" => $value->id,
+                "no" => $key + 1,
+                "pawnTicket" => $value->orNumber,
+                "date" => date("F j, Y", strtotime($value->createdDate)),
+                "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
+                "category" => $value->categoryInfo->label,
+                "itemPawn" => $value->itemInfo,
+                "principal" => $value->principal,
+            ];
+        }
+
+        if($list){
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($list));
+        } else {
+            $response = [
+                'error' => 404,
+                'title' => 'Error',
+                'message' => 'No Data Found'
+            ];
+
+            return $this->response
+                    ->setStatusCode(404)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+    }
+
+    public function generateAuctionList($datefrom, $dateto){
+        $list = [
+            "generatedDate" => date("F j, Y", strtotime($datefrom)),
+            "columns" => [
+                [ 
+                    "name"=>'no', 
+                    "label" => 'NO', 
+                    "field" => 'no',
+                    "align" => 'left',
+                    "type" => 'Number',
+                ],
+                [ 
+                    "name"=>'date', 
+                    "label" => 'DATE', 
+                    "field" => 'date',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'pawnTicket', 
+                    "label" => 'TICKET NO.', 
+                    "field" => 'pawnTicket',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'pawnerName', 
+                    "label" => 'CUSTOMER', 
+                    "field" => 'pawnerName',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'category', 
+                    "label" => 'CATEGORY', 
+                    "field" => 'category',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'itemPawn', 
+                    "label" => 'ITEM', 
+                    "field" => 'itemPawn',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+                [ 
+                    "name"=>'principal', 
+                    "label" => 'PRINCIPAL', 
+                    "field" => 'principal',
+                    "align" => 'left',
+                    "type" => 'String',
+                ],
+            ],
+        ];
+        
+        $query = $this->auctionModel->getAuctionListReport([
+            "dateFrom" => $datefrom,
+            "dateTo" => $dateto
+        ]);
+
+        foreach ($query as $key => $value) {
+            $cinfo = $value->customerInfo;
+            $cinfo->addressDetails = json_decode($cinfo->addressDetails);
+            
+            $list['list'][$key] = [
+                "key" => $value->id,
+                "no" => $key + 1,
+                "pawnTicket" => $value->orNumber,
+                "date" => date("F j, Y", strtotime($value->createdDate)),
+                "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
+                "category" => $value->categoryInfo->label,
+                "itemPawn" => $value->itemInfo,
+                "principal" => $value->principal,
+            ];
+        }
+
+        ob_start();
+        $dompdf = new \Dompdf\Dompdf(['enable_font_subsetting' => true]); 
+        $dompdf->loadHtml(view('reports/auctionList', $list));
+        $dompdf->setPaper(array(0, 0, 612, 936), 'landscape');
+        $dompdf->render();
+        $dompdf->stream('Auction List', ["Attachment" => false]);
+    }
+
     public function truncateString($string, $length, $ellipsis = '...') {
         if (strlen($string) <= $length) {
             return $string;

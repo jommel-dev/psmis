@@ -58,16 +58,28 @@ class AuctionModel extends Model
         return $all;
     }
 
-    public function getCIFReportRange($params){
+    // This should get on the TBL Loan History
+    public function getAuctionListReport($params){
 
-        $sql = "SELECT * FROM `tblapplications` WHERE status = :status: AND DATE_FORMAT(createdAt, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
+        $sql = "SELECT * FROM ".$this->table." a
+        WHERE a.status = 0 AND
+        DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
        
         $query = $this->db->query($sql, $params);
         $results = $query->getResult();
 
-        return $results;
-    }
+        $all = array_map(function($el){
+            foreach($el as $key => $val){
+                $clientInfo = $this->db->table($this->applicantTable)->where('id', $el->customerId)->get();
+                $el->customerInfo = $clientInfo->getRow();
+                $category = $this->db->table($this->catTable)->where('id', $el->catId)->get();
+                $el->categoryInfo = $category->getRow();
+            }
+            return $el;
+        }, $results);
 
+        return $all;
+    }
 
     public function updateAuctionData($where, $setData){
         $query = $this->db->table($this->table)->set($setData)->where($where)->update();
