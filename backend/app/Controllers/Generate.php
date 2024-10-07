@@ -231,16 +231,14 @@ class Generate extends BaseController
 
         foreach ($query as $key => $value) {
             $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
-            $value->amountWord = $fmoneyword->format($value->loanAmount);
-            $value->interestWord = $fmoneyword->format($value->interest);
+            
             $cinfo = $value->customerInfo;
-            $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
-            $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $value->identification = json_decode($value->identification);
-            $value->itemDetails = json_decode($value->itemDetails);
-            $value->computationDetails = json_decode($value->computationDetails);
-            $pastDue = $value->payStatus <= 1 ? 0 : ($value->computationDetails->amountPercentage * $value->payStatus);
+            $linfo = $value->loanInfo;
+            $linfo->itemDetails = json_decode($linfo->itemDetails);
+            $linfo->computationDetails = json_decode($linfo->computationDetails);
+            $pastDue = $linfo->payStatus <= 1 ? 0 : ($linfo->computationDetails->amountPercentage * $linfo->payStatus);
+            $value->amountWord = $fmoneyword->format($linfo->loanAmount);
+            $value->interestWord = $fmoneyword->format($linfo->interest);
 
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -250,8 +248,8 @@ class Generate extends BaseController
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
                 "cashOnHand" => $value->amount,
-                "principal" => number_format($value->loanAmount, 2, '.', ','),
-                "interest" => number_format($value->computationDetails->amountPercentage, 2, '.', ','),
+                "principal" => number_format($linfo->loanAmount, 2, '.', ','),
+                "interest" => number_format($linfo->computationDetails->amountPercentage, 2, '.', ','),
                 "interestPassedMonth" => number_format($pastDue, 2, '.', ','),
             ];
         }
@@ -360,16 +358,13 @@ class Generate extends BaseController
 
         foreach ($query as $key => $value) {
             $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
-            $value->amountWord = $fmoneyword->format($value->loanAmount);
-            $value->interestWord = $fmoneyword->format($value->interest);
             $cinfo = $value->customerInfo;
-            $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
-            $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $value->identification = json_decode($value->identification);
-            $value->itemDetails = json_decode($value->itemDetails);
-            $value->computationDetails = json_decode($value->computationDetails);
-            $pastDue = $value->payStatus <= 1 ? 0 : ($value->computationDetails->amountPercentage * $value->payStatus);
+            $linfo = $value->loanInfo;
+            $linfo->itemDetails = json_decode($linfo->itemDetails);
+            $linfo->computationDetails = json_decode($linfo->computationDetails);
+            $pastDue = $linfo->payStatus <= 1 ? 0 : ($linfo->computationDetails->amountPercentage * $linfo->payStatus);
+            $value->amountWord = $fmoneyword->format($linfo->loanAmount);
+            $value->interestWord = $fmoneyword->format($linfo->interest);
 
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -379,8 +374,8 @@ class Generate extends BaseController
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
                 "cashOnHand" => $value->amount,
-                "principal" => $value->loanAmount,
-                "interest" => $value->computationDetails->amountPercentage,
+                "principal" => $linfo->loanAmount,
+                "interest" => $linfo->computationDetails->amountPercentage,
                 "interestPassedMonth" => $pastDue,
             ];
         }
@@ -498,12 +493,14 @@ class Generate extends BaseController
         foreach ($query as $key => $value) {
             $cinfo = $value->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
-            $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $value->itemDetails = json_decode($value->itemDetails);
             $addressText = $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label;
+
+            $rinfo = $value->renewRecord;
+
+            $linfo = $value->loanInfo;
+            $linfo->itemDetails = json_decode($linfo->itemDetails);
             $item = [];
-            foreach ($value->itemDetails as $ikey => $ivalue) {
+            foreach ($linfo->itemDetails as $ikey => $ivalue) {
                 $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
             }
             $item = implode(" ", $item);
@@ -515,10 +512,10 @@ class Generate extends BaseController
                 "no" => $key + 1,
                 "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
                 "pawnTicket" => $value->orNumber,
-                "serviceCharge" => $value->charge,
-                "principal" => number_format($value->loanAmount, 2, '.', ','),
-                "redeemed" => $value->redeemDate,
-                "canceled" => "",
+                "serviceCharge" => $linfo->charge,
+                "principal" => number_format($linfo->loanAmount, 2, '.', ','),
+                "redeemed" => $linfo->redeemDate,
+                "canceled" => count($rinfo) !== 0 ? date("F j, Y", strtotime($rinfo[sizeof($rinfo) - 1]->createdDate)) : "",
                 "spoiled" => $spoiledValue,
                 "address" => $this->truncateString($addressText, 25),
                 "items" => $this->truncateString($item, 52)
@@ -644,11 +641,12 @@ class Generate extends BaseController
         foreach ($query as $key => $value) {
             $cinfo = $value->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $cinfo->identifications = json_decode($cinfo->identifications);
-            $cinfo->otherDetails = json_decode($cinfo->otherDetails);
-            $value->itemDetails = json_decode($value->itemDetails);
+            $rinfo = $value->renewRecord;
+
+            $linfo = $value->loanInfo;
+            $linfo->itemDetails = json_decode($linfo->itemDetails);
             $item = [];
-            foreach ($value->itemDetails as $ikey => $ivalue) {
+            foreach ($linfo->itemDetails as $ikey => $ivalue) {
                 $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
             }
             $spoiledValue = $value->transactionType == 5 ? "ST" : "";
@@ -659,10 +657,10 @@ class Generate extends BaseController
                 "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
                 "date" => date("F j, Y", strtotime($value->createdDate)),
                 "pawnTicket" => $value->orNumber,
-                "serviceCharge" => $value->charge,
-                "principal" => number_format($value->loanAmount, 2, '.', ','),
-                "redeemed" => $value->redeemDate,
-                "canceled" => "",
+                "serviceCharge" => $linfo->charge,
+                "principal" => number_format($linfo->loanAmount, 2, '.', ','),
+                "redeemed" => $linfo->redeemDate,
+                "canceled" => count($rinfo) !== 0 ? date("F j, Y", strtotime($rinfo[sizeof($rinfo) - 1]->createdDate)) : "",
                 "spoiled" => $spoiledValue,
                 "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label,
                 "items" => implode(" ", $item)

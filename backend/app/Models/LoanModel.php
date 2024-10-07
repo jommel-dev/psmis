@@ -187,7 +187,6 @@ class LoanModel extends Model
     public function getTenColumnReportList($params){
 
         $sql = "SELECT * FROM ".$this->tableTransaction." a
-        INNER JOIN ".$this->table." b ON a.loanId = b.id
         WHERE a.status IN ('renew', 'redeem') AND 
         a.orStatus = :status: AND 
         DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
@@ -197,7 +196,18 @@ class LoanModel extends Model
 
         $all = array_map(function($el){
             foreach($el as $key => $val){
-                $clientInfo = $this->db->table($this->applicantTable)->where('id', $el->customerId)->get();
+                $linfoParams = [
+                    "id" => $el->loanId
+                ];
+                $lq = "SELECT id, itemDetails, computationDetails, payStatus, interest, charge, loanAmount, redeemDate, customerId FROM ". $this->table ." WHERE id = :id:";
+                $loanInfo = $this->db->query($lq, $linfoParams);
+                $el->loanInfo = $loanInfo->getRow();
+
+                $cInfoParams = [
+                    "id" => $el->loanInfo->customerId
+                ];
+                $cq = "SELECT lastName, firstName, suffix, middleName FROM ". $this->applicantTable ." WHERE id = :id:";
+                $clientInfo = $this->db->query($cq, $cInfoParams);
                 $el->customerInfo = $clientInfo->getRow();
             }
             return $el;
@@ -209,7 +219,6 @@ class LoanModel extends Model
     public function getTwentyFourColumnReportList($params){
 
         $sql = "SELECT * FROM ".$this->tableTransaction." a
-        INNER JOIN ".$this->table." b ON a.loanId = b.id
         WHERE a.status IN ('new', 'spoiled') AND 
         a.orStatus = :status: AND 
         DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
@@ -219,13 +228,27 @@ class LoanModel extends Model
 
         $all = array_map(function($el){
             foreach($el as $key => $val){
-                $clientInfo = $this->db->table($this->applicantTable)->where('id', $el->customerId)->get();
+                $linfoParams = [
+                    "id" => $el->loanId
+                ];
+                $lq = "SELECT id, itemDetails, charge, loanAmount, redeemDate, customerId FROM ". $this->table ." WHERE id = :id:";
+                $loanInfo = $this->db->query($lq, $linfoParams);
+                $el->loanInfo = $loanInfo->getRow();
+
+                $cInfoParams = [
+                    "id" => $el->loanInfo->customerId
+                ];
+                $cq = "SELECT addressDetails, addressLine, lastName, firstName, suffix, middleName FROM ". $this->applicantTable ." WHERE id = :id:";
+                $clientInfo = $this->db->query($cq, $cInfoParams);
                 $el->customerInfo = $clientInfo->getRow();
+
+
+                $el->renewRecord = $this->getAllLoanHistory(["loanId" => $el->loanInfo->id, "actionType" => 5]);
             }
             return $el;
         }, $results);
 
         return $all;
     }
-
+    
 }
