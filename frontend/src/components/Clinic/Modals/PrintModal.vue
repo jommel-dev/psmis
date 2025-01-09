@@ -74,6 +74,7 @@ export default {
             this.$emit('updatePrintStatus', false);
         },
         async createPDF(data){
+            // const url = 'files/vikingsPrint.pdf'
             const url = 'files/printReceipt.pdf'
             // const url = 'files/draftInvoice.pdf'
             const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
@@ -91,7 +92,7 @@ export default {
             // OR Number
             fpage.drawText(`${data.oldTicket}`, {
               x: 430,
-              y: 765,
+              y: 775,
               size: 14,
               color: rgb(0, 0, 0),
             })
@@ -131,7 +132,7 @@ export default {
             let grantDate = moment().format("LL");
             fpage.drawText(`${grantDate}`, {
                 x: 140,
-                y: 660,
+                y: 670,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -139,7 +140,7 @@ export default {
             // Date Maturity
             fpage.drawText(`${moment(data.maturityDate).format("LL")}`, {
                 x: 430,
-                y: 660,
+                y: 670,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -147,7 +148,7 @@ export default {
             // Date Expiry
             fpage.drawText(`${moment(data.expirationDate).format("LL")}`, {
                 x: 430,
-                y: 645,
+                y: 655,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -155,22 +156,22 @@ export default {
             // Name
             fpage.drawText(`${data.customerInfo.firstName} ${data.customerInfo.middleName} ${data.customerInfo.lastName}`, {
                 x: 93,
-                y: 632,
+                y: 642,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Address
             fpage.drawText(`${data.customerInfo.addressLine} ${data.customerInfo.addressDetails?.barangay.label} ${data.customerInfo.addressDetails?.city.label}`, {
                 x: 340,
-                y: 632,
+                y: 642,
                 size: 9,
                 color: rgb(0, 0, 0),
             })
 
             // Word Amount
             fpage.drawText(`${data.amountWord.toUpperCase()} PESOS ONLY`, {
-                x: 154,
-                y: 604,
+                x: 134,
+                y: 614,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -179,8 +180,8 @@ export default {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
                 })}`, {
-                x: 496,
-                y: 604,
+                x: 466,
+                y: 614,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -189,28 +190,28 @@ export default {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
                 })}`, {
-                x: 496,
-                y: 575,
+                x: 476,
+                y: 582,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
 
             // Interest & months
             fpage.drawText(`${data.interestWord}`, {
-                x: 137,
-                y: 585,
+                x: 127,
+                y: 595,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             fpage.drawText(`${data.interest}`, {
-                x: 210,
-                y: 585,
+                x: 200,
+                y: 595,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             fpage.drawText(`1`, {
                 x: 260,
-                y: 585,
+                y: 595,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -219,36 +220,40 @@ export default {
             // Interest 2%
             fpage.drawText(`2%`, {
                 x: 493,
-                y: 560,
+                y: 568,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Principal
-            fpage.drawText(`${data.loanAmount}`, {
-                x: 480,
-                y: 535,
+            fpage.drawText(`${Number(data.loanAmount).toLocaleString('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+                })}`, {
+                x: 460,
+                y: 545,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Interest per month
             fpage.drawText(`${data.computationDetails.amountPercentage}/MONTH`, {
-                x: 480,
-                y: 522,
+                x: 460,
+                y: 527,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Charge
 
             fpage.drawText(`${data.charge}`, {
-                x: 480,
-                y: 508,
+                x: 460,
+                y: 512,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Interest 5%
             fpage.drawText(`${data.interest}%`, {
                 x: 480,
-                y: 470,
+                y: 480,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -256,7 +261,7 @@ export default {
             // Grace Period
             let graceMonth = moment(data.gracePeriodDate).format("YYYY-MM-15")
             fpage.drawText(moment(graceMonth).format("LL"), {
-                x: 480,
+                x: 460,
                 y: 380,
                 size: 11,
                 color: rgb(0, 0, 0),
@@ -270,8 +275,8 @@ export default {
                 list.push(res);
             });
             fpage.drawText(list.join(", "), {
-                x: 60,
-                y: 530,
+                x: 40,
+                y: 540,
                 size: 11,
                 spacing: 1,
                 lineHeight: 11,
@@ -291,7 +296,7 @@ export default {
             // })
             fpage.drawText(`${data.customerInfo.contactNo}`, {
                 x: 369,
-                y: 434,
+                y: 438,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
