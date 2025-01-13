@@ -62,7 +62,7 @@
             <tr>
                 <td style="text-align: center;"><?= $row['no'] ?></td>
                 <td style="text-align: center;"><?= $row['pawnerName'] ?></td>
-                <td style="font-size:9pt; text-align: center;"><?= $generatedDate ?></td>
+                <td style="font-size:9pt; text-align: center;"><?= $row['date'] ?></td>
                 <td style="text-align: center;"><?= $row['pawnTicket'] ?></td>
                 <td style="text-align: center;"><?= $row['serviceCharge'] ?></td>
                 <td style="text-align: center;"><?= $row['principal'] ?></td>

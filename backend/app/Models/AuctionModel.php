@@ -63,7 +63,7 @@ class AuctionModel extends Model
 
         $sql = "SELECT * FROM ".$this->table." a
         WHERE a.status = 0 AND
-        DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
+        DATE_FORMAT(a.loanDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
        
         $query = $this->db->query($sql, $params);
         $results = $query->getResult();
@@ -83,6 +83,10 @@ class AuctionModel extends Model
 
     public function updateAuctionData($where, $setData){
         $query = $this->db->table($this->table)->set($setData)->where($where)->update();
+        return $query ? true : false;
+    }
+    public function deleteAuctionData($where){
+        $query = $this->db->table($this->table)->where($where)->delete();
         return $query ? true : false;
     }
 

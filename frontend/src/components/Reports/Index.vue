@@ -312,7 +312,7 @@ export default {
                                 return el.label === this.selected
                             });
             getApiUrl = getApiUrl.length > 0 ? {...getApiUrl[0]} : false;
-            let url = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}/${this.formFilter.status.value}`;
+            let url = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}/${this.dateSelected.to}/${this.formFilter.status.value}`;
             // 
             if(getApiUrl.label === "Auction Item Report"){
                 url = `${process.env.API_BASE}/${getApiUrl.pdfprint}/${this.dateSelected.from}/${this.dateSelected.to}`

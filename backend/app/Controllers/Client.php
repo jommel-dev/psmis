@@ -770,6 +770,19 @@ class Client extends BaseController
         //Get API Request Data from UI
         $payload = $this->request->getJSON();
        
+        // Check if the Loan is already existed on Auction and been Renewed
+        $auctionWhere = [
+            'loanId' => $payload->loanId
+        ];
+
+        $checkIfAuctioned = $this->auctionModel->where($auctionWhere)->get()->getRow();
+
+        // If Exists Delete the record on Auction
+        if($checkIfAuctioned){
+            $this->auctionModel->deleteAuctionData([
+                "id" => $checkIfAuctioned->id
+            ]);
+        }
 
         // Update the Loan Data and Insert Transaction
         $where = ['id' => $payload->loanId];
@@ -839,6 +852,19 @@ class Client extends BaseController
         //Get API Request Data from UI
         $payload = $this->request->getJSON();
        
+        // Check if the Loan is already existed on Auction and been Renewed
+        $auctionWhere = [
+            'loanId' => $payload->loanId
+        ];
+
+        $checkIfAuctioned = $this->auctionModel->where($auctionWhere)->get()->getRow();
+
+        // If Exists Delete the record on Auction
+        if($checkIfAuctioned){
+            $this->auctionModel->deleteAuctionData([
+                "id" => $checkIfAuctioned->id
+            ]);
+        }
 
         // Update the Loan Data and Insert Transaction
         $where = ['id' => $payload->loanId];

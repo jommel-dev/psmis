@@ -108,8 +108,8 @@ export default {
                 dateList.push(res);
             });
             fpage.drawText(dateList.join("\r\n"), {
-                x: 470,
-                y: 735,
+                x: 474,
+                y: 755,
                 size: 9,
                 spacing: 1,
                 lineHeight: 11,
@@ -122,7 +122,7 @@ export default {
             // Loan Status
             fpage.drawText(`${data.loanStatus}`, {
                 x: 50,
-                y: 690,
+                y: 730,
                 size: 30,
                 color: rgb(0, 0, 0),
             })
@@ -132,7 +132,7 @@ export default {
             let grantDate = moment().format("LL");
             fpage.drawText(`${grantDate}`, {
                 x: 140,
-                y: 670,
+                y: 700,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -140,7 +140,7 @@ export default {
             // Date Maturity
             fpage.drawText(`${moment(data.maturityDate).format("LL")}`, {
                 x: 430,
-                y: 670,
+                y: 695,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -148,7 +148,7 @@ export default {
             // Date Expiry
             fpage.drawText(`${moment(data.expirationDate).format("LL")}`, {
                 x: 430,
-                y: 655,
+                y: 680,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -156,14 +156,14 @@ export default {
             // Name
             fpage.drawText(`${data.customerInfo.firstName} ${data.customerInfo.middleName} ${data.customerInfo.lastName}`, {
                 x: 93,
-                y: 642,
+                y: 672,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Address
             fpage.drawText(`${data.customerInfo.addressLine} ${data.customerInfo.addressDetails?.barangay.label} ${data.customerInfo.addressDetails?.city.label}`, {
                 x: 340,
-                y: 642,
+                y: 672,
                 size: 9,
                 color: rgb(0, 0, 0),
             })
@@ -171,7 +171,7 @@ export default {
             // Word Amount
             fpage.drawText(`${data.amountWord.toUpperCase()} PESOS ONLY`, {
                 x: 134,
-                y: 614,
+                y: 644,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -181,7 +181,7 @@ export default {
                 maximumFractionDigits: 2
                 })}`, {
                 x: 466,
-                y: 614,
+                y: 644,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -191,7 +191,7 @@ export default {
                 maximumFractionDigits: 2
                 })}`, {
                 x: 476,
-                y: 582,
+                y: 610,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -199,19 +199,19 @@ export default {
             // Interest & months
             fpage.drawText(`${data.interestWord}`, {
                 x: 127,
-                y: 595,
+                y: 625,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             fpage.drawText(`${data.interest}`, {
                 x: 200,
-                y: 595,
+                y: 625,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             fpage.drawText(`1`, {
                 x: 260,
-                y: 595,
+                y: 625,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -220,7 +220,7 @@ export default {
             // Interest 2%
             fpage.drawText(`2%`, {
                 x: 493,
-                y: 568,
+                y: 598,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -231,14 +231,14 @@ export default {
                 maximumFractionDigits: 2
                 })}`, {
                 x: 460,
-                y: 545,
+                y: 573,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Interest per month
             fpage.drawText(`${data.computationDetails.amountPercentage}/MONTH`, {
                 x: 460,
-                y: 527,
+                y: 557,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -246,14 +246,14 @@ export default {
 
             fpage.drawText(`${data.charge}`, {
                 x: 460,
-                y: 512,
+                y: 542,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
             // Interest 5%
             fpage.drawText(`${data.interest}%`, {
                 x: 480,
-                y: 480,
+                y: 510,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -262,7 +262,7 @@ export default {
             let graceMonth = moment(data.gracePeriodDate).format("YYYY-MM-15")
             fpage.drawText(moment(graceMonth).format("LL"), {
                 x: 460,
-                y: 380,
+                y: 410,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -276,7 +276,7 @@ export default {
             });
             fpage.drawText(list.join(", "), {
                 x: 40,
-                y: 540,
+                y: 568,
                 size: 11,
                 spacing: 1,
                 lineHeight: 11,
@@ -296,7 +296,7 @@ export default {
             // })
             fpage.drawText(`${data.customerInfo.contactNo}`, {
                 x: 369,
-                y: 438,
+                y: 468,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
@@ -304,7 +304,7 @@ export default {
 
             fpage.drawText(moment().format("l LT"), {
                 x: 50,
-                y: 348,
+                y: 378,
                 size: 11,
                 color: rgb(0, 0, 0),
             })

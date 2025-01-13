@@ -134,10 +134,10 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->get('print/auctions/(:any)/(:any)', 'Generate::generateAuctionList/$1/$2');
 
 		$routes->post('report/10columns', 'Generate::tenColumnReport');
-		$routes->get('print/10columns/(:any)/(:any)', 'Generate::generateTenCoulumn/$1/$2');
+		$routes->get('print/10columns/(:any)/(:any)/(:any)', 'Generate::generateTenCoulumn/$1/$2/$3');
 
 		$routes->post('report/24columns', 'Generate::twentyFourCoulumnReport');
-		$routes->get('print/24columns/(:any)/(:any)', 'Generate::generateTwentyFourCoulumn/$1/$2');
+		$routes->get('print/24columns/(:any)/(:any)/(:any)', 'Generate::generateTwentyFourCoulumn/$1/$2/$3');
 		// Report Columns
 	});
 

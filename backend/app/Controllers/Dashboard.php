@@ -379,7 +379,7 @@ class Dashboard extends BaseController
                 if($value->payStatus === $value->terms){
                     // check the Curr Date > Grace Period 
                     // 'createdDate'=>$payload->currDate
-                    $dateGrace = date($value->gracePeriodDate);
+                    $dateGrace = date($value->expirationDate);
                     if($date_now > $dateGrace){
                         $updateDate = [
                             'loanStatus' => 'Auctioned Expire',
@@ -391,7 +391,7 @@ class Dashboard extends BaseController
                         //     "actionTaken" => "Loan gets expired and moved to Auction List",
                         //     "actionType" => 2,
                         //     "snapShot" => json_encode($value),
-                        //     "createdBy" => 0,
+                        //     "createdBy" => 1,
                         // ];
                         // $this->createHistory($history);
                         $this->insertToAuctionList($value);
@@ -443,6 +443,7 @@ class Dashboard extends BaseController
                 'customerId' => $dataItem->customerId, 
                 'loanId' => $dataItem->id, 
                 'expDate' => $dataItem->gracePeriodDate, 
+                'loanDate' => $dataItem->createdDate, 
                 'orNumber' => $dataItem->orNumber, 
                 'catId' => $dataItem->catId, 
                 'itemInfo' => $value->qty ." ". $value->unit->value ." ". $value->type->value .", ". $value->description .", ". $value->property .", ". $value->weight, 

@@ -151,9 +151,12 @@ class Generate extends BaseController
     }
 
     // 10 Columns
-    public function generateTenCoulumn($date, $reportType){
+    public function generateTenCoulumn($dateFrom, $dateTo, $reportType){
+        $genDate = $dateFrom === $dateTo ? 
+        date("F j, Y", strtotime($dateFrom)) : 
+        date("F j, Y", strtotime($dateFrom)) ." - ". date("F j, Y", strtotime($dateTo));
         $list = [
-            "generatedDate" => date("F j, Y", strtotime($date)),
+            "generatedDate" => $genDate,
             "columns" => [
                 [ 
                     "name"=>'no', 
@@ -223,8 +226,8 @@ class Generate extends BaseController
         
         $query = $this->loanModel->getTenColumnReportList([
             "status" => $reportType,
-            "dateFrom" => $date,
-            "dateTo" => $date
+            "dateFrom" => $dateFrom,
+            "dateTo" => $dateTo
         ]);
         // print_r($query);
         // exit;
@@ -400,9 +403,12 @@ class Generate extends BaseController
     }
 
     // 24 Column Report
-    public function generateTwentyFourCoulumn($date, $reportType){
+    public function generateTwentyFourCoulumn($dateFrom, $dateTo, $reportType){
+        $genDate = $dateFrom === $dateTo ? 
+        date("F j, Y", strtotime($dateFrom)) : 
+        date("F j, Y", strtotime($dateFrom)) ." - ". date("F j, Y", strtotime($dateTo));
         $list = [
-            "generatedDate" => date("F j, Y", strtotime($date)),
+            "generatedDate" => $genDate,
             "columns" => [
                 [ 
                     "name"=>'no', 
@@ -486,8 +492,8 @@ class Generate extends BaseController
         
         $query = $this->loanModel->getTwentyFourColumnReportList([
             "status" => $reportType,
-            "dateFrom" => $date,
-            "dateTo" => $date
+            "dateFrom" => $dateFrom,
+            "dateTo" => $dateTo
         ]);
 
         foreach ($query as $key => $value) {
@@ -501,7 +507,11 @@ class Generate extends BaseController
             $linfo->itemDetails = json_decode($linfo->itemDetails);
             $item = [];
             foreach ($linfo->itemDetails as $ikey => $ivalue) {
-                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
+                if(isset($ivalue->remarks)){
+                    $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
+                } else {
+                    $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property;
+                }
             }
             $item = implode(" ", $item);
             
@@ -512,6 +522,7 @@ class Generate extends BaseController
                 "no" => $key + 1,
                 "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
                 "pawnTicket" => $value->orNumber,
+                "date" => date("F j, Y", strtotime($value->createdDate)),
                 "serviceCharge" => $linfo->charge,
                 "principal" => number_format($linfo->loanAmount, 2, '.', ','),
                 "redeemed" => $linfo->redeemDate,
@@ -647,7 +658,11 @@ class Generate extends BaseController
             $linfo->itemDetails = json_decode($linfo->itemDetails);
             $item = [];
             foreach ($linfo->itemDetails as $ikey => $ivalue) {
-                $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
+                if(isset($ivalue->remarks)){
+                    $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property .", ". $ivalue->remarks;
+                } else {
+                    $item[$ikey] = $ivalue->qty ." ". $ivalue->unit->value ." ". $ivalue->type->value .", ". $ivalue->description .", ". $ivalue->weight .", ". $ivalue->property;
+                }
             }
             $spoiledValue = $value->transactionType == 5 ? "ST" : "";
             
