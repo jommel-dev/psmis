@@ -423,7 +423,6 @@ export default {
         this.getAllHistoryList();
         this.getProfile();
         this.setDetails
-        this.getPastDue()
     },
     computed: {
         user: function(){
@@ -552,13 +551,18 @@ export default {
             let amount = 0;
             // Get the past due if redeemed late 
             // get the diff. from date created to current date
-            let dateOne = moment(this.loanData.origData.createdDate).format('YYYY-MM-DD')
+            let hasRenewals = this.renewTransaction.length > 0;
+            let dateOne = hasRenewals ? 
+            moment(this.renewTransaction[0].createdDate).format('YYYY-MM-DD') :
+            moment(this.loanData.origData.createdDate).format('YYYY-MM-DD')
             let duration = moment(this.redeemDate).diff(dateOne, 'months');
+
             let pastdue = duration > this.loanData.terms ? 
             duration - Number(this.loanData.terms) : 
             0;
 
-            if(duration > this.loanData.terms){
+            
+            if(duration > this.loanData.terms && pastdue !== 0){
                 this.pastDueCount = pastdue + 1
                 amount = Number(this.loanData.computationDetails.amountPercentage) * this.pastDueCount 
             }
