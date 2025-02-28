@@ -247,7 +247,7 @@ class Generate extends BaseController
                 "key" => $value->id,
                 "no" => $key + 1,
                 "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
-                "date" => date("F j, Y", strtotime($value->createdDate)),
+                "date" => date("F j, Y", strtotime($linfo->createdDate)),
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
                 "cashOnHand" => $value->amount,
@@ -373,7 +373,7 @@ class Generate extends BaseController
                 "key" => $value->id,
                 "no" => $key + 1,
                 "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
-                "date" => date("F j, Y", strtotime($value->createdDate)),
+                "date" => date("F j, Y", strtotime($linfo->createdDate)),
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
                 "cashOnHand" => $value->amount,
@@ -499,7 +499,7 @@ class Generate extends BaseController
         foreach ($query as $key => $value) {
             $cinfo = $value->customerInfo;
             $cinfo->addressDetails = json_decode($cinfo->addressDetails);
-            $addressText = $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label;
+            $addressText = $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label || '-' .", ". $cinfo->addressDetails->city->label || '-' .", ". $cinfo->addressDetails->province->label || '-';
 
             $rinfo = $value->renewRecord;
 
@@ -677,7 +677,7 @@ class Generate extends BaseController
                 "redeemed" => $linfo->redeemDate,
                 "canceled" => count($rinfo) !== 0 ? date("F j, Y", strtotime($rinfo[sizeof($rinfo) - 1]->createdDate)) : "",
                 "spoiled" => $spoiledValue,
-                "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label,
+                "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label || '-' .", ". $cinfo->addressDetails->city->label || '-' .", ". $cinfo->addressDetails->province->label || '-',
                 "items" => implode(" ", $item)
             ];
         }

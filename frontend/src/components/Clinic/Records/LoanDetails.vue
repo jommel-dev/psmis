@@ -101,8 +101,8 @@
 
                     <q-tab-panels v-model="tab" animated>
 
-                        <q-tab-panel name="renewal">
-                            <div class="row">
+                        <q-tab-panel name="renewal" >
+                            <div class="row" v-if="loanDetails.status !== '4'">
                                 <div class="col-12 col-md-12 q-pl-md">
                                     <div class="text-subtitle1 text-bold">
                                     Loan Amount: {{convertCurrency(Number(loanDetails.loanAmount))}}
@@ -165,6 +165,9 @@
                                         Spoiled Ticket
                                     </q-btn>
                                 </div> -->
+                                
+                            </div>
+                            <div class="row">
                                 <div class="col col-md-12 q-pl-md q-mt-md">
                                     <q-table
                                         flat
@@ -213,9 +216,21 @@
             <div class="row">
               <div class="col-12 col-sm-12 q-pa-sm">
                 <span class="text-h5">Loan Renew Amount: {{computeRenewAmount()}}</span><br/>
+                <span class="text-h5">Past Due Months: {{pastDueCount}}</span><br/>
+                <span class="text-h5">Past Due Amount: {{getPastDue()}}</span><br/>
                 <span class="text-h5">Penalty: {{computeRenewPenaltyAmount()}}</span>
               </div>
               <div class="col-12 col-sm-6 q-pa-sm">
+                <q-input
+                    type="date"
+                    class="q-mb-sm"
+                    outlined
+                    v-model="redeemDate"
+                    label="Date Renew"
+                    stack-label
+                    dense
+                    hint="Note: Only modify this if needed."
+                />
                 <q-input
                   class="q-mb-sm"
                   outlined
@@ -246,7 +261,7 @@
               <div class="col-12 col-sm-6 q-pa-sm modalItemBorder">
                 <span class="text-title">Summary</span><br>
                 <q-separator />
-                <span class="text-title"><strong>Renew Amount: </strong> {{convertCurrency(computeRenewAmount() + computeRenewPenaltyAmount())}}</span><br>
+                <span class="text-title"><strong>Renew Amount: </strong> {{convertCurrency(computeRenewAmount() + computeRenewPenaltyAmount() + getPastDue())}}</span><br>
                 <span class="text-title"><strong>Cash On Hand: </strong> {{ this.price }}</span><br>
                 <span class="text-title"><strong>Discount: </strong> {{ this.discount }}</span><br><br>
                 <q-separator />
@@ -271,9 +286,9 @@
         <q-card-section class="q-pt-none">
             <div class="row">
               <div class="col-12 col-sm-12 q-pa-sm">
-                <span class="text-h5">Loan Amount To Be Paid: <br>
-                  {{convertCurrency(computeFullAmount())}}
-                </span><br/>
+                <span class="text-h5">Loan Amount To Be Paid: {{convertCurrency(computeFullAmount())}}</span><br/>
+                <span class="text-h5">Expired Due Months: {{pastDueCount}}</span><br/>
+                <span class="text-h5">Past Due Amount: {{convertCurrency(getPastDue())}}</span><br/>
                 <span class="text-h5">Penalty: {{convertCurrency(computeRenewPenaltyAmount())}}</span>
               </div>
               <div class="col-12 col-sm-6 q-pa-sm">
@@ -317,7 +332,7 @@
               <div class="col-12 col-sm-6 q-pa-sm modalItemBorder">
                 <span class="text-title">Summary</span><br>
                 <q-separator />
-                <span class="text-title"><strong>Amount in Full: </strong> {{convertCurrency(computeFullAmount() + computeRenewPenaltyAmount())}}</span><br>
+                <span class="text-title"><strong>Amount in Full: </strong> {{convertCurrency(computeFullAmount() + computeRenewPenaltyAmount() + getPastDue())}}</span><br>
                 <span class="text-title"><strong>Cash On Hand: </strong> {{ this.price }}</span><br>
                 <span class="text-title"><strong>Discount: </strong> {{ this.discount }}</span><br><br>
                 <q-separator />
@@ -370,6 +385,7 @@ export default {
             renewTransaction: [],
             allTransaction: [],
             loanDetails: {},
+            pastDueCount: 0,
             seriesDetatils:{},
             // Renew and Pay in Full
             openModal: false,
@@ -407,6 +423,7 @@ export default {
         this.getAllHistoryList();
         this.getProfile();
         this.setDetails
+        this.getPastDue()
     },
     computed: {
         user: function(){
@@ -531,10 +548,29 @@ export default {
         }
     },
     methods:{
+        getPastDue(){
+            let amount = 0;
+            // Get the past due if redeemed late 
+            // get the diff. from date created to current date
+            let dateOne = moment(this.loanData.origData.createdDate).format('YYYY-MM-DD')
+            let duration = moment(this.redeemDate).diff(dateOne, 'months');
+            let pastdue = duration > this.loanData.terms ? 
+            duration - Number(this.loanData.terms) : 
+            0;
+
+            if(duration > this.loanData.terms){
+                this.pastDueCount = pastdue + 1
+                amount = Number(this.loanData.computationDetails.amountPercentage) * this.pastDueCount 
+            }
+
+            return amount;
+
+        },
+
         computeRenewAmount(){
             let amount = 0;
             if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate ){
-                amount = Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)+1)
+                amount = Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus))
             } else {
                 amount = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
             }
@@ -543,9 +579,9 @@ export default {
         },
         computeFullAmount(){
             let amount = 0;
-            // convertCurrency(Number(loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))
+            
             if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate){
-                amount = Number(this.loanDetails.loanAmount) + Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)+1)
+                amount = Number(this.loanDetails.loanAmount) + Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus))
             } else {
                 amount = Number(this.loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))
             }
@@ -555,7 +591,7 @@ export default {
         computeRenewPenaltyAmount(){
             let amount = 0;
             if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate){
-                amount = Number(this.loanData.loanAmount) * 0.02
+                amount = (Number(this.loanData.loanAmount) * 0.02) * this.pastDueCount
             }
             return amount;
         },
@@ -718,10 +754,12 @@ export default {
                         officialReceipt:  this.officialReceipt,
                         discount:  this.discount,
                         orStatus: Number(this.loanData.orStatus),
+                        pastDue: this.pastDueCount,
                         amount: this.totalPrice,
                         cashOnHand: this.price,
                         status: 'renew',
                         transactionType: 0,
+                        createdDate: moment(this.redeemDate).format('YYYY-MM-DD h:mm:ss'),
                         createdBy: this.user.userId
                     }
                 }
@@ -784,7 +822,6 @@ export default {
                         oldTicket: this.loanData.orNumber,
                         loanStatus: "Redeemed",
                         redeemDate: moment(this.redeemDate).format('YYYY-MM-DD'),
-                        payStatus: 0,
                         orNumber: this.loanData.orNumber,
                         status: 4
                     },

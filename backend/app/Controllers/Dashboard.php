@@ -385,17 +385,17 @@ class Dashboard extends BaseController
                             'loanStatus' => 'Auctioned Expire',
                             'status' => 0,
                         ];
-                        $qUpdate = $this->loanModel->updateLoanApplication(['id' => $value->id], $updateDate);
-                        // $history = [
-                        //     "loanId" => $value->id,
-                        //     "actionTaken" => "Loan gets expired and moved to Auction List",
-                        //     "actionType" => 2,
-                        //     "snapShot" => json_encode($value),
-                        //     "createdBy" => 1,
-                        // ];
-                        // $this->createHistory($history);
+                        $this->loanModel->updateLoanApplication(['id' => $value->id], $updateDate);
+                        $history = [
+                            "loanId" => $value->id,
+                            "actionTaken" => "Loan gets expired and moved to Auction List",
+                            "actionType" => 2,
+                            "snapShot" => json_encode($value),
+                            "createdBy" => 1,
+                        ];
+                        $this->createHistory($history);
                         $this->insertToAuctionList($value);
-                    }
+                    } 
                 } else {
                     // first check curr date > maturity
                     // check for the payStatus that starts to 1 and check curr date > maturity date
