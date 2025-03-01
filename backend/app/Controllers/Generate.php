@@ -239,9 +239,11 @@ class Generate extends BaseController
             $linfo = $value->loanInfo;
             $linfo->itemDetails = json_decode($linfo->itemDetails);
             $linfo->computationDetails = json_decode($linfo->computationDetails);
-            $pastDue = $linfo->payStatus <= 1 ? 0 : ($linfo->computationDetails->amountPercentage * $linfo->payStatus);
             $value->amountWord = $fmoneyword->format($linfo->loanAmount);
             $value->interestWord = $fmoneyword->format($linfo->interest);
+            $pastDue = $linfo->payStatus <= 1 ? 0 : ($value->pastDue * $linfo->computationDetails->amountPercentage) + (($linfo->loanAmount * 0.02) * $value->pastDue);
+            $earnedInterest = $linfo->payStatus <= 1 ? $linfo->computationDetails->amountPercentage : $linfo->computationDetails->amountPercentage * $linfo->terms;
+            $coh = $linfo->loanAmount + $pastDue + $earnedInterest;
 
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -250,9 +252,9 @@ class Generate extends BaseController
                 "date" => date("F j, Y", strtotime($linfo->createdDate)),
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
-                "cashOnHand" => $value->amount,
+                "cashOnHand" => number_format($coh, 2, '.', ','),
                 "principal" => number_format($linfo->loanAmount, 2, '.', ','),
-                "interest" => number_format($linfo->computationDetails->amountPercentage, 2, '.', ','),
+                "interest" => number_format($earnedInterest, 2, '.', ','),
                 "interestPassedMonth" => number_format($pastDue, 2, '.', ','),
             ];
         }
@@ -365,9 +367,13 @@ class Generate extends BaseController
             $linfo = $value->loanInfo;
             $linfo->itemDetails = json_decode($linfo->itemDetails);
             $linfo->computationDetails = json_decode($linfo->computationDetails);
-            $pastDue = $linfo->payStatus <= 1 ? 0 : ($linfo->computationDetails->amountPercentage * $linfo->payStatus);
+            $pastDue = $linfo->payStatus <= 1 ? 0 : ($value->pastDue * $linfo->computationDetails->amountPercentage) + (($linfo->loanAmount * 0.02) * $value->pastDue);
+            $earnedInterest = $linfo->payStatus <= 1 ? $linfo->computationDetails->amountPercentage : $linfo->computationDetails->amountPercentage * $linfo->terms;
+            // $pastDue = $linfo->payStatus <= 1 ? 0 : ($linfo->computationDetails->amountPercentage * $linfo->payStatus);
             $value->amountWord = $fmoneyword->format($linfo->loanAmount);
             $value->interestWord = $fmoneyword->format($linfo->interest);
+            // temporary Solution
+            $coh = $linfo->loanAmount + $pastDue + $earnedInterest;
 
             $list['list'][$key] = [
                 "key" => $value->id,
@@ -376,9 +382,9 @@ class Generate extends BaseController
                 "date" => date("F j, Y", strtotime($linfo->createdDate)),
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
-                "cashOnHand" => $value->amount,
+                "cashOnHand" => $coh,
                 "principal" => $linfo->loanAmount,
-                "interest" => $linfo->computationDetails->amountPercentage,
+                "interest" => $earnedInterest,
                 "interestPassedMonth" => $pastDue,
             ];
         }
@@ -526,7 +532,7 @@ class Generate extends BaseController
                 "serviceCharge" => $linfo->charge,
                 "principal" => number_format($linfo->loanAmount, 2, '.', ','),
                 "redeemed" => $linfo->redeemDate,
-                "canceled" => count($rinfo) !== 0 ? date("F j, Y", strtotime($rinfo[sizeof($rinfo) - 1]->createdDate)) : "",
+                "canceled" => count($rinfo) !== 0 && date("F j, Y", strtotime($dateFrom)) !== date("F j, Y", strtotime($rinfo[0]->createdDate)) ? date("F j, Y", strtotime($rinfo[sizeof($rinfo) - 1]->createdDate)) : "",
                 "spoiled" => $spoiledValue,
                 "address" => $this->truncateString($addressText, 25),
                 "items" => $this->truncateString($item, 52)
@@ -675,9 +681,9 @@ class Generate extends BaseController
                 "serviceCharge" => $linfo->charge,
                 "principal" => number_format($linfo->loanAmount, 2, '.', ','),
                 "redeemed" => $linfo->redeemDate,
-                "canceled" => count($rinfo) !== 0 ? date("F j, Y", strtotime($rinfo[sizeof($rinfo) - 1]->createdDate)) : "",
+                "canceled" => count($rinfo) !== 0 && date("F j, Y", strtotime($payload->from)) !== date("F j, Y", strtotime($rinfo[0]->createdDate)) ? date("F j, Y", strtotime($rinfo[sizeof($rinfo) - 1]->createdDate)) : "",
                 "spoiled" => $spoiledValue,
-                "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label || '-' .", ". $cinfo->addressDetails->city->label || '-' .", ". $cinfo->addressDetails->province->label || '-',
+                "address" => $cinfo->addressLine .", ". $cinfo->addressDetails->barangay->label .", ". $cinfo->addressDetails->city->label .", ". $cinfo->addressDetails->province->label,
                 "items" => implode(" ", $item)
             ];
         }

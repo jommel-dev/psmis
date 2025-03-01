@@ -199,7 +199,7 @@ class LoanModel extends Model
                 $linfoParams = [
                     "id" => $el->loanId
                 ];
-                $lq = "SELECT id, itemDetails, computationDetails, payStatus, interest, charge, loanAmount, redeemDate, customerId FROM ". $this->table ." WHERE id = :id:";
+                $lq = "SELECT id, terms, itemDetails, computationDetails, payStatus, interest, charge, loanAmount, redeemDate, customerId, createdDate FROM ". $this->table ." WHERE id = :id:";
                 $loanInfo = $this->db->query($lq, $linfoParams);
                 $el->loanInfo = $loanInfo->getRow();
 
