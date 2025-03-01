@@ -115,9 +115,9 @@
                                     <div class="text-subtitle1">
                                     Amount Interest: {{convertCurrency(computeRenewAmount())}}
                                     </div>
-                                    <div v-show="isExpired" class="text-subtitle1">
+                                    <!--<div v-show="isExpired" class="text-subtitle1">
                                     Amount Penalty (2%): {{convertCurrency(computeRenewPenaltyAmount())}}
-                                    </div>
+                                    </div>-->
                                     <div class="text-caption text-grey">
                                     Maturity Date: {{loanDetails.maturityDate}}
                                     </div>
@@ -134,9 +134,9 @@
                                     <div class="text-subtitle1">
                                     Amount Loan in Full: {{convertCurrency(computeFullAmount())}}
                                     </div>
-                                    <div v-show="isExpired" class="text-subtitle1">
+                                    <!--<div v-show="isExpired" class="text-subtitle1">
                                     Amount Penalty (2%): {{convertCurrency(computeRenewPenaltyAmount())}}
-                                    </div>
+                                    </div>-->
                                     <div class="text-caption text-grey">
                                     Expiration Date: {{loanDetails.expirationDate}}
                                     </div>
@@ -562,7 +562,7 @@ export default {
             0;
 
             
-            if(duration > this.loanData.terms && pastdue !== 0){
+            if((duration > this.loanData.terms && pastdue !== 0) || (this.loanData.terms === this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD'))){
                 this.pastDueCount = pastdue + 1
                 amount = Number(this.loanData.computationDetails.amountPercentage) * this.pastDueCount 
             }
@@ -574,7 +574,7 @@ export default {
         computeRenewAmount(){
             let amount = 0;
             if(this.loanData.terms <= this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD')){
-                amount = Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus))
+                amount = Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)) + Number(this.getPastDue()) + Number(this.computeRenewPenaltyAmount())
             } else {
                 amount = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
             }
@@ -585,7 +585,7 @@ export default {
             let amount = 0;
             
             if(this.loanData.terms <= this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD')){
-                amount = Number(this.loanDetails.loanAmount) + Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus))
+                amount = Number(this.loanDetails.loanAmount) + Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)) + Number(this.getPastDue()) + Number(this.computeRenewPenaltyAmount())
             } else {
                 amount = Number(this.loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))
             }
@@ -594,7 +594,7 @@ export default {
         },
         computeRenewPenaltyAmount(){
             let amount = 0;
-            if(this.loanData.terms <= this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD')){
+            if(this.loanData.terms === this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD')){
                 amount = (Number(this.loanData.loanAmount) * 0.02) * this.pastDueCount
             }
             return amount;
