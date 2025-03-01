@@ -215,10 +215,16 @@
         <q-card-section class="q-pt-none">
             <div class="row">
               <div class="col-12 col-sm-12 q-pa-sm">
-                <span class="text-h5">Loan Renew Amount: {{computeRenewAmount()}}</span><br/>
-                <span class="text-h5">Past Due Months: {{pastDueCount}}</span><br/>
-                <span class="text-h5">Past Due Amount: {{getPastDue()}}</span><br/>
-                <span class="text-h5">Penalty: {{computeRenewPenaltyAmount()}}</span>
+                <span class="text-h5">Loan Renew Amount: {{computeRenewAmount()}}</span><br/><br/>
+              </div>
+              <div class="col-12 col-sm-6 q-pa-sm">
+                <span class="text-h6">Summary:</span>
+              </div>
+              <div class="col-12 col-sm-6 q-pa-sm">
+                <span class="">Loan Interest: {{convertCurrency(Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus)))}}</span><br/>
+                <span class="">Past Due Months: {{pastDueCount}}</span><br/>
+                <span class="">Past Due Amount: {{getPastDue()}}</span><br/>
+                <span class="">Penalty: {{computeRenewPenaltyAmount()}}</span>
               </div>
               <div class="col-12 col-sm-6 q-pa-sm">
                 <q-input
@@ -261,7 +267,7 @@
               <div class="col-12 col-sm-6 q-pa-sm modalItemBorder">
                 <span class="text-title">Summary</span><br>
                 <q-separator />
-                <span class="text-title"><strong>Renew Amount: </strong> {{convertCurrency(computeRenewAmount() + computeRenewPenaltyAmount() + getPastDue())}}</span><br>
+                <span class="text-title"><strong>Renew Amount: </strong> {{convertCurrency(computeRenewAmount())}}</span><br>
                 <span class="text-title"><strong>Cash On Hand: </strong> {{ this.price }}</span><br>
                 <span class="text-title"><strong>Discount: </strong> {{ this.discount }}</span><br><br>
                 <q-separator />
@@ -287,9 +293,17 @@
             <div class="row">
               <div class="col-12 col-sm-12 q-pa-sm">
                 <span class="text-h5">Loan Amount To Be Paid: {{convertCurrency(computeFullAmount())}}</span><br/>
-                <span class="text-h5">Expired Due Months: {{pastDueCount}}</span><br/>
-                <span class="text-h5">Past Due Amount: {{convertCurrency(getPastDue())}}</span><br/>
-                <span class="text-h5">Penalty: {{convertCurrency(computeRenewPenaltyAmount())}}</span>
+                
+              </div>
+              <div class="col-12 col-sm-6 q-pa-sm">
+                <span class="text-h6">Summary:</span>
+              </div>
+              <div class="col-12 col-sm-6 q-pa-sm">
+                <span class="">Loan Interest: {{convertCurrency(Number(this.loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)))}}</span><br/>
+                <span class="">Expired Due Months: {{pastDueCount}}</span><br/>
+                <span class="">Past Due Amount: {{convertCurrency(getPastDue())}}</span><br/>
+                <span class="">Penalty: {{convertCurrency(computeRenewPenaltyAmount())}}</span>
+               
               </div>
               <div class="col-12 col-sm-6 q-pa-sm">
                 <q-input
@@ -332,7 +346,7 @@
               <div class="col-12 col-sm-6 q-pa-sm modalItemBorder">
                 <span class="text-title">Summary</span><br>
                 <q-separator />
-                <span class="text-title"><strong>Amount in Full: </strong> {{convertCurrency(computeFullAmount() + computeRenewPenaltyAmount() + getPastDue())}}</span><br>
+                <span class="text-title"><strong>Amount in Full: </strong> {{convertCurrency(computeFullAmount())}}</span><br>
                 <span class="text-title"><strong>Cash On Hand: </strong> {{ this.price }}</span><br>
                 <span class="text-title"><strong>Discount: </strong> {{ this.discount }}</span><br><br>
                 <q-separator />
