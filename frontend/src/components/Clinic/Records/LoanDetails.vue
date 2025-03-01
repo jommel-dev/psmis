@@ -573,7 +573,7 @@ export default {
 
         computeRenewAmount(){
             let amount = 0;
-            if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate ){
+            if(this.loanData.terms <= this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD')){
                 amount = Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus))
             } else {
                 amount = Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus)
@@ -584,7 +584,7 @@ export default {
         computeFullAmount(){
             let amount = 0;
             
-            if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate){
+            if(this.loanData.terms <= this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD')){
                 amount = Number(this.loanDetails.loanAmount) + Number(this.loanData.computationDetails.amountPercentage) * (Number(this.loanData.payStatus))
             } else {
                 amount = Number(this.loanDetails.loanAmount) + (Number(this.loanData.computationDetails.amountPercentage) * Number(this.loanData.payStatus))
@@ -594,7 +594,7 @@ export default {
         },
         computeRenewPenaltyAmount(){
             let amount = 0;
-            if(this.loanData.terms <= this.loanData.payStatus && dateNow > this.loanData.expirationDate){
+            if(this.loanData.terms <= this.loanData.payStatus && dateNow > moment(this.loanData.expirationDate).format('YYYY-MM-DD')){
                 amount = (Number(this.loanData.loanAmount) * 0.02) * this.pastDueCount
             }
             return amount;
