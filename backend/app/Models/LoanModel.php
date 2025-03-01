@@ -219,7 +219,7 @@ class LoanModel extends Model
     public function getTwentyFourColumnReportList($params){
 
         $sql = "SELECT * FROM ".$this->tableTransaction." a
-        WHERE a.status IN ('new', 'spoiled') AND 
+        WHERE a.status IN ('new', 'renew','spoiled') AND 
         a.orStatus = :status: AND 
         DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
        
