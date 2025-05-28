@@ -127,3 +127,6 @@ nb-configuration.xml
 
 .env
 composer.lock
+
+# Public Uploaded Files
+public/uploads/*
