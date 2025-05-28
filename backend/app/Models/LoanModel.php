@@ -11,6 +11,7 @@ class LoanModel extends Model
     protected $usersTable  = 'tblusers';
     protected $tableHistory = 'tblloan_history';
     protected $tableTransaction = 'tbltransactions';
+    protected $tableKyc = 'tblkyc';
     protected $primaryKey = 'id';
 
     protected $allowedFields = [
@@ -66,6 +67,11 @@ class LoanModel extends Model
             foreach($el as $key => $val){
                 $clientInfo = $this->db->table($this->applicantTable)->where('id', $el->customerId)->get();
                 $el->customerInfo = $clientInfo->getRow();
+
+                $kycsql = "SELECT customerId, idType, idNumber, validityDate FROM ".$this->tableKyc." WHERE customerId=".$el->customerId;
+       
+                $kycInfo = $this->db->query($kycsql);
+                $el->identificationDetails = $kycInfo->getResult();
             }
             return $el;
         }, $results);

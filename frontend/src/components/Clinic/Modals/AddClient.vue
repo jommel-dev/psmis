@@ -225,136 +225,74 @@
 
                             <template v-slot:before>
                                 <div class="q-pa-sm">
+                                   
+                                    <div v-if="!form.idImage" class="text-center">
+                                        <q-icon name="person" size="6.5rem"/>
+                                    </div>
                                     <q-img
-                                        fit
-                                        :src="form.eSignature"
+                                        v-else
+                                        :src="form.idImage"
                                         spinner-color="white"
-                                        style="height: 140px; width: 100%;"
+                                        style="width: 100%;"
+                                        class="q-mb-sm"
+                                        fit
                                     />
                                     <q-btn
-                                        @click="renderSignModal"
-                                        class="q-ml-sm q-pl-sm q-pr-sm vertical-middle full-width"
+                                        class="q-ml-sm q-pl-sm q-pr-sm vertical-middle"
                                         rounded
+                                        @click="openAddIDCamera()"
                                         dense
                                         color="primary"
                                         size="sm"
-                                        label="Signature"
+                                        label="Upload Customer Picture"
                                     />
+                                    
                                 </div>
                                 
                             </template>
 
                             <template v-slot:after>
                                 <q-toolbar class="bg-primary text-white">
-                                    <q-btn flat round dense icon="badge">
-                                        <q-badge floating color="red">{{form?.identifications?.length}}</q-badge>
-                                    </q-btn>
                                     <q-toolbar-title>
                                         Presented ID's
                                     </q-toolbar-title>
-                                    <q-btn flat round dense icon="add_photo_alternate" @click="openAddIDCamera" />
+                                    <q-btn flat round dense icon="post_add" @click="addIdentificationCamera" />
                                 </q-toolbar>
                                 <!-- ID Content -->
                                 <div v-if="form?.identifications?.length !== 0">
-                                    <q-list bordered class="rounded-borders" style="max-width: 100%">
-
-                                        <q-item v-for="(item, index) in form.identifications" :key="index">
-                                            <q-item-section avatar top>
-                                                <q-icon name="badge" color="black" size="34px" />
-                                            </q-item-section>
-
-                                            <q-item-section top class="col-2 gt-sm">
-                                                <q-item-label class="q-mt-sm"> {{ item.type }}</q-item-label>
-                                                <q-popup-edit v-model="item.type" :validate="val => val.length > 5" v-slot="scope">
-                                                    <q-input
-                                                    autofocus
-                                                    dense
-                                                    v-model="scope.value"
-                                                    :model-value="scope.value"
-                                                    >
-                                                    <template v-slot:after>
-                                                        <q-btn
-                                                        flat dense color="negative" icon="cancel"
-                                                        @click.stop.prevent="scope.cancel"
-                                                        />
-
-                                                        <q-btn
-                                                        flat dense color="positive" icon="check_circle"
-                                                        @click.stop.prevent="scope.set"
-                                                        :disable="scope.validate(scope.value) === false || scope.initialValue === scope.value"
-                                                        />
-                                                    </template>
-                                                    </q-input>
-                                                </q-popup-edit>
-                                            </q-item-section>
-
-                                            <q-item-section top>
-                                                <q-item-label lines="1">
-                                                    <span class="text-weight-medium">ID Number - </span>
-                                                    <span class="text-grey-8">
-                                                        {{ item.idNumber }}
-                                                        <q-popup-edit v-model="item.idNumber" :validate="val => val.length > 5" v-slot="scope">
-                                                            <q-input
-                                                            autofocus
-                                                            dense
-                                                            v-model="scope.value"
-                                                            :model-value="scope.value"
-                                                            >
-                                                            <template v-slot:after>
-                                                                <q-btn
-                                                                flat dense color="negative" icon="cancel"
-                                                                @click.stop.prevent="scope.cancel"
-                                                                />
-
-                                                                <q-btn
-                                                                flat dense color="positive" icon="check_circle"
-                                                                @click.stop.prevent="scope.set"
-                                                                :disable="scope.validate(scope.value) === false || scope.initialValue === scope.value"
-                                                                />
-                                                            </template>
-                                                            </q-input>
-                                                        </q-popup-edit>
-                                                    </span>
-                                                </q-item-label>
-                                                <q-item-label caption lines="1">
-                                                    Validity Until: {{item.validUntil}}
-                                                    <q-popup-edit v-model="item.validUntil" :validate="val => val.length > 5" v-slot="scope">
-                                                        <q-input
-                                                        autofocus
-                                                        dense
-                                                        v-model="scope.value"
-                                                        :model-value="scope.value"
-                                                        >
-                                                        <template v-slot:after>
-                                                            <q-btn
-                                                            flat dense color="negative" icon="cancel"
-                                                            @click.stop.prevent="scope.cancel"
-                                                            />
-
-                                                            <q-btn
-                                                            flat dense color="positive" icon="check_circle"
-                                                            @click.stop.prevent="scope.set"
-                                                            :disable="scope.validate(scope.value) === false || scope.initialValue === scope.value"
-                                                            />
-                                                        </template>
-                                                        </q-input>
-                                                    </q-popup-edit>
-                                                </q-item-label>
-                                            </q-item-section>
-
-                                            <q-item-section top side>
-                                            <div class="text-grey-8 q-gutter-xs">
-                                                <q-btn @click="removeId(index)" class="gt-xs" color="red" size="12px" flat dense round icon="delete" />
-                                            </div>
-                                            </q-item-section>
-
-                                            <q-separator spaced />
-                                        </q-item>
-                                        
-                                    </q-list>
-                                </div>
-                                <div v-else>
-                                    No Identification Added
+                                    <div v-for="(item, index) in form.identifications" :key="index" class="row">
+                                        <div class="col col-md-4 q-pa-sm">
+                                            <q-input
+                                                outlined 
+                                                v-model="item.type" 
+                                                label="ID Type" 
+                                                stack-label 
+                                                dense
+                                            />
+                                        </div>
+                                        <div class="col col-md-4 q-pa-sm">
+                                            <q-input
+                                                outlined 
+                                                v-model="item.idNumber" 
+                                                label="ID Number" 
+                                                stack-label 
+                                                dense
+                                            />
+                                        </div>
+                                        <div class="col col-md-3 q-pa-sm">
+                                            <q-input
+                                                outlined 
+                                                v-model="item.validUntil"
+                                                type="date"
+                                                label="Valid Until" 
+                                                stack-label 
+                                                dense
+                                            />
+                                        </div>
+                                        <div class="col col-md-1 q-pa-sm">
+                                            <q-btn @click="removeId(index)" class="gt-xs" color="red" size="12px" flat dense round icon="delete" />
+                                        </div>
+                                    </div>
                                 </div>
                             </template>
                         </q-splitter>
@@ -432,7 +370,8 @@ export default {
                 },
                 profile:'',
                 eSignature: '',
-                identifications: []
+                identifications: [],
+                idImage: ''
             },
             genderOption: [
                 {
@@ -577,10 +516,18 @@ export default {
         openAddIDCamera(){
             let vm = this;
             defineCustomElements(window).then(()=>{
-                vm.addIdentificationCamera()
+                vm.addIdentificationCameraImage()
             })
         },
         async addIdentificationCamera(){
+            this.form.identifications.push({
+               type: "",
+               idNumber: "",
+               validUntil: "",
+            })
+
+        },
+        async addIdentificationCameraImage(){
             const image = await Camera.getPhoto({
                 quality: 15,
                 source: CameraSource.Camera,
@@ -592,13 +539,8 @@ export default {
                 alert(err)
             })
 
-            this.form.identifications.push({
-                type: "--",
-                idNumber: "--",
-                validUntil: "--",
-                image: image.dataUrl
-            })
-
+            this.form.idImage = image.dataUrl;
+            
         },
         computeAge(val){
             var today = new Date();

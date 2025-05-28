@@ -22,11 +22,11 @@
                         class="imageStyleView q-mb-sm" 
                         :src="userProfile.profile" 
                     />
-                    <!-- <q-img 
-                        v-if="loanDetails.customerInfo.identifications[0].image !== ''" 
+                    <q-img 
+                        v-if="idetntification !== null" 
                         class="imageStyleView q-mb-sm" 
-                        :src="loanDetails.customerInfo.identifications[0].image" 
-                    /> -->
+                        :src="idetntification" 
+                    />
                     <q-img 
                         v-if="userProfile.eSignature !== ''" 
                         class="imageStyleView q-mb-sm" 
@@ -401,6 +401,7 @@ export default {
             loanDetails: {},
             pastDueCount: 0,
             seriesDetatils:{},
+            idetntification: null,
             // Renew and Pay in Full
             openModal: false,
             openItem: null,
@@ -436,6 +437,7 @@ export default {
         this.getRenewHistoryList();
         this.getAllHistoryList();
         this.getProfile();
+        this.getProfileID();
         this.setDetails
     },
     computed: {
@@ -719,6 +721,24 @@ export default {
                 const data = {...response.data};
                 this.userProfile = data
             })
+        },
+        getProfileID(){
+            let payload = {
+                uid: this.loanData.origData.customerId
+            }
+            api.post('loan/get/profile/id', payload).then((response) => {
+                const data = response.data;
+                console.log(data[0])
+                if(!this.isBase64(data[0].file)){
+                    this.idetntification = `${process.env.API_IMAGE_BASE}/${data[0].file}`
+                } else {
+                    this.idetntification = data[0].file
+                }
+            })
+        },
+        isBase64(str) {
+            // Checks for data URL base64 (image, etc.)
+            return /^data:image\/[a-zA-Z]+;base64,([A-Za-z0-9+/=]+)$/.test(str);
         },
         getReference(){
             // loan/get/reference

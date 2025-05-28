@@ -134,9 +134,9 @@
                 >
                     <q-card-section v-if="tableView === 'clientList'">
                         <q-icon 
-                            name="folder" 
+                            :name="Number(props.row.isBlockListed) === 1 ? 'folder_off' : 'folder'" 
                             size="lg" 
-                            color="warning" 
+                            :color="Number(props.row.isBlockListed) === 1 ? 'red' : 'warning'" 
                         /> 
                         {{`(${props.row.customerNo}) - ${props.row.firstName} ${props.row.lastName}`}}
                     </q-card-section>
@@ -147,36 +147,74 @@
                                 @click="openFolder(props.row)" 
                             >
                                 <q-item-section side>
-                                    <q-icon name="folder_open" size="xs" />
+                                    <q-icon 
+                                        name="folder_open" 
+                                        size="xs"
+                                        :color="Number(props.row.isBlockListed) === 1 ? 'red' : 'warning'"
+                                    />
                                 </q-item-section>
                                 <q-item-section> Open</q-item-section>
                             </q-item>
                             <q-item 
                                 clickable 
+                                :disable="Number(props.row.isBlockListed) === 1"
                                 @click="openEditClient(props.row)"
                             >
                                 <q-item-section side>
-                                    <q-icon name="help" size="xs" />
+                                    <q-icon 
+                                        name="help" 
+                                        size="xs"
+                                        :color="Number(props.row.isBlockListed) === 1 ? 'red' : 'primary'"
+                                    />
                                 </q-item-section>
                                 <q-item-section>Edit Details</q-item-section>
                             </q-item>
                             <q-separator />
                             <q-item 
                                 clickable
+                                :disable="Number(props.row.isBlockListed) === 1"
                                 v-close-popup
                                 @click="openAddLoan(props.row)"
                             >
                                 <q-item-section side>
-                                    <q-icon name="credit_score" size="xs" />
+                                    <q-icon 
+                                        name="credit_score" 
+                                        size="xs"
+                                        :color="Number(props.row.isBlockListed) === 1 ? 'red' : 'primary'"
+                                    />
                                 </q-item-section>
                                 <q-item-section>Add Loan</q-item-section>
                             </q-item>
                             <q-separator />
-                            <q-item clickable v-close-popup>
+                            <q-item :disable="Number(props.row.isBlockListed) === 1" clickable v-close-popup>
                                 <q-item-section side>
-                                    <q-icon name="menu_book" size="xs" />
+                                    <q-icon 
+                                        name="menu_book" 
+                                        size="xs" 
+                                        :color="Number(props.row.isBlockListed) === 1 ? 'red' : 'primary'"
+                                    />
                                 </q-item-section>
                                 <q-item-section>History</q-item-section>
+                            </q-item>
+                            <q-item 
+                                clickable
+                                v-if="Number(props.row.isBlockListed) === 0"
+                                @click="addToBlockList(props.row)" 
+                            >
+                                <q-item-section side>
+                                    <q-icon color="negative" name="remove_circle" size="xs" />
+                                </q-item-section>
+                                <q-item-section>Block</q-item-section>
+                            </q-item>
+                            <q-item 
+                                clickable
+                                v-if="Number(props.row.isBlockListed) === 1"
+                                @click="unBlockList(props.row)" 
+                            >
+                                <q-item-section side>
+                                    <q-icon color="positive" name="remove_circle" size="xs" />
+                                </q-item-section>
+                                <q-item-section>Unblock</q-item-section>
                             </q-item>
                         </q-list>
                     </q-popup-proxy>
@@ -421,9 +459,101 @@ export default {
             this.formDetails = data;
             this.openPrintModal = true;
         },
+        addToBlockList(row){
+            this.$q.dialog({
+                title: 'Block Transactions',
+                message: 'What is the reason for blocking this pawner?',
+                prompt: {
+                    model: '',
+                    type: 'textarea' // optional
+                },
+                cancel: true,
+                persistent: true
+            }).onOk(data => {
+                let payload = {
+                    clientId: row.key,
+                    blockListRemarks: data
+                }
+
+                api.post('application/blockApplicant', payload).then((response) => {
+                    const data = {...response.data};
+                    if(!data.error){
+                        this.$q.notify({
+                            color: 'positive',
+                            position: 'top-right',
+                            message: "Successfully Blocked",
+                            icon: 'check_circle'
+                        })
+                        this.getList();
+                    } else {
+                        this.$q.notify({
+                            color: 'negative',
+                            position: 'top-right',
+                            title:data.title,
+                            message: this.$t(`errors.${data.error}`),
+                            icon: 'report_problem'
+                        })
+                    }
+                })
+            })
+        },
+        unBlockList(row){
+            this.$q.dialog({
+                title: 'Unblock Transactions',
+                message: 'Are you sure you want to unblock this pawner?',
+                cancel: true,
+                persistent: true
+            }).onOk(() => {
+                let payload = {
+                    clientId: row.key
+                }
+
+                api.post('application/unblockApplicant', payload).then((response) => {
+                    const data = {...response.data};
+                    if(!data.error){
+                        this.$q.notify({
+                            color: 'positive',
+                            position: 'top-right',
+                            message: "Successfully Blocked",
+                            icon: 'check_circle'
+                        })
+                        this.getList();
+                    } else {
+                        this.$q.notify({
+                            color: 'negative',
+                            position: 'top-right',
+                            title:data.title,
+                            message: this.$t(`errors.${data.error}`),
+                            icon: 'report_problem'
+                        })
+                    }
+                })
+            })
+        },
         openFolder(row){
             this.filter = ""
             if(this.tableView === 'clientList'){
+
+                if(Number(row.isBlockListed) === 1){
+                    let vm = this
+                    this.$q.dialog({
+                        title: 'Pawner is BlockListed',
+                        message: `In the reason of: ${row.blockListRemarks}, Do you want to open what is the item he/she pawned?`,
+                        cancel: true,
+                        persistent: true
+                    }).onOk(data => {
+                        vm.appId = row
+                        vm.tableView = 'patientList'
+                        vm.getLoanList(row.key);
+                        vm.breadCrumbs.push({
+                            label: `${row.firstName} ${row.lastName}`,
+                            icon:'folder_open',
+                            classNames: 'itemCursor',
+                            action: () => { return vm.breadCrumbsClick('patientList', row) }
+                        })
+                    })
+                    return false
+                }
                 this.appId = row
                 this.tableView = 'patientList'
                 this.getLoanList(row.key);

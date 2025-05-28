@@ -81,6 +81,7 @@ class Client extends BaseController
         if($query){
             // json_encode($payload->identifications)
             $lastInserted = $this->clientModel->insertID();
+            $fileIdName = $this->saveBase64Image($payload->idImage);
             $profileData = [
                 "appId" => $lastInserted,
                 "profile" => $payload->profile,
@@ -94,13 +95,13 @@ class Client extends BaseController
                     "idType" => $value->type,
                     "idNumber" => $value->idNumber,
                     "validityDate" => $value->validUntil,
-                    "file" => $value->image,
                     "uploadedBy" => $payload->createdBy,
+                    "file" => $fileIdName
                 ];
                 $this->kycModel->insert($kycValues);
             }
             
-
+            
 
             $response = [
                 'title' => 'Customer Information',
@@ -124,6 +125,37 @@ class Client extends BaseController
                     ->setBody(json_encode($response));
         }
 
+    }
+
+    public function saveBase64Image($base64String)
+    {
+        if (!$base64String) {
+            return $this->response->setJSON(['error' => 'No image data provided']);
+        }
+
+        // Remove the data URL part if present
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64String, $type)) {
+            $base64String = substr($base64String, strpos($base64String, ',') + 1);
+            $type = strtolower($type[1]); // jpg, png, gif
+        }
+
+        $base64String = str_replace(' ', '+', $base64String);
+        $imageData = base64_decode($base64String);
+
+        if ($imageData === false) {
+            return $this->response->setJSON(['error' => 'Base64 decode failed']);
+        }
+
+        $fileName = uniqid() . '.' . $type;
+        $uploadDir = FCPATH . 'uploads/'; // FCPATH points to public/
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        $filePath = $uploadDir . $fileName;
+
+        file_put_contents($filePath, $imageData);
+
+        return $fileName; // Return the file name or path as needed
     }
 
     public function updateClientDetails(){
@@ -221,6 +253,112 @@ class Client extends BaseController
 
     }
 
+    public function putToBlockList(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from NuxtJs
+        $payload = $this->request->getJSON();
+
+        // Insert the customer Data
+        $customerInfo =  [
+            "isBlockListed" => 1,
+            "blockListRemarks" => $payload->blockListRemarks,
+        ];
+
+        // //INSERT QUERY TO APPLICATION
+        $query = $this->clientModel->where(["id" => $payload->clientId])->set($customerInfo)->update();
+
+        if($query){
+
+            $response = [
+                'title' => 'Customer Blocklisted',
+                'message' => 'Pawner habe been blocklisted.'
+            ];
+
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        } else {
+            $response = [
+                'error' => 400,
+                'title' => 'Data Submit Failed',
+                'message' => 'Please contact the admin for concern'
+            ];
+
+            return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+
+    }
+
+    public function putToUnBlockList(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from NuxtJs
+        $payload = $this->request->getJSON();
+
+        // Insert the customer Data
+        $customerInfo =  [
+            "isBlockListed" => 0,
+            "blockListRemarks" => "",
+        ];
+
+        // //INSERT QUERY TO APPLICATION
+        $query = $this->clientModel->where(["id" => $payload->clientId])->set($customerInfo)->update();
+
+        if($query){
+
+            $response = [
+                'title' => 'Customer Blocklisted',
+                'message' => 'Pawner habe been blocklisted.'
+            ];
+
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        } else {
+            $response = [
+                'error' => 400,
+                'title' => 'Data Submit Failed',
+                'message' => 'Please contact the admin for concern'
+            ];
+
+            return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+
+    }
+
     public function getUserProfile(){
         // Check Auth header bearer
         $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
@@ -240,6 +378,44 @@ class Client extends BaseController
         $payload = $this->request->getJSON();
         
         $query = $this->profileModel->getDetails(['appId' => $payload->uid]);
+
+        if($query){
+            return $this->response
+                    ->setStatusCode(200)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($query));
+        } else {
+            $response = [
+                'title' => 'Error',
+                'message' => $query
+            ];
+
+            return $this->response
+                    ->setStatusCode(400)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+        }
+    }
+
+    public function getUserIDProfile(){
+        // Check Auth header bearer
+        $authorization = $this->request->getServer('HTTP_AUTHORIZATION');
+        if(!$authorization){
+            $response = [
+                'message' => 'Unauthorized Access'
+            ];
+
+            return $this->response
+                    ->setStatusCode(401)
+                    ->setContentType('application/json')
+                    ->setBody(json_encode($response));
+            exit();
+        }
+
+        //Get API Request Data from NuxtJs
+        $payload = $this->request->getJSON();
+        
+        $query = $this->kycModel->getDetails(['customerId' => $payload->uid]);
 
         if($query){
             return $this->response
@@ -297,8 +473,9 @@ class Client extends BaseController
                 "contactNo" => $value->contactNo,
                 "sex" => $value->sex,
                 "birthDate" => $value->birthDate,
+                "isBlockListed" => $value->isBlockListed,
+                "blockListRemarks" => $value->blockListRemarks,
                 "otherDetails" => json_decode($value->otherDetails),
-                // "identifications" =>  json_decode($value->identifications),
                 "createdBy" => $value->createdBy,
                 "status" => $value->status
             ];
@@ -455,7 +632,7 @@ class Client extends BaseController
                 'customerInfo' => $cinfo, 
                 'orNumber' => $value->orNumber, 
                 'catId' => $value->catId, 
-                // 'identification' => $value->identification, 
+                'identification' => $value->identificationDetails, 
                 'itemDetails' => $value->itemDetails, 
                 'loanAmount' => $value->loanAmount, 
                 'terms' => $value->terms, 
@@ -530,6 +707,7 @@ class Client extends BaseController
                 'customerInfo' => $cinfo, 
                 'orNumber' => $value->orNumber, 
                 'catId' => $value->catId, 
+                'identification' => $value->identificationDetails,
                 // 'identification' => $value->identification, 
                 'itemDetails' => $value->itemDetails, 
                 'loanAmount' => $value->loanAmount, 
@@ -724,6 +902,7 @@ class Client extends BaseController
             $print->itemDetails = json_decode($print->itemDetails);
             $print->computationDetails = json_decode($print->computationDetails);
             $print->datesOfMaturity = json_decode($print->datesOfMaturity);
+            $print->identificationDetails = $this->clientModel->getKYC($payload->customerId);
             $print->customerInfo = $cinfo;
 
             // Response 

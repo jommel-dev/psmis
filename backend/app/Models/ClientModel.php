@@ -10,6 +10,7 @@ class ClientModel extends Model
     protected $tableLoan      = 'tblloans';
     protected $tableHistory = 'tblloan_history';
     protected $tableTransaction = 'tbltransactions';
+    protected $tableKyc = 'tblkyc';
     protected $primaryKey = 'id';
 
     protected $allowedFields = [
@@ -28,6 +29,8 @@ class ClientModel extends Model
         'eSignature', 
         'profile', 
         'createdBy', 
+        'blockListRemarks', 
+        'isBlockListed', 
         'status'
     ];
 
@@ -51,6 +54,15 @@ class ClientModel extends Model
             "status" => 1,
             // "createdBy" => $uid
         ])->orderBy('id', 'DESC')->get();
+        $results = $query->getResult(); 
+
+        return $results;
+    }
+
+    public function getKYC($uid){
+        $query = $this->db->table($this->tableKyc)->where([
+            "customerId" => $uid
+        ])->get();
         $results = $query->getResult(); 
 
         return $results;

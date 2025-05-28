@@ -83,6 +83,8 @@ $routes->group('psmis/api/v1', function($routes){
 	$routes->group('application', function($routes){
 		$routes->post('register', 'Client::registerClient');
 		$routes->post('updateClient', 'Client::updateClientDetails');
+		$routes->post('blockApplicant', 'Client::putToBlockList');
+		$routes->post('unblockApplicant', 'Client::putToUnBlockList');
 		$routes->post('clientList', 'Client::getAllClientList');
 		$routes->post('filter/list', 'Client::getClientListFilter');
 		$routes->post('get/patient/list', 'Client::getClientPatientList');
@@ -108,6 +110,7 @@ $routes->group('psmis/api/v1', function($routes){
 		$routes->post('update/item', 'Client::updateAuctionedItem');
 
 		$routes->post('get/profile', 'Client::getUserProfile');
+		$routes->post('get/profile/id', 'Client::getUserIDProfile');
 
 		$routes->get('get/loans/list', 'Client::getLoansList'); // 1
 		$routes->get('get/sales/list', 'Client::getSalesList'); // transaction logs

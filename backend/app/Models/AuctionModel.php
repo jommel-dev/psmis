@@ -11,7 +11,7 @@ class AuctionModel extends Model
     protected $catTable = "tblcategory";
     protected $primaryKey = 'id';
 
-    protected $allowedFields = ["customerId", "loanId", "expDate", "orNumber", "catId", "itemInfo", "principal", "soldPrice", "soldDate", "createdDate", "status", "remarks"];
+    protected $allowedFields = ["customerId", "loanId", "loanDate", "expDate", "orNumber", "catId", "itemInfo", "principal", "soldPrice", "soldDate", "createdDate", "status", "remarks"];
 
     protected $useAutoIncrement = true;
 

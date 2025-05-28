@@ -48,7 +48,8 @@ module.exports = configure(function (ctx) {
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
       env: {
-        API_BASE: ctx.dev ? 'http://localhost:8080/index.php/psmis/api/v1' : 'http://119.8.28.151:8080/index.php/psmis/api/v1'
+        API_BASE: ctx.dev ? 'https://psmis.test:8081/index.php/psmis/api/v1' : 'https://psmis.test:8081/index.php/psmis/api/v1',
+        API_IMAGE_BASE: ctx.dev ? 'http://localhost:8080/uploads' : 'http://localhost:8080/uploads',
       },
       // transpile: false,
       // publicPath: '/',
