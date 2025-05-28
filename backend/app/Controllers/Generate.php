@@ -893,7 +893,7 @@ class Generate extends BaseController
                 "key" => $value->id,
                 "no" => $key + 1,
                 "pawnTicket" => $value->orNumber,
-                "date" => date("F j, Y", strtotime($value->createdDate)),
+                "date" => date("F j, Y", strtotime($value->loanDate)),
                 "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
                 "category" => $value->categoryInfo->label,
                 "itemPawn" => $value->itemInfo,

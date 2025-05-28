@@ -285,15 +285,28 @@ export default {
             })
 
             // ID & Contact
-            fpage.drawText(`${data.identificationDetails[0].idType} (${data.identificationDetails[0].idNumber})`, {
-                x: 120,
-                y: 480,
-                size: 9,
-                spacing: 1,
-                lineHeight: 11,
-                maxWidth: 190,
-                color: rgb(0, 0, 0),
-            })
+            // ID & Contact
+            if(data.identificationDetails.length !== 0){
+                fpage.drawText(`${data.identificationDetails[0].idType} (${data.identificationDetails[0].idNumber})`, {
+                    x: 120,
+                    y: 480,
+                    size: 9,
+                    spacing: 1,
+                    lineHeight: 11,
+                    maxWidth: 190,
+                    color: rgb(0, 0, 0),
+                })
+            } else {
+                fpage.drawText(`No ID Presented`, {
+                    x: 120,
+                    y: 480,
+                    size: 9,
+                    spacing: 1,
+                    lineHeight: 11,
+                    maxWidth: 190,
+                    color: rgb(0, 0, 0),
+                })
+            }
             fpage.drawText(`${data.customerInfo.contactNo}`, {
                 x: 369,
                 y: 458,
