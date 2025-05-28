@@ -49,7 +49,15 @@ export default {
             this.openModal = newVal
             if(newVal){
                 this.appData.charge = Number(this.appData.charge).toFixed(2)
-                this.createPDF(this.appData)
+                let users = "yellow,white";
+                if(users.includes(this.user.iss)){
+                    console.log("Creating PDF for Yellow or White Issuer")
+                    this.createPDFOld(this.appData)
+                } else {
+                    this.createPDF(this.appData)
+                }
+
+                
                 this.getHistoryList(this.appData)
             }
         }
@@ -318,6 +326,244 @@ export default {
             fpage.drawText(moment().format("l LT"), {
                 x: 50,
                 y: 370,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+
+
+            const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
+            document.getElementById('pdf').src = pdfDataUri;
+
+            this.selectLoading = false;
+        },
+        async createPDFOld(data){
+            const url = 'files/printReceipt.pdf'
+            // const url = 'files/draftInvoice.pdf'
+            const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
+            // Create a new PDFDocument
+            const pdfDoc = await PDFDocument.load(existingPdfBytes)
+            // Add a blank page to the document
+            const pages = pdfDoc.getPages()
+            const fpage = pages[0];
+            // Get the width and height of the page
+            const { width, height } = fpage.getSize()
+            const fontSize = 9
+            let curdateYear = moment().format("YY");
+
+            // Draw a string of text toward the top of the page
+            // OR Number
+            fpage.drawText(`${data.oldTicket}`, {
+              x: 430,
+              y: 765,
+              size: 14,
+              color: rgb(0, 0, 0),
+            })
+
+            let dateList = [];
+            data.datesOfMaturity.forEach((el, indx) => {
+                let pay = Number(data.computationDetails.amountPercentage) * (indx + 1)
+                let res = `${moment(el.dateFormatted).format("MM/DD/YY")} - ${Number(pay).toLocaleString('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+                })}`;
+                dateList.push(res);
+            });
+            fpage.drawText(dateList.join("\r\n"), {
+                x: 474,
+                y: 755,
+                size: 9,
+                spacing: 1,
+                lineHeight: 11,
+                maxWidth: 230,
+                color: rgb(0, 0, 0),
+            })
+
+
+
+            // Loan Status
+            fpage.drawText(`${data.loanStatus}`, {
+                x: 50,
+                y: 730,
+                size: 30,
+                color: rgb(0, 0, 0),
+            })
+
+            // Dates
+            // Date Granted
+            let grantDate = moment().format("LL");
+            fpage.drawText(`${grantDate}`, {
+                x: 140,
+                y: 660,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+            // Date Maturity
+            fpage.drawText(`${moment(data.maturityDate).format("LL")}`, {
+                x: 430,
+                y: 660,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+            // Date Expiry
+            fpage.drawText(`${moment(data.expirationDate).format("LL")}`, {
+                x: 430,
+                y: 645,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+            // Name
+            fpage.drawText(`${data.customerInfo.firstName} ${data.customerInfo.middleName} ${data.customerInfo.lastName}`, {
+                x: 93,
+                y: 632,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            // Address
+            fpage.drawText(`${data.customerInfo.addressLine} ${data.customerInfo.addressDetails?.barangay.label} ${data.customerInfo.addressDetails?.city.label}`, {
+                x: 340,
+                y: 632,
+                size: 9,
+                color: rgb(0, 0, 0),
+            })
+
+            // Word Amount
+            fpage.drawText(`${data.amountWord.toUpperCase()} PESOS ONLY`, {
+                x: 154,
+                y: 604,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            fpage.drawText(`${Number(data.loanAmount).toLocaleString('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+                })}`, {
+                x: 496,
+                y: 604,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            fpage.drawText(`${Number(data.loanAmount).toLocaleString('en-US', {
+                style: 'decimal',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+                })}`, {
+                x: 496,
+                y: 575,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+            // Interest & months
+            fpage.drawText(`${data.interestWord}`, {
+                x: 137,
+                y: 585,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            fpage.drawText(`${data.interest}`, {
+                x: 210,
+                y: 585,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            fpage.drawText(`1`, {
+                x: 260,
+                y: 585,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+            // Pay Details
+            // Interest 2%
+            fpage.drawText(`2%`, {
+                x: 493,
+                y: 560,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            // Principal
+            fpage.drawText(`${data.loanAmount}`, {
+                x: 480,
+                y: 535,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            // Interest per month
+            fpage.drawText(`${data.computationDetails.amountPercentage}/MONTH`, {
+                x: 480,
+                y: 522,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            // Charge
+
+            fpage.drawText(`${data.charge}`, {
+                x: 480,
+                y: 508,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+            // Interest 5%
+            fpage.drawText(`${data.interest}%`, {
+                x: 480,
+                y: 470,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+            // Grace Period
+            let graceMonth = moment(data.gracePeriodDate).format("YYYY-MM-15")
+            fpage.drawText(moment(graceMonth).format("LL"), {
+                x: 480,
+                y: 380,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+
+            // Description of Pawn
+            let list = [];
+            data.itemDetails.forEach(el => {
+                let res = `${el.qty} ${el.unit.value} ${el.type.value}, ${el.description}, ${el.weight}, ${el.property}`;
+                list.push(res);
+            });
+            fpage.drawText(list.join(", "), {
+                x: 60,
+                y: 530,
+                size: 11,
+                spacing: 1,
+                lineHeight: 11,
+                maxWidth: 230,
+                color: rgb(0, 0, 0),
+            })
+
+            // ID & Contact
+            // fpage.drawText(`${data.identification.type} (${data.identification.idNumber})`, {
+            //     x: 130,
+            //     y: 450,
+            //     size: 11,
+            //     spacing: 1,
+            //     lineHeight: 11,
+            //     maxWidth: 230,
+            //     color: rgb(0, 0, 0),
+            // })
+            fpage.drawText(`${data.customerInfo.contactNo}`, {
+                x: 369,
+                y: 434,
+                size: 11,
+                color: rgb(0, 0, 0),
+            })
+
+
+            fpage.drawText(moment().format("l LT"), {
+                x: 50,
+                y: 378,
                 size: 11,
                 color: rgb(0, 0, 0),
             })
