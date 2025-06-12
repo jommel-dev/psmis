@@ -289,6 +289,27 @@ export default {
             //     maxWidth: 230,
             //     color: rgb(0, 0, 0),
             // })
+             if(data.identificationDetails.length !== 0){
+                fpage.drawText(`${data.identificationDetails[0].idType} (${data.identificationDetails[0].idNumber})`, {
+                    x: 130,
+                    y: 450,
+                    size: 9,
+                    spacing: 1,
+                    lineHeight: 11,
+                    maxWidth: 190,
+                    color: rgb(0, 0, 0),
+                })
+            } else {
+                fpage.drawText(`No ID Presented`, {
+                    x: 130,
+                    y: 450,
+                    size: 9,
+                    spacing: 1,
+                    lineHeight: 11,
+                    maxWidth: 190,
+                    color: rgb(0, 0, 0),
+                })
+            }
             fpage.drawText(`${data.customerInfo.contactNo}`, {
                 x: 369,
                 y: 434,
