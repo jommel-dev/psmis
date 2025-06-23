@@ -225,37 +225,49 @@ class Generate extends BaseController
         ];
         
         $query = $this->loanModel->getTenColumnReportList([
-            "status" => $reportType,
-            "dateFrom" => $dateFrom,
-            "dateTo" => $dateTo
+            "orStatus" => $reportType,
+            "dateFrom" =>'%' . $dateFrom  . '%',
+            // "dateTo" => $dateTo
         ]);
         // print_r($query);
         // exit;
 
         foreach ($query as $key => $value) {
-            $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
+            // $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
             
-            $cinfo = $value->customerInfo;
-            $linfo = $value->loanInfo;
-            $linfo->itemDetails = json_decode($linfo->itemDetails);
-            $linfo->computationDetails = json_decode($linfo->computationDetails);
-            $value->amountWord = $fmoneyword->format($linfo->loanAmount);
-            $value->interestWord = $fmoneyword->format($linfo->interest);
-            $pastDue = $linfo->payStatus <= 1 ? ($linfo->computationDetails->amountPercentage * $linfo->payStatus) : ($value->pastDue * $linfo->computationDetails->amountPercentage) + (($linfo->loanAmount * 0.02) * $value->pastDue);
-            $earnedInterest = $linfo->payStatus <= 1 ? $linfo->computationDetails->amountPercentage : $linfo->computationDetails->amountPercentage * $linfo->terms;
-            $coh = $linfo->loanAmount + $pastDue + $earnedInterest;
+            // $cinfo = $value->customerInfo;
+            // $linfo = $value->loanInfo;
+            // $linfo->itemDetails = json_decode($linfo->itemDetails);
+            // $linfo->computationDetails = json_decode($linfo->computationDetails);
+            // $value->amountWord = $fmoneyword->format($linfo->loanAmount);
+            // $value->interestWord = $fmoneyword->format($linfo->interest);
+            // $pastDue = $linfo->payStatus <= 1 ? ($linfo->computationDetails->amountPercentage * $linfo->payStatus) : ($value->pastDue * $linfo->computationDetails->amountPercentage) + (($linfo->loanAmount * 0.02) * $value->pastDue);
+            // $earnedInterest = $linfo->payStatus <= 1 ? $linfo->computationDetails->amountPercentage : $linfo->computationDetails->amountPercentage * $linfo->terms;
+            // $coh = $linfo->loanAmount + $pastDue + $earnedInterest;
 
+            // $list['list'][$key] = [
+            //     "key" => $value->id,
+            //     "no" => $key + 1,
+            //     "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
+            //     "date" => date("F j, Y", strtotime($linfo->createdDate)),
+            //     "pawnTicket" => $value->oldTicketNo,
+            //     "orNumber" => $value->officialReceipt,
+            //     "cashOnHand" => number_format($coh, 2, '.', ','),
+            //     "principal" => number_format($linfo->loanAmount, 2, '.', ','),
+            //     "interest" => number_format($earnedInterest, 2, '.', ','),
+            //     "interestPassedMonth" => number_format($pastDue, 2, '.', ','),
+            // ];
             $list['list'][$key] = [
                 "key" => $value->id,
                 "no" => $key + 1,
-                "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
-                "date" => date("F j, Y", strtotime($linfo->createdDate)),
+                "pawnerName" => $value->pawnerName,
+                "date" => date("F j, Y", strtotime($value->renewDate)),
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
-                "cashOnHand" => number_format($coh, 2, '.', ','),
-                "principal" => number_format($linfo->loanAmount, 2, '.', ','),
-                "interest" => number_format($earnedInterest, 2, '.', ','),
-                "interestPassedMonth" => number_format($pastDue, 2, '.', ','),
+                "cashOnHand" => number_format($value->amount, 2, '.', ','),
+                "principal" => number_format($value->loanAmount, 2, '.', ','),
+                "interest" => number_format($value->amountPercentage, 2, '.', ','),
+                "interestPassedMonth" => number_format($value->pastDueInterest, 2, '.', ','),
             ];
         }
 
@@ -354,39 +366,55 @@ class Generate extends BaseController
         ];
         
         $query = $this->loanModel->getTenColumnReportList([
-            "status" => $payload->status,
-            "dateFrom" => $payload->from,
-            "dateTo" => $payload->to
+            "orStatus" => $payload->status,
+            "dateFrom" => '%' .$payload->from . '%'
         ]);
         // print_r($query);
         // exit;
 
         foreach ($query as $key => $value) {
-            $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
-            $cinfo = $value->customerInfo;
-            $linfo = $value->loanInfo;
-            $linfo->itemDetails = json_decode($linfo->itemDetails);
-            $linfo->computationDetails = json_decode($linfo->computationDetails);
-            $pastDue = $linfo->payStatus <= 1 ? ($linfo->computationDetails->amountPercentage * $linfo->payStatus) : ($value->pastDue * $linfo->computationDetails->amountPercentage) + (($linfo->loanAmount * 0.02) * $value->pastDue);
-            $earnedInterest = $linfo->payStatus <= 1 ? $linfo->computationDetails->amountPercentage : $linfo->computationDetails->amountPercentage * $linfo->terms;
-            // $pastDue = $linfo->payStatus <= 1 ? 0 : ($linfo->computationDetails->amountPercentage * $linfo->payStatus);
-            $value->amountWord = $fmoneyword->format($linfo->loanAmount);
-            $value->interestWord = $fmoneyword->format($linfo->interest);
-            // temporary Solution
-            $coh = $linfo->loanAmount + $pastDue + $earnedInterest;
+            // $fmoneyword = new \NumberFormatter("en", \NumberFormatter::SPELLOUT); 
+            // $cinfo = $value->customerInfo;
+            // $linfo = $value->loanInfo;
+            // $linfo->itemDetails = json_decode($linfo->itemDetails);
+            // $linfo->computationDetails = json_decode($linfo->computationDetails);
+            // $pastDue = $linfo->payStatus <= 1 ? ($linfo->computationDetails->amountPercentage * $linfo->payStatus) : ($value->pastDue * $linfo->computationDetails->amountPercentage) + (($linfo->loanAmount * 0.02) * $value->pastDue);
+            // $earnedInterest = $linfo->payStatus <= 1 ? $linfo->computationDetails->amountPercentage : $linfo->computationDetails->amountPercentage * $linfo->terms;
+            // // $pastDue = $linfo->payStatus <= 1 ? 0 : ($linfo->computationDetails->amountPercentage * $linfo->payStatus);
+            // $value->amountWord = $fmoneyword->format($linfo->loanAmount);
+            // $value->interestWord = $fmoneyword->format($linfo->interest);
+            // // temporary Solution
+            // if($value->status == "redeem"){
+            //     $coh = $linfo->loanAmount + $pastDue + $earnedInterest;
+            // } else {
+            //     $coh = $value->amount;
+            // }
+            
 
             $list['list'][$key] = [
                 "key" => $value->id,
                 "no" => $key + 1,
-                "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
-                "date" => date("F j, Y", strtotime($linfo->createdDate)),
+                "pawnerName" => $value->pawnerName,
+                "date" => date("F j, Y", strtotime($value->renewDate)),
                 "pawnTicket" => $value->oldTicketNo,
                 "orNumber" => $value->officialReceipt,
-                "cashOnHand" => $coh,
-                "principal" => $linfo->loanAmount,
-                "interest" => $earnedInterest,
-                "interestPassedMonth" => $pastDue,
+                "cashOnHand" => $value->amount,
+                "principal" => $value->loanAmount,
+                "interest" => $value->amountPercentage,
+                "interestPassedMonth" => $value->pastDueInterest
             ];
+            // $list['list'][$key] = [
+            //     "key" => $value->id,
+            //     "no" => $key + 1,
+            //     "pawnerName" => $cinfo->lastName .", ". $cinfo->firstName ." ". $cinfo->suffix ." ". $cinfo->middleName,
+            //     "date" => date("F j, Y", strtotime($linfo->createdDate)),
+            //     "pawnTicket" => $value->oldTicketNo,
+            //     "orNumber" => $value->officialReceipt,
+            //     "cashOnHand" => $coh,
+            //     "principal" => $linfo->loanAmount,
+            //     "interest" => $earnedInterest,
+            //     "interestPassedMonth" => $pastDue,
+            // ];
         }
 
         if($list){

@@ -192,40 +192,87 @@ class LoanModel extends Model
     // This should get on the TBL Loan History
     public function getTenColumnReportList($params){
 
-        $sql = "SELECT * FROM ".$this->tableTransaction." a
-        WHERE a.status IN ('renew', 'redeem') AND 
-        a.orStatus = :status: AND 
-        DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
+        // $sql = "SELECT * FROM ".$this->tableTransaction." a
+        // WHERE a.status IN ('renew', 'redeem') AND 
+        // a.orStatus = :status: AND 
+        // DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
        
+        // $query = $this->db->query($sql, $params);
+        // $results = $query->getResult();
+
+        // $all = array_map(function($el){
+        //     foreach($el as $key => $val){
+        //         $linfoParams = [
+        //             "id" => $el->loanId
+        //         ];
+        //         $lq = "SELECT id, terms, itemDetails, computationDetails, payStatus, interest, charge, loanAmount, redeemDate, customerId, createdDate FROM ". $this->table ." WHERE id = :id:";
+        //         $loanInfo = $this->db->query($lq, $linfoParams);
+        //         $el->loanInfo = $loanInfo->getRow();
+
+        //         $cInfoParams = [
+        //             "id" => $el->loanInfo->customerId
+        //         ];
+        //         $cq = "SELECT lastName, firstName, suffix, middleName FROM ". $this->applicantTable ." WHERE id = :id:";
+        //         $clientInfo = $this->db->query($cq, $cInfoParams);
+        //         $el->customerInfo = $clientInfo->getRow();
+        //     }
+        //     return $el;
+        // }, $results);
+
+        // return $all;
+
+        $sql = "
+            SELECT
+                a.id,
+                a.status,
+                CONCAT(c.lastName,', ', c.firstName,' ', c.suffix, ' ', c.middleName) AS pawnerName,
+                DATE_FORMAT(a.createdDate, '%M %d, %Y') AS renewDate,
+                a.oldTicketNo,
+                a.officialReceipt,
+                a.amount,
+                b.loanAmount,
+                ap.amountPercentage,
+                SUM(CASE 
+                    WHEN a.status = 'renew' AND TIMESTAMPDIFF(MONTH, a.createdDate, a.dateMaturity) < 0
+                        THEN ap.amountPercentage * (ABS(TIMESTAMPDIFF(MONTH, a.createdDate, a.dateMaturity)) + 1)
+                    WHEN a.status = 'redeem' AND b.redeemDate IS NOT NULL AND b.redeemDate > a.dateMaturity
+                        THEN CASE 
+                            WHEN DATEDIFF(b.redeemDate, a.dateMaturity) / 30 >= 0.1 
+                                THEN ap.amountPercentage * CEIL(DATEDIFF(b.redeemDate, a.dateMaturity) / 30)
+                            ELSE 0
+                        END
+                    ELSE 0
+                END) AS pastDueInterest,
+                CASE 
+                    WHEN a.status = 'redeem' AND b.redeemDate IS NOT NULL AND DATEDIFF(b.redeemDate, a.dateMaturity) > 135
+                        THEN b.loanAmount * 0.02
+                    WHEN a.status = 'renew' AND DATEDIFF(a.createdDate, a.dateMaturity) > 135
+                        THEN b.loanAmount * 0.02
+                    ELSE 0
+                END AS penalty
+            FROM {$this->tableTransaction} a
+            INNER JOIN {$this->table} b ON a.loanId = b.id
+            INNER JOIN {$this->applicantTable} c ON b.customerId = c.id
+            JOIN JSON_TABLE(
+                b.computationDetails,
+                '$' COLUMNS (
+                    amountPercentage DECIMAL(10,2) PATH '$.amountPercentage'
+                )
+            ) AS ap
+            WHERE a.status IN ('redeem', 'renew')
+                AND a.createdDate LIKE :dateFrom:
+                AND a.orStatus = :orStatus:
+            GROUP BY a.oldTicketNo, a.amount, c.firstName, c.lastName, b.createdDate, a.dateMaturity, b.expirationDate, b.redeemDate, a.createdDate, a.status, ap.amountPercentage, a.id
+        ";
+
         $query = $this->db->query($sql, $params);
-        $results = $query->getResult();
-
-        $all = array_map(function($el){
-            foreach($el as $key => $val){
-                $linfoParams = [
-                    "id" => $el->loanId
-                ];
-                $lq = "SELECT id, terms, itemDetails, computationDetails, payStatus, interest, charge, loanAmount, redeemDate, customerId, createdDate FROM ". $this->table ." WHERE id = :id:";
-                $loanInfo = $this->db->query($lq, $linfoParams);
-                $el->loanInfo = $loanInfo->getRow();
-
-                $cInfoParams = [
-                    "id" => $el->loanInfo->customerId
-                ];
-                $cq = "SELECT lastName, firstName, suffix, middleName FROM ". $this->applicantTable ." WHERE id = :id:";
-                $clientInfo = $this->db->query($cq, $cInfoParams);
-                $el->customerInfo = $clientInfo->getRow();
-            }
-            return $el;
-        }, $results);
-
-        return $all;
+        return $query->getResult();
     }
     // This should get on the TBL Loan History
     public function getTwentyFourColumnReportList($params){
 
         $sql = "SELECT * FROM ".$this->tableTransaction." a
-        WHERE a.status IN ('new', 'renew','spoiled') AND 
+        WHERE a.status IN ('new', 'renew', 'spoiled') AND 
         a.orStatus = :status: AND 
         DATE_FORMAT(a.createdDate, '%Y-%m-%d') BETWEEN :dateFrom: AND :dateTo:";
        
