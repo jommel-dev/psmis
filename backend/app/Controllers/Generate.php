@@ -267,7 +267,7 @@ class Generate extends BaseController
                 "cashOnHand" => number_format($value->amount, 2, '.', ','),
                 "principal" => number_format($value->loanAmount, 2, '.', ','),
                 "interest" => number_format($value->amountPercentage, 2, '.', ','),
-                "interestPassedMonth" => number_format($value->pastDueInterest, 2, '.', ','),
+                "interestPassedMonth" => number_format($value->pastDueInterest  + $value->penalty, 2, '.', ','),
             ];
         }
 
@@ -401,7 +401,7 @@ class Generate extends BaseController
                 "cashOnHand" => $value->amount,
                 "principal" => $value->loanAmount,
                 "interest" => $value->amountPercentage,
-                "interestPassedMonth" => $value->pastDueInterest
+                "interestPassedMonth" => $value->pastDueInterest + $value->penalty
             ];
             // $list['list'][$key] = [
             //     "key" => $value->id,
