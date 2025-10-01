@@ -43,7 +43,7 @@
         // print_r($result);
     ?>
     <div style="border: 1px solid black; border-bottom: 3px solid black; padding: 3px; margin-top: 10px; margin-bottom: 10px;"></div>
-    <table style="width: 100%; border-collapse: collapse; border-bottom:0px !important; font-size: 9pt;">
+    <table style="width: 100%; border-collapse: collapse; border-bottom:0px !important; font-size: 8pt;">
         <tr style="border-bottom: 1px solid black;">
             <?php
                 foreach ($columns as $key => $value) {
@@ -61,8 +61,8 @@
         <?php foreach($list as $row): ?>
             <tr>
                 <td style="text-align: center;"><?= $row['no'] ?></td>
-                <td><?= $row['pawnerName'] ?></td>
-                <td style="text-align: center;"><?= $row['date'] ?></td>
+                <td style="font-size: 6pt !important; width: 150px;"><?= $row['pawnerName'] ?></td>
+                <td style="text-align: center; font-size: 6pt !important; width: 60px;"><?= $row['date'] ?></td>
                 <td style="text-align: center;"><?= $row['pawnTicket'] ?></td>
                 <td style="text-align: center;"><?= $row['orNumber'] ?></td>
                 <td style="text-align: center;"><?= $row['cashOnHand'] ?></td>

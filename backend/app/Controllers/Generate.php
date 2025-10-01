@@ -274,9 +274,9 @@ class Generate extends BaseController
         ob_start();
         $dompdf = new \Dompdf\Dompdf(['enable_font_subsetting' => true]); 
         $dompdf->loadHtml(view('reports/10columns', $list));
-        $dompdf->setPaper(array(0, 0, 612, 936), 'landscape');
+        $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-        $dompdf->stream('24 Column Report', ["Attachment" => false]);
+        $dompdf->stream('10 Column Report', ["Attachment" => false]);
     }
 
     public function tenColumnReport(){

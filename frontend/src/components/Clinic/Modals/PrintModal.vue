@@ -45,22 +45,20 @@ export default {
         }
     },
     watch:{
-        modalStatus: function(newVal){
-            this.openModal = newVal
-            if(newVal){
-                this.appData.charge = Number(this.appData.charge).toFixed(2)
-                let users = "yellow,white";
-                if(users.includes(this.user.iss)){
-                    console.log("Creating PDF for Yellow or White Issuer")
-                    this.createPDFOld(this.appData)
-                } else {
-                    this.createPDF(this.appData)
-                }
-
-                
-                this.getHistoryList(this.appData)
-            }
+      modalStatus: function(newVal){
+        this.openModal = newVal
+        if(newVal){
+          this.appData.charge = Number(this.appData.charge).toFixed(2)
+          let users = "yellow,white";
+          // if(users.includes(this.user.iss)){
+          //   this.createPDFOld(this.appData)
+          // } else {
+          //   this.createPDF(this.appData)
+          // }
+          this.createPDFOld(this.appData)
+          this.getHistoryList(this.appData)
         }
+      }
     },
     props: {
         appData: {
